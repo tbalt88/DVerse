@@ -8,9 +8,11 @@ Part of the DVerse series. Successor to [DVerseClaudeSkills](https://github.com/
 
 ## What this is
 
-Dataverse expresses its system as declarative artifacts: solution XML, FormXML, sitemap, ribbon, FetchXML, workflow XAML. Declarative means diffable. Diffable means gateable.
+The Power Platform expresses its systems as declarative artifacts: Dataverse solution XML, FormXML, sitemap, ribbon, FetchXML, workflow XAML, and canvas app sources unpacked to `.pa.yaml`. Declarative means diffable. Diffable means gateable.
 
 DVerse v2 tests whether that property can carry real governance: whether AI DLC gates can run natively against those artifacts and mechanically refuse ungated output, rather than governance being asserted by human review.
+
+Everything here is built by Claude models. No other vendor's models are used.
 
 Three components, all currently empty:
 
@@ -26,7 +28,11 @@ DVerse layers on top of Microsoft's official tooling. It does not replace or ven
 
 [`microsoft/power-platform-skills`](https://github.com/microsoft/power-platform-skills) covers the app layer: canvas apps, model-driven apps, Power Pages, Power Automate, mobile, code apps, MCP apps. That territory is theirs and they ship it daily.
 
-DVerse covers what their marketplace does not: **Dataverse backend pro-code** (plugin assemblies, custom APIs, workflow activities) and **governance gates** over the declarative artifacts.
+Their plugins help you **build**. DVerse **gates**. That is the distinction, and it holds across the whole surface: nothing in their marketplace mechanically refuses output that violates a rule, and nothing there produces an auditable refusal ledger.
+
+DVerse covers two things their marketplace does not: **governance gates** over Power Platform declarative artifacts, and **Dataverse backend pro-code** (plugin assemblies, custom APIs, workflow activities), which has no plugin of theirs at all.
+
+Scope note, stated honestly: DVerse gates canvas app sources as well as Dataverse solutions. That overlaps their `canvas-apps` territory on the build side. We are not competing on generation; we are adding the layer above it.
 
 See [`docs/upstream-map.md`](docs/upstream-map.md) for exactly what is consumed, at what pinned version, and what was deliberately declined.
 
@@ -47,9 +53,14 @@ Honesty about what is ours matters more here than anywhere, because this project
 
 ## What this repo does not claim
 
-The differentiator is narrow and specific: **nobody has shipped governed, pro-code, Dataverse-backend agentic tooling.**
+The differentiator is narrow and specific: **nobody has shipped mechanical governance gates over Power Platform declarative artifacts.** Plenty of tooling helps you build. None of it refuses.
 
-It is not a claim that nobody builds agentic Power Platform tooling. Microsoft does, publicly, with a funded team. Overstating that would not survive thirty seconds of scrutiny.
+It is not a claim that nobody builds agentic Power Platform tooling. Microsoft does, publicly, with a funded team and a 572-star marketplace. Overstating that would not survive thirty seconds of scrutiny.
+
+Two further limits worth stating before someone finds them:
+
+- Canvas app gating depends on `pac canvas pack/unpack/validate`, which Microsoft currently marks **Preview**. That foundation may shift.
+- The Power Apps Checker rung requires a live Dataverse environment and cannot run on fork pull requests. Every gate authored here runs offline with no credentials; that one does not.
 
 ## Engineering notes
 
