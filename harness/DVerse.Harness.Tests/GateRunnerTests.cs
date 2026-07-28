@@ -93,6 +93,33 @@ public sealed class GateRunnerTests
         Assert.Equal(0, Runner(ledger).Run([new TenantGate()], Context(false)).ExitCode);
     }
 
+    [Theory]
+    [InlineData(true)]   // gate crash path
+    [InlineData(false)]  // tenant skip path
+    public void Runner_authored_verdicts_never_carry_an_absolute_path(bool crashing)
+    {
+        // Regression guard. The runner authors verdicts of its own for crashes
+        // and skips, and both originally emitted SolutionRoot raw. With an
+        // absolute root that leaked a local filesystem path into a ledger bound
+        // for a public repo. The original tests missed it by passing a relative
+        // string as the root, so the defect could not manifest. This one uses a
+        // realistic absolute root on purpose.
+        var ledger = new InMemoryLedger();
+        var context = new GateContext(
+            RepositoryRoot: Path.Combine(Path.GetTempPath(), "repo"),
+            SolutionRoot: Path.Combine(Path.GetTempPath(), "repo", "demo-solution"),
+            Stage: GateStage.Integration,
+            HasTenantCredentials: false);
+
+        IGate gate = crashing ? new ThrowingGate() : new TenantGate();
+        Runner(ledger).Run([gate], context);
+
+        var verdict = Assert.Single(ledger.Recorded);
+        Assert.False(Path.IsPathRooted(verdict.Artifact),
+            $"Runner emitted absolute Artifact '{verdict.Artifact}'.");
+        Assert.Equal("demo-solution", verdict.Artifact);
+    }
+
     [Fact]
     public void A_ledger_failure_stops_the_run_rather_than_reporting_green()
     {

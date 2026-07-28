@@ -1,0 +1,5 @@
+EntityRelationship:
+  Name: dv_client_docs
+  RelationshipType: OneToMany
+  ReferencingEntityName: dv_client
+  ReferencedEntityName: sharepointdocumentlocation

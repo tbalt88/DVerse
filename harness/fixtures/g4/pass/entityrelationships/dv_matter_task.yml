@@ -1,0 +1,5 @@
+EntityRelationship:
+  Name: dv_matter_dv_task
+  RelationshipType: OneToMany
+  ReferencingEntityName: dv_task
+  ReferencedEntityName: dv_matter

@@ -1,0 +1,7 @@
+# Correct solution layout; this fixture is missing publishers/ entirely.
+UniqueName: DVerseCore
+LocalizedNames:
+  - languagecode: 1033
+    description: DVerse Core
+Version: 1.0.0.0
+Publisher: dverse

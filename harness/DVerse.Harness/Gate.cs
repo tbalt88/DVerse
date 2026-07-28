@@ -14,11 +14,23 @@ namespace DVerse.Harness;
 /// <see cref="GateOutcome.Skip"/> with a reason when false, which is the normal
 /// and expected state on a fork pull request.
 /// </param>
+/// <param name="Time">
+/// Clock for stamping <see cref="GateVerdict.At"/>. Supplied through the context
+/// rather than read from <see cref="DateTimeOffset.UtcNow"/> inside each gate, so
+/// gate tests are deterministic and no gate has to invent its own time source.
+/// Defaults to the system clock.
+/// </param>
 public sealed record GateContext(
     string RepositoryRoot,
     string SolutionRoot,
     GateStage Stage,
-    bool HasTenantCredentials);
+    bool HasTenantCredentials)
+{
+    public TimeProvider Time { get; init; } = TimeProvider.System;
+
+    /// <summary>Convenience for gates building a verdict.</summary>
+    public DateTimeOffset Now => Time.GetUtcNow();
+}
 
 /// <summary>
 /// One rule, mechanically enforced.
@@ -113,6 +125,27 @@ public sealed class GateRunner(IRefusalLedger ledger, TimeProvider? timeProvider
     /// a pass.
     /// </para>
     /// </summary>
+    /// <summary>
+    /// The solution root expressed relative to the repository root.
+    /// <para>
+    /// The runner authors verdicts of its own for skips and gate crashes, and
+    /// those must obey the same no-absolute-paths rule gates do. Emitting
+    /// <see cref="GateContext.SolutionRoot"/> raw leaked a full local path into
+    /// the ledger, which is both a reproducibility failure and a small privacy
+    /// one once the repo is public. Caught by wave 1 integration validation;
+    /// the wave 0 unit tests missed it because they passed a relative string as
+    /// the solution root, so the bug could not manifest.
+    /// </para>
+    /// </summary>
+    private static string RelativeSolutionRoot(GateContext context)
+    {
+        if (!Path.IsPathRooted(context.SolutionRoot))
+            return context.SolutionRoot.Replace('\\', '/');
+
+        var relative = Path.GetRelativePath(context.RepositoryRoot, context.SolutionRoot);
+        return relative.Replace('\\', '/');
+    }
+
     private IEnumerable<GateVerdict> EvaluateSafely(IGate gate, GateContext context)
     {
         if (gate.RequiresTenant && !context.HasTenantCredentials)
@@ -124,7 +157,7 @@ public sealed class GateRunner(IRefusalLedger ledger, TimeProvider? timeProvider
                     GateId = gate.Id,
                     GateName = gate.Name,
                     Outcome = GateOutcome.Skip,
-                    Artifact = context.SolutionRoot,
+                    Artifact = RelativeSolutionRoot(context),
                     Evidence = "Gate not executed.",
                     Reason = "Requires a Dataverse tenant; no credentials present. "
                            + "Expected on fork pull requests.",
@@ -150,7 +183,7 @@ public sealed class GateRunner(IRefusalLedger ledger, TimeProvider? timeProvider
                     GateId = gate.Id,
                     GateName = gate.Name,
                     Outcome = GateOutcome.Refuse,
-                    Artifact = context.SolutionRoot,
+                    Artifact = RelativeSolutionRoot(context),
                     Evidence = "Gate threw before reaching a verdict.",
                     Reason = $"Gate defect, refusing rather than passing: "
                            + $"{ex.GetType().Name}: {ex.Message}",

@@ -1,0 +1,7 @@
+# Minimal solution manifest fixture for G10 tests.
+UniqueName: DVerseCore
+LocalizedNames:
+  - languagecode: 1033
+    description: DVerse Core
+Version: 1.0.0.0
+Publisher: dverse

@@ -1,0 +1,7 @@
+# Publisher manifest is correctly placed in this fixture, so G10's publisher
+# check stays quiet and the test can isolate the root-manifest trap.
+UniqueName: dverse
+LocalizedNames:
+  - languagecode: 1033
+    description: DVerse
+CustomizationPrefix: dv

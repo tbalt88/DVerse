@@ -1,0 +1,6 @@
+# Minimal publisher manifest fixture for G10 tests.
+UniqueName: dverse
+LocalizedNames:
+  - languagecode: 1033
+    description: DVerse
+CustomizationPrefix: dv

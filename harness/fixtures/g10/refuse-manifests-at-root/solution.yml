@@ -1,0 +1,11 @@
+# Trap fixture for G10: manifest misplaced at the solution root instead of
+# under solutions/<name>/. This is the exact layout the Microsoft docs warn
+# about: format auto-detection finds no solutions/*/solution.yml, so the
+# packer falls back to the legacy XML format and fails with a misleading
+# "missing Customizations.xml" error.
+UniqueName: DVerseCore
+LocalizedNames:
+  - languagecode: 1033
+    description: DVerse Core
+Version: 1.0.0.0
+Publisher: dverse

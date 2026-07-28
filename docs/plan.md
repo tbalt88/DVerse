@@ -29,15 +29,22 @@ C2a is the contract everything else consumes. It is built first and frozen befor
 
 Every gate ships with a fixture it refuses. A gate with no red case is an assertion, not a gate.
 
-| Gate | Asserts | Tier | Novel? |
-|---|---|---|---|
-| G1 well-formedness | artifacts parse, match schema | offline | no, table stakes |
-| G2 publisher prefix | all custom components carry `dv_` | offline | no, trivial |
-| G3 dependency integrity | no dangling refs; `MissingDependencies` honest | offline | yes, nothing checks this pre-import |
-| G4 document-location cardinality | entity to `SharePointDocumentLocation` is 1:N, never N:1 or N:N | offline | **yes, flagship** |
-| G5 plugin registration sanity | stage, mode, `FilteringAttributes` match the code | offline | yes |
-| G6 build and unit tests | plugins compile, xUnit suite green | offline | no, inherited |
-| G7 Power Apps Checker | Microsoft's ruleset | **online** | no, composed |
+| Gate | Asserts | Tier | Novel? | Built |
+|---|---|---|---|---|
+| G1 well-formedness | artifacts parse, match schema | offline | no, table stakes | not yet |
+| G2 publisher prefix | `CustomizationPrefix: dv`, entity dirs `dv_` prefixed | offline | no, trivial | **wave 1** |
+| G3 dependency integrity | no dangling refs; `MissingDependencies` honest | offline | yes | not yet |
+| G4 document-location cardinality | entity to `SharePointDocumentLocation` is 1:N, never N:1 or N:N | offline | **yes, flagship** | **wave 1** |
+| G5 plugin registration sanity | stage, mode, `FilteringAttributes` match the code | offline | yes | not yet |
+| G6 build and unit tests | plugins compile, xUnit suite green | offline | no, inherited | not yet |
+| G7 Power Apps Checker | Microsoft's ruleset | **online** | no, composed | wave 2 |
+| G8 rootcomponent source presence | every `rootcomponents.yml` declaration has source on disk | offline | yes, silent failure | **NOT BUILT, see gap** |
+| G9 solution component paths | every `solutioncomponents.yml` `Path:` resolves on disk | offline | yes, silent failure | **wave 1** |
+| G10 YAML layout conformance | manifests under `solutions/<name>/`, not at root | offline | yes, misleading error | **wave 1** |
+
+G8, G9 and G10 were added during wave 1 after reading Microsoft's YAML format reference, which documents three failure modes the platform does not report usefully: a declared component whose source is absent is dropped from the pack while **pack still exits 0**; `solutioncomponents.yml` omitting dependency paths **packs clean and fails at import**; and manifests placed at the folder root cause a fallback to XML and a **misleading error about a missing Customizations.xml**.
+
+**Honest gap.** G8 and G9 address two different files. G9 (built) validates `solutioncomponents.yml`. G8 (not built) would validate `rootcomponents.yml`, which is the file Microsoft's exit-code-0 note actually names. The two overlap in spirit but not in coverage. G8 is outstanding work, not covered by G9.
 
 G4 is the flagship because its violation fails **silently**. Microsoft documents that a non-1:N relationship to a document-location entity causes documents to simply not appear. No error, no import failure, no checker warning. That is precisely the failure class governance exists for, and nothing upstream catches it.
 

@@ -1,0 +1,1 @@
+Placeholder so this directory is tracked and resolvable on disk. Content is not read by G9.

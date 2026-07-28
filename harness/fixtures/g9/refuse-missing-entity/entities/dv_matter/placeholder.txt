@@ -1,0 +1,2 @@
+Unreferenced by this fixture's solutioncomponents.yml; present only so the
+entities folder itself is not empty. Content is not read by G9.

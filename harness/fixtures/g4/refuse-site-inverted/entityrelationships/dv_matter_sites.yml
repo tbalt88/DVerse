@@ -1,0 +1,5 @@
+EntityRelationship:
+  Name: dv_matter_SharePointSites
+  RelationshipType: OneToMany
+  ReferencingEntityName: dv_matter
+  ReferencedEntityName: sharepointsite

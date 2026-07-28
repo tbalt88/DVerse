@@ -1,0 +1,4 @@
+# This fixture deliberately has no solutioncomponents.yml alongside this file.
+# solution.yml itself is not read by G9; it exists only so the solution
+# directory is non-empty and tracked by git.
+SolutionUniqueName: dversesolution

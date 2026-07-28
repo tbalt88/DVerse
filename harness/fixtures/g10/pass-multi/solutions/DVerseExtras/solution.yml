@@ -1,0 +1,7 @@
+# Minimal solution manifest fixture for G10 tests (multi-solution layout).
+UniqueName: DVerseExtras
+LocalizedNames:
+  - languagecode: 1033
+    description: DVerse Extras
+Version: 1.0.0.0
+Publisher: dverse
