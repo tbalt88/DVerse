@@ -53,10 +53,12 @@ This is a platform constraint, not a design choice: GitHub issues neither secret
 
 Secure before dev starts, never piecemeal mid-wave.
 
+**Sequencing rule: the trial is spun up at the START OF WAVE 2, not before.** The environment does not exist yet, and its 30 day clock starts the moment it is created. Waves 0 and 1 are entirely offline: the recorder, every gate G1 to G6, and all artifact authoring need no tenant. Creating the trial early would burn window on days when nothing requires it. Deferring it to wave 2 puts the full 30 days against the only work that needs a tenant, which is G7 and the golden import receipt, and leaves buffer for defects that surface at import.
+
 | Item | Required | Needed by | Who |
 |---|---|---|---|
-| Dataverse trial environment URL | yes | G7, golden import receipt | owner (exists in Azure trial) |
-| Trial expiry date | yes | schedules the import receipt | **owner, unknown to the seat** |
+| Dataverse trial environment | yes | **wave 2 only** | owner, creates on dev-ready signal |
+| Trial expiry | derived | 30 days from creation | starts at wave 2, not at kickoff |
 | Entra app registration (client ID, tenant ID) | yes | OIDC auth | owner only |
 | Dataverse application user plus security role | yes | G7 in CI | owner only |
 | GitHub OIDC federated credential | yes | G7 in CI | seat prepares, owner approves |
@@ -72,7 +74,7 @@ No secrets enter chat, commits, or docs. OIDC federation means no stored client 
 | ID | Risk | Severity | Mitigation |
 |---|---|---|---|
 | R1 | `pac canvas pack/unpack/validate` are Preview; the canvas gate foundation may shift | high | pin pac version; keep canvas gates in a separate module so churn is contained |
-| R2 | Trial expires and G7 goes dark | high | spend the window on a golden import receipt, dated and committed; offline gates continue unaffected |
+| R2 | Trial expires and G7 goes dark | medium, downgraded from high | the trial is not created until wave 2, so its 30 day clock never runs during offline work; the window is spent on the golden import receipt, dated and committed; offline gates continue unaffected after expiry |
 | R3 | Microsoft ships a dataverse-backend plugin upstream | medium | re-check `microsoft/power-platform-skills` each planning cycle; the gating layer stays differentiated even if building converges |
 | R4 | Offline-authored artifacts pass our gates but fail a real import | medium | golden import receipt proves the artifacts were real, not merely well-formed |
 | R5 | Fork PRs cannot run G7 | low | documented in README; offline tier covers everything DVerse authors |
