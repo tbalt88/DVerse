@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DVerse.Harness\DVerse.Harness.csproj" />
+    <ProjectReference Include="..\DVerse.Harness.Cli\DVerse.Harness.Cli.csproj" />
   </ItemGroup>
 
 </Project>

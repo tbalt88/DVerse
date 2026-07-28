@@ -14,7 +14,7 @@ namespace DVerse.Harness.Gates;
 /// <para>
 /// A manifest left at the root is invisible to that detection. The packer then
 /// falls back to the legacy XML format and fails with an error about a missing
-/// <c>Other\Customizations.xml</c> — a symptom that points a developer at
+/// <c>Other\Customizations.xml</c>, a symptom that points a developer at
 /// entirely the wrong file. This gate exists to catch the real cause (a
 /// misplaced or absent YAML manifest) and say so plainly, before that
 /// misleading error ever has a chance to fire.
@@ -67,7 +67,7 @@ public sealed class YamlLayoutGate : IGate
         {
             var strayNote = strayAtRoot.Count > 0
                 ? $" Found {string.Join(", ", strayAtRoot)} sitting directly at the solution root " +
-                  "instead of under solutions/<name>/ — that is exactly what causes this."
+                  "instead of under solutions/<name>/, which is exactly what causes this."
                 : string.Empty;
 
             verdicts.Add(new GateVerdict
@@ -83,7 +83,7 @@ public sealed class YamlLayoutGate : IGate
                 Reason = "No solutions/<name>/solution.yml found." + strayNote +
                     " Per Microsoft's format auto-detection, with no solutions/*/solution.yml present " +
                     "the packer silently falls back to the legacy XML format and expects " +
-                    "Other\\Customizations.xml — producing a misleading error about a missing " +
+                    "Other\\Customizations.xml, producing a misleading error about a missing " +
                     "Customizations.xml whose real cause is the missing or misplaced YAML manifest, " +
                     "not a missing XML file.",
                 At = context.Now,

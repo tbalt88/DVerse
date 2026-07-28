@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="DVerse.Harness.Cli/DVerse.Harness.Cli.csproj" />
   <Project Path="DVerse.Harness.Tests/DVerse.Harness.Tests.csproj" />
   <Project Path="DVerse.Harness/DVerse.Harness.csproj" />
 </Solution>
