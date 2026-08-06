@@ -27,14 +27,19 @@ If A3 is blocked by tenant policy, everything in section C stops until it is lif
 | # | Step | Record this |
 |---|---|---|
 | B1 | Power Platform admin center, `admin.powerplatform.microsoft.com`, then Manage, Environments, New | |
-| B2 | Type: **Trial**. Include a **Dataverse data store**, this is not optional for us | |
-| B3 | Region: pick the one matching your Power Apps Checker geo, section E4 | region name |
-| B4 | Enable **Dynamics 365 apps**: not required. DVerse targets Dataverse, not first-party apps | |
+| B2 | Type: **Trial (standard)**, NOT Trial (subscription-based). The subscription-based type requires an active Dynamics 365 trial subscription and is a different product. For the standard type, answer **Yes** to "Create a database for this environment" | |
+| B3 | Region: pick one and record it. `pac solution check` takes a `--geo` argument at run time; keeping them matched avoids cross-geo confusion | region name |
+| B4 | **Dynamics 365 apps cannot be enabled on trial-type environments** (Microsoft limitation). Fine for us; DVerse targets Dataverse, not first-party apps | |
 | B5 | After creation, open the environment, Details | **Environment ID** (GUID) |
 | B6 | Same panel | **Environment URL** (`https://<org>.crm<n>.dynamics.com`) |
 | B7 | Note the creation date | **expiry = creation + 30 days** |
 
 B7 is the one people forget. The expiry date drives the golden import receipt deadline in wave 2.7.
+
+Two more standard-trial facts worth knowing before you commit to one:
+
+- A standard trial **can only be created and deleted**. No backup, no restore, no copy, no reset. There is no safety net inside the environment, which is exactly why every artifact lives in git and the environment is treated as disposable.
+- After 30 days the environment is disabled and then deleted. Anything not exported to the repo by then is gone.
 
 ## C. Entra app registration
 
@@ -182,5 +187,5 @@ Trial environment: free for 30 days. Entra app registration: free. Federated cre
 ## Known limits carried in
 
 - Branch protection and rulesets are unavailable on this free private repo. Refusal lives in the harness, not in GitHub, so this constrains nothing. GitHub Pro was declined and is not needed.
-- Fork pull requests receive neither secrets nor OIDC tokens. Gate G7 therefore cannot run on them, by design, and the offline tier covers everything DVerse authors.
+- Fork pull requests receive neither secrets nor OIDC tokens. Gate G7 therefore cannot run on them, by design, and the offline tier covers everything DVerse authors. Note this is anticipatory: forking is off by default on private repos, so the fork-PR scenario only becomes live at the wave 8 public flip.
 - Everything in section B expires 30 days after creation. The golden import receipt exists so the offline gates keep their evidentiary value after that.
