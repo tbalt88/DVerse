@@ -6,17 +6,21 @@ Design authority is [`ARCHITECTURE.md`](ARCHITECTURE.md). Wave 1 scope and the r
 
 ## Status
 
+Status as of 2026-08-13:
+
 | Wave | Content | State |
 |---|---|---|
 | 0 | recorder, refusal ledger, frozen contract | **done**, `a61f0e5` |
 | 1 | G2, G4, G9, G10 with red fixtures | **done**, `fd76100` |
-| 2 | CLI, CI wiring, tenant, golden import receipt | next |
-| 3 | remaining offline gates | planned |
-| 4 | demo solution, Dataverse slice | planned |
-| 5 | canvas app and document management | planned |
+| 2 | CLI, CI wiring, tenant, golden import receipt | **offline lane done and CI-proven** (CLI `4a66e48`, offline workflow green, O7/O8/O9 closed). Provisioning done and verified (consent, FIC, app user, auth chain). G7 + online workflow in flight; golden import receipt remains |
+| 3 | remaining offline gates (G1, G3, G5, G6, G8) | planned |
+| 4 | demo solution, Dataverse slice | **4.1 done**, `5d9deaa`: publisher + DVerseCore shell, pack-verified against pac 2.10.1; G9 realigned to pac reality `5d0b25e`. 4.2 to 4.5 planned |
+| 5 | canvas app and document management | planned (SharePoint not yet provisioned) |
 | 6 | evolved architect skill | planned |
 | 7 | structural diff | planned |
 | 8 | public flip and receipts | planned |
+
+The environment turned out to be pay-as-you-go, not a 30 day trial, so the ordering constraint below is historical: there is no expiry clock. Sequencing by dependency stands; urgency by deadline does not.
 
 ## The ordering constraint that shapes everything
 
