@@ -19,26 +19,36 @@ public sealed class DocumentLocationCardinalityGateTests
     }
 
     /// <summary>
-    /// Walks up from the test assembly to the repo's fixture root. Avoids
-    /// copying fixtures to the output directory, which would mean editing the
-    /// shared csproj that parallel slices are forbidden from touching.
+    /// Walks up from the test assembly to harness/fixtures/g4. Avoids copying
+    /// fixtures to the output directory, which would mean editing the shared
+    /// csproj that parallel slices are forbidden from touching.
+    /// <para>
+    /// Deliberately the g4 folder itself, one level above any individual
+    /// fixture directory, so RepositoryRoot and SolutionRoot are never equal
+    /// in these tests. A gate that quietly relativized against SolutionRoot
+    /// instead of RepositoryRoot would still pass every earlier assertion if
+    /// the two roots happened to coincide; keeping them distinct is what
+    /// actually pins the path base.
+    /// </para>
     /// </summary>
-    private static string Fixture(string name)
+    private static string FixturesRoot()
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
 
-        while (dir is not null && !Directory.Exists(Path.Combine(dir.FullName, "fixtures")))
+        while (dir is not null && !Directory.Exists(Path.Combine(dir.FullName, "fixtures", "g4")))
             dir = dir.Parent;
 
         if (dir is null)
             throw new DirectoryNotFoundException(
-                $"Could not locate 'fixtures' walking up from {AppContext.BaseDirectory}.");
+                $"Could not locate 'fixtures/g4' walking up from {AppContext.BaseDirectory}.");
 
-        return Path.Combine(dir.FullName, "fixtures", "g4", name);
+        return Path.Combine(dir.FullName, "fixtures", "g4");
     }
 
+    private static string Fixture(string name) => Path.Combine(FixturesRoot(), name);
+
     private static GateContext Context(string fixture) => new(
-        RepositoryRoot: Fixture(fixture),
+        RepositoryRoot: FixturesRoot(),
         SolutionRoot: Fixture(fixture),
         Stage: GateStage.Generation,
         HasTenantCredentials: false)
@@ -61,6 +71,10 @@ public sealed class DocumentLocationCardinalityGateTests
         // Two files inspected, only one touches a document table.
         Assert.Contains("2 relationship file", verdict.Evidence);
         Assert.Contains("1 touch", verdict.Evidence);
+
+        // Artifact is relative to RepositoryRoot (fixtures/g4), not SolutionRoot
+        // (fixtures/g4/pass), so it must be prefixed with the fixture name.
+        Assert.Equal("pass/entityrelationships", verdict.Artifact);
     }
 
     [Fact]
@@ -74,6 +88,10 @@ public sealed class DocumentLocationCardinalityGateTests
         // The whole value of this gate is naming a symptom the developer would
         // otherwise chase for hours with no error to guide them.
         Assert.Contains("silently empty", verdict.Reason, StringComparison.OrdinalIgnoreCase);
+
+        Assert.Equal(
+            "refuse-inverted/entityrelationships/dv_matter_documents.yml",
+            verdict.Artifact);
     }
 
     [Fact]
@@ -84,6 +102,10 @@ public sealed class DocumentLocationCardinalityGateTests
         Assert.Equal(GateOutcome.Refuse, verdict.Outcome);
         Assert.Contains("Many-to-many", verdict.Reason, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("only 1:N", verdict.Reason);
+
+        Assert.Equal(
+            "refuse-many-to-many/entityrelationships/dv_matter_documents.yml",
+            verdict.Artifact);
     }
 
     [Fact]
@@ -93,6 +115,10 @@ public sealed class DocumentLocationCardinalityGateTests
 
         Assert.Equal(GateOutcome.Refuse, verdict.Outcome);
         Assert.Contains("sharepointsite", verdict.Evidence, StringComparison.OrdinalIgnoreCase);
+
+        Assert.Equal(
+            "refuse-site-inverted/entityrelationships/dv_matter_sites.yml",
+            verdict.Artifact);
     }
 
     [Fact]
@@ -104,6 +130,11 @@ public sealed class DocumentLocationCardinalityGateTests
         Assert.All(verdicts, v => Assert.Equal(GateOutcome.Refuse, v.Outcome));
         Assert.Contains(verdicts, v => v.Evidence.Contains("dv_matter_docs"));
         Assert.Contains(verdicts, v => v.Evidence.Contains("dv_client_docs"));
+
+        Assert.Contains(verdicts, v =>
+            v.Artifact == "refuse-two-violations/entityrelationships/a_matter.yml");
+        Assert.Contains(verdicts, v =>
+            v.Artifact == "refuse-two-violations/entityrelationships/b_client.yml");
     }
 
     [Fact]
@@ -113,6 +144,7 @@ public sealed class DocumentLocationCardinalityGateTests
 
         Assert.Equal(GateOutcome.Pass, verdict.Outcome);
         Assert.Contains("No entityrelationships/ directory", verdict.Evidence);
+        Assert.Equal("no-relationships/entityrelationships", verdict.Artifact);
     }
 
     [Fact]

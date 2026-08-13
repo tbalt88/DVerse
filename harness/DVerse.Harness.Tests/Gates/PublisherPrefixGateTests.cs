@@ -32,6 +32,11 @@ public sealed class PublisherPrefixGateTests
         Assert.Null(verdict.Reason);
         Assert.Equal(FixedNow, verdict.At);
         Assert.Equal("G2", verdict.GateId);
+
+        // Whole-solution Pass: Artifact is the repo-relative path of the
+        // solution root itself (fixtures/g2/pass relative to RepositoryRoot
+        // fixtures/g2), not the literal "." a same-root context would produce.
+        Assert.Equal("pass", verdict.Artifact);
     }
 
     [Fact]
@@ -45,6 +50,10 @@ public sealed class PublisherPrefixGateTests
         Assert.NotNull(verdict.Reason);
         Assert.Contains("'ms'", verdict.Reason);
         Assert.Contains("dv", verdict.Reason);
+
+        Assert.Equal(
+            "refuse-wrong-prefix/publishers/dversepublisher/publisher.yml",
+            verdict.Artifact);
     }
 
     [Fact]
@@ -57,7 +66,13 @@ public sealed class PublisherPrefixGateTests
         Assert.Equal(GateOutcome.Refuse, verdict.Outcome);
         Assert.NotNull(verdict.Reason);
         Assert.Contains("'matter'", verdict.Reason);
-        Assert.Contains("entities/matter", verdict.Artifact);
+
+        // Pins the path base: Artifact is relative to RepositoryRoot
+        // (fixtures/g2), not SolutionRoot (fixtures/g2/refuse-unprefixed-entity),
+        // so it must carry the fixture directory name as a prefix. A gate that
+        // relativized against SolutionRoot instead would only satisfy Contains,
+        // not this exact value.
+        Assert.Equal("refuse-unprefixed-entity/entities/matter", verdict.Artifact);
     }
 
     [Fact]
