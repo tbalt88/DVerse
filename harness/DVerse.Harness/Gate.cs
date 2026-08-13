@@ -35,9 +35,15 @@ public sealed record GateContext(
 /// <summary>
 /// One rule, mechanically enforced.
 /// <para>
-/// Implementations must be pure with respect to the filesystem: read artifacts,
-/// return a verdict, write nothing. The runner owns all recording, so a gate
-/// physically cannot refuse without the refusal reaching the ledger.
+/// Implementations never write to the ledger, and never write anywhere under
+/// the repository root: recording is the runner's monopoly, so a gate
+/// physically cannot refuse without the refusal reaching the ledger, and the
+/// repository never contains anything a gate manufactured. Scratch output
+/// OUTSIDE the repository (temp directories) is permitted when a gate composes
+/// an external tool that requires it; G7 packs the solution and captures
+/// checker output that way. This wording replaced an absolute "write nothing"
+/// after G7 surfaced the tension; the refined rule is what the original
+/// intended to protect.
 /// </para>
 /// </summary>
 public interface IGate
