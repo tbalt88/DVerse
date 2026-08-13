@@ -64,6 +64,14 @@ namespace DVerse.Harness.Cli
                 return ExitCliError;
             }
 
+            if (!IsUnderOrEqual(options.RepositoryRoot, options.SolutionRoot))
+            {
+                stderr.WriteLine(
+                    $"dverse: solution root is not under the repository root: "
+                    + $"solution={options.SolutionRoot} repo={options.RepositoryRoot}");
+                return ExitCliError;
+            }
+
             var ledger = new JsonlRefusalLedger(options.LedgerPath);
             var gates = GateRegistry.Select(options.IncludeOnline);
 
@@ -123,6 +131,33 @@ namespace DVerse.Harness.Cli
                 result.Passed
                     ? "No gate refused."
                     : $"REFUSED. {result.Refusals.Count} violation(s) recorded in the ledger.");
+        }
+
+        /// <summary>
+        /// True when <paramref name="candidate"/> is <paramref name="root"/> itself
+        /// or a descendant of it. GateVerdict.Artifact is repository-root-relative
+        /// by contract, and Path.GetRelativePath happily walks ".." segments to
+        /// reach a path outside the root instead of failing, so this containment
+        /// check is what actually enforces the contract.
+        ///
+        /// WHY trailing-separator normalization instead of a bare StartsWith:
+        /// both paths are resolved full paths already, but "C:\repo2" starts
+        /// with the string "C:\repo" even though it is a sibling directory, not
+        /// a descendant. Appending a trailing separator to both sides before
+        /// comparing forces the match to land on a full path-segment boundary,
+        /// and it also makes candidate == root compare equal (root's own
+        /// trailing-separator form is a prefix of itself), so "equal to repo
+        /// root" is accepted without a separate equality check.
+        /// Comparison is OrdinalIgnoreCase because Windows paths are
+        /// case-insensitive.
+        /// </summary>
+        private static bool IsUnderOrEqual(string root, string candidate)
+        {
+            var normalizedRoot = Path.TrimEndingDirectorySeparator(root) + Path.DirectorySeparatorChar;
+            var normalizedCandidate =
+                Path.TrimEndingDirectorySeparator(candidate) + Path.DirectorySeparatorChar;
+
+            return normalizedCandidate.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase);
         }
     }
 
