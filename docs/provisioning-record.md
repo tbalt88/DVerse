@@ -21,9 +21,10 @@ Recorded 2026-08-13 from owner handback.
 
 | Item | Value |
 |---|---|
-| Application (client) ID | `31e37971-d28a-f111-8077-70a8a59a66f9` |
+| Application (client) ID | `1f71d5bb-5f44-4e72-bffa-b382eff9cad7` (supersedes `31e37971-...` recorded earlier on 2026-08-13; owner re-issued the app ID same day) |
 | Directory (tenant) ID | `a18bf5e0-62a5-4b3b-bb96-8b0cc7d02989` |
-| API permissions granted | **pending, owner in progress (C5/C6)** |
+| API permissions | added: Dynamics CRM `user_impersonation`, PowerApps Runtime Service `user_impersonation`, PowerApps-Advisor `Analysis.All` (screenshot-verified 2026-08-13) |
+| Admin consent | **pending, Status column blank; owner to click Grant admin consent** |
 | Federated credential (section D) | **pending** |
 | Client secret | none, by design |
 
