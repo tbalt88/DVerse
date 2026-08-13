@@ -61,8 +61,12 @@ Add these under API permissions, then grant admin consent.
 | API | Where to find it | Type | Permission |
 |---|---|---|---|
 | **Dynamics CRM** | Microsoft APIs tab | Delegated | `user_impersonation` |
-| **PowerApps Runtime Service** | Microsoft APIs tab | Delegated | `user_impersonation` |
+| ~~PowerApps Runtime Service~~ | **DO NOT ADD, see below** | | |
 | **PowerApps-Advisor** | **APIs my organization uses**, search for it | Delegated | `Analysis.All` |
+
+**PowerApps Runtime Service is dead, despite Microsoft's tutorial still listing it.** Discovered empirically 2026-08-13: it resolves to service `82f77645-8a66-4745-bcdf-9706824f9ad0`, which Microsoft has renamed "Previous version CDS OBSOLETE - DO NOT USE", and tenant consent fails with AADSTS650052 trying to provision it. Nothing in this project needs it: interactive `pac auth` does not use this app registration, service-principal access to Dataverse is authorized by the application user in section E, and Solution Checker uses the Advisor permission. If it was added, remove it before granting consent.
+
+**If the portal consent button fails with "your organization does not have a subscription (or service principal)":** the tenant lacks local service principals for the listed first-party APIs, which the portal button cannot create. Use the admin consent URL endpoint instead, which provisions them as part of consent: `https://login.microsoftonline.com/<TENANT_ID>/adminconsent?client_id=<CLIENT_ID>`, signed in as Global Administrator. A post-accept error page about a missing reply address is cosmetic; verify the green Status in the portal.
 
 **PowerApps-Advisor / `Analysis.All` is the Solution Checker permission.** Without it, gate G7 cannot run at all. It is the one people miss because it is not on the Microsoft APIs tab; you have to search the organization tab for it.
 
