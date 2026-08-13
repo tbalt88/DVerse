@@ -1,3 +1,5 @@
-- Path: entities/dv_matter
-- Path: canvasapps/dv_matterapp
-- Path: publishers/dversepublisher
+SolutionComponents:
+  Component:
+    - '@path': entities/dv_matter
+    - '@path': canvasapps/dv_matterapp
+    - '@path': publishers/dversepublisher

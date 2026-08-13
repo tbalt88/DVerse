@@ -1,3 +1,5 @@
-- Path: entities/dv_ghost_one
-- Path: entities/dv_ghost_two
-- Path: canvasapps/dv_ghost_app
+SolutionComponents:
+  Component:
+    - '@path': entities/dv_ghost_one
+    - '@path': entities/dv_ghost_two
+    - '@path': canvasapps/dv_ghost_app

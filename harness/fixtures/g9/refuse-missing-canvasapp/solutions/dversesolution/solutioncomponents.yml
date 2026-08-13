@@ -1,1 +1,3 @@
-- Path: canvasapps/dv_matterapp
+SolutionComponents:
+  Component:
+    '@path': canvasapps/dv_matterapp
