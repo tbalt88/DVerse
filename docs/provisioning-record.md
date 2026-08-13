@@ -23,8 +23,8 @@ Recorded 2026-08-13 from owner handback.
 |---|---|
 | Application (client) ID | `1f71d5bb-5f44-4e72-bffa-b382eff9cad7` (supersedes `31e37971-...` recorded earlier on 2026-08-13; owner re-issued the app ID same day) |
 | Directory (tenant) ID | `a18bf5e0-62a5-4b3b-bb96-8b0cc7d02989` |
-| API permissions | added: Dynamics CRM `user_impersonation`, PowerApps Runtime Service `user_impersonation`, PowerApps-Advisor `Analysis.All` (screenshot-verified 2026-08-13) |
-| Admin consent | **pending, Status column blank; owner to click Grant admin consent** |
+| API permissions | Dynamics CRM `user_impersonation`, Microsoft Graph `User.Read`, PowerApps-Advisor `Analysis.All`. PowerApps Runtime Service was added per the stale Microsoft tutorial, then REMOVED: it resolves to "Previous version CDS OBSOLETE" (`82f77645-...`) and blocks consent with AADSTS650052 |
+| Admin consent | **GRANTED for DMD LLC on all three, screenshot-verified 2026-08-13.** Portal button failed (tenant lacked first-party service principals); succeeded via the adminconsent URL endpoint after removing the obsolete permission and adding a temporary `https://localhost` redirect URI |
 | Federated credential (section D) | **pending** |
 | Client secret | none, by design |
 
