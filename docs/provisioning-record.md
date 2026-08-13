@@ -30,7 +30,7 @@ Recorded 2026-08-13 from owner handback.
 
 ## Dataverse application user (section E)
 
-**Pending.** Environment exists, so this can be done immediately after C5/C6 consent.
+**DONE, verified by FetchXML query 2026-08-13:** application user `# DexEvoApp` bound to `1f71d5bb-...`, Enabled, role **System Administrator** (role id `c9ad0449-...`). Interactive chain also verified: `pac auth` profile `dverse-ci` connects, `pac org who` returns environment `5700d87e-...` matching this record, `pac solution list` returns 5 solutions. The federated credential remains the one unproven link; only a real GitHub Actions OIDC run can exercise it (wave 2.5). Org unique name `unq530cda77ce8af1119969000d3a5cb`, friendly name `crmdev`.
 
 ## SharePoint (section F)
 
