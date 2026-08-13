@@ -144,7 +144,7 @@ Carried forward until discharged, so they cannot be lost between waves.
 
 | # | Obligation | Due |
 |---|---|---|
-| O1 | Confirm inferred YAML node names against real clone output | wave 2.6 |
+| O1 | **Partially discharged, slice 4.1 (2026-08-13).** Shell shapes (publisher.yml, solution.yml, solutioncomponents.yml, rootcomponents.yml, missingdependencies.yml) verified against pac 2.10.1 by pack, unpack round-trip, and decompilation of SolutionPackagerLib. Three inferred-shape defects found: empty YAML lists must be empty mappings or pack dies with "Root element is missing"; solution.yml needs the full ImportExportXml root with Publisher as a nested UniqueName object; solutioncomponents.yml is a SolutionComponents/Component mapping with '@path' attributes, DIRECTLY CONTRADICTING Microsoft's published docs example. Component-level shapes (entities, forms, relationships, canvas) remain unverified until they exist, wave 4.2 onward. | wave 4.2+ |
 | O2 | G8 rootcomponents gate, gap left open by wave 1 | wave 3.3 |
 | O3 | Isolated build outputs per slice, concurrency contention bit wave 1 | wave 2 |
 | O4 | Re-check `microsoft/power-platform-skills` for a dataverse-backend plugin | every wave |
