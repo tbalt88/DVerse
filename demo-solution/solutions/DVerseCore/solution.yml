@@ -1,6 +1,13 @@
+# generatedBy MUST be CrmLive and version MUST be present, or Dataverse
+# rejects the import as an On-Premises package with a blank version
+# ("Package Version:  On-Premises"). pac solution pack accepts any
+# generatedBy value without complaint; only a real import enforces this.
+# Discovered live during slice 2.7 against system version 9.2.26081.135.
 ImportExportXml:
+  '@version': '9.2'
+  '@SolutionPackageVersion': '9.2'
   '@languagecode': '1033'
-  '@generatedBy': 'DVerse'
+  '@generatedBy': 'CrmLive'
   SolutionManifest:
     UniqueName: DVerseCore
     LocalizedNames:
