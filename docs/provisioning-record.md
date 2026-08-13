@@ -25,7 +25,7 @@ Recorded 2026-08-13 from owner handback.
 | Directory (tenant) ID | `a18bf5e0-62a5-4b3b-bb96-8b0cc7d02989` |
 | API permissions | Dynamics CRM `user_impersonation`, Microsoft Graph `User.Read`, PowerApps-Advisor `Analysis.All`. PowerApps Runtime Service was added per the stale Microsoft tutorial, then REMOVED: it resolves to "Previous version CDS OBSOLETE" (`82f77645-...`) and blocks consent with AADSTS650052 |
 | Admin consent | **GRANTED for DMD LLC on all three, screenshot-verified 2026-08-13.** Portal button failed (tenant lacked first-party service principals); succeeded via the adminconsent URL endpoint after removing the obsolete permission and adding a temporary `https://localhost` redirect URI |
-| Federated credential (section D) | **in progress.** DVerse-v2 was created 2026-07-27, after GitHub's 2026-07-15 cutoff, so its OIDC tokens use IMMUTABLE subjects and the credential must carry numeric IDs. Owner ID `20543139`, repository ID `1314351397`, expected subject `repo:tbalt88@20543139/DVerse-v2@1314351397:ref:refs/heads/main` |
+| Federated credential (section D) | **DONE AND CI-PROVEN 2026-08-13** (run 31751910173 rerun + run 31753552568): `pac auth create --githubFederated` succeeded on the ubuntu runner with zero stored secrets. Subject `repo:tbalt88@20543139/DVerse-v2@1314351397:ref:refs/heads/main` (immutable IDs; repo postdates GitHub's 2026-07-15 cutoff). First attempt failed AADSTS70025 because the credential was never saved: the required Name field was empty and the Add silently did not commit. Name: `dverse-v2-main` |
 | Client secret | none, by design |
 
 ## Dataverse application user (section E)

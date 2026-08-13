@@ -12,7 +12,7 @@ Status as of 2026-08-13:
 |---|---|---|
 | 0 | recorder, refusal ledger, frozen contract | **done**, `a61f0e5` |
 | 1 | G2, G4, G9, G10 with red fixtures | **done**, `fd76100` |
-| 2 | CLI, CI wiring, tenant, golden import receipt | **offline lane done and CI-proven** (CLI `4a66e48`, offline workflow green, O7/O8/O9 closed). Provisioning done and verified (consent, FIC, app user, auth chain). G7 + online workflow in flight; golden import receipt remains |
+| 2 | CLI, CI wiring, tenant, golden import receipt | **done except 2.7.** Offline lane CI-proven (`4a66e48`). G7 checker gate live-verified locally AND in CI; online workflow green with federated OIDC auth, zero secrets (runs 31751910173, 31753552568). 96 tests. Golden import receipt (2.7) remains |
 | 3 | remaining offline gates (G1, G3, G5, G6, G8) | planned |
 | 4 | demo solution, Dataverse slice | **4.1 done**, `5d9deaa`: publisher + DVerseCore shell, pack-verified against pac 2.10.1; G9 realigned to pac reality `5d0b25e`. 4.2 to 4.5 planned |
 | 5 | canvas app and document management | planned (SharePoint not yet provisioned) |
@@ -150,10 +150,11 @@ Carried forward until discharged, so they cannot be lost between waves.
 |---|---|---|
 | O1 | **Partially discharged, slice 4.1 (2026-08-13).** Shell shapes (publisher.yml, solution.yml, solutioncomponents.yml, rootcomponents.yml, missingdependencies.yml) verified against pac 2.10.1 by pack, unpack round-trip, and decompilation of SolutionPackagerLib. Three inferred-shape defects found: empty YAML lists must be empty mappings or pack dies with "Root element is missing"; solution.yml needs the full ImportExportXml root with Publisher as a nested UniqueName object; solutioncomponents.yml is a SolutionComponents/Component mapping with '@path' attributes, DIRECTLY CONTRADICTING Microsoft's published docs example. Component-level shapes (entities, forms, relationships, canvas) remain unverified until they exist, wave 4.2 onward. | wave 4.2+ |
 | O2 | G8 rootcomponents gate, gap left open by wave 1 | wave 3.3 |
-| O3 | Isolated build outputs per slice, concurrency contention bit wave 1 | wave 2 |
+| O3 | **done**: every slice since wave 2 runs in its own git worktree | done |
 | O4 | Re-check `microsoft/power-platform-skills` for a dataverse-backend plugin | every wave |
 | O5 | Archived seed gains its forward link | wave 8.5 |
 | O6 | Mission statement may be tweaked if an interesting use case warrants | owner, any time |
 | O7 | **DONE, wave 2.1 (commit e630ac6).** `Artifact` is repository-root-relative, forward slashes, never absolute, across all gates. Verified by strengthened per-gate tests (mutation-checked: reverting the fix turns 9 tests red) and a live CLI run showing one path base. | done |
-| O8 | **CLI must enforce SolutionRoot under RepositoryRoot** (exit 2 otherwise). Repo-relative artifacts are only meaningful when the solution root sits under the repo root; with an outside root they climb out via `..` and reproduce the outside path in relative form. Found by the first Linux CI run failing a wave 1 test that passed on Windows only via a path-separator accident. Add CLI validation plus a CliTest. | next executor slice |
-| O9 | GitHub deprecation notice: `actions/checkout@v4` and `setup-dotnet@v4` target Node 20, forced onto Node 24. Bump to current majors in a later slice; non-blocking warning today. | wave 3 window |
+| O8 | **done**, `4a66e48`: CLI exits 2 when the solution root is not under the repository root, sibling-prefix safe | done |
+| O9 | **done**, `3ff8b0f`: checkout v7 and setup-dotnet v6, both verified node24 via their action.yml at the tagged refs; deprecation annotation confirmed gone from the next run | done |
+| O10 | `actions/upload-artifact@v4` in gates-online.yml carries the same Node 20 deprecation warning; bump to the verified Node 24 major. Same slice: consider the online workflow trigger. It currently runs the live checker on every push to main, which is tenant traffic and log noise on doc-only pushes; a path filter or manual dispatch may fit better. Owner call on the trigger, mechanical on the bump | wave 3 window |
