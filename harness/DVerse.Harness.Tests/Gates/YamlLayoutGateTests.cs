@@ -155,13 +155,27 @@ public sealed class YamlLayoutGateTests : IDisposable
             }
         }
 
-        // Also cover the empty-directory case, whose SolutionRoot lives outside
-        // the fixtures tree entirely.
+        // Also cover the empty-directory case. The RepositoryRoot must be an
+        // ancestor of the SolutionRoot here: with a repo root elsewhere, the
+        // repo-relative artifact legitimately climbs out via ".." segments and
+        // reproduces the temp path in relative form. The original version of
+        // this test did exactly that and only passed on Windows because the
+        // backslashed temp path never substring-matched the forward-slash
+        // artifact; the first Linux CI run failed it. Repo-relative paths are
+        // only meaningful when the solution root sits under the repo root.
         var empty = NewEmptyDirectory();
-        var emptyContext = ContextFor(empty);
+        var emptyContext = new GateContext(
+            RepositoryRoot: Path.GetDirectoryName(empty)!,
+            SolutionRoot: empty,
+            Stage: GateStage.Generation,
+            HasTenantCredentials: false)
+        {
+            Time = new FakeTime(FixedNow)
+        };
         foreach (var verdict in Gate().Evaluate(emptyContext))
         {
             Assert.False(Path.IsPathRooted(verdict.Artifact));
+            Assert.DoesNotContain("..", verdict.Artifact);
             Assert.DoesNotContain(empty, verdict.Artifact, StringComparison.OrdinalIgnoreCase);
         }
     }
