@@ -1,0 +1,84 @@
+# DVerse gate ladder: OFFLINE tier.
+#
+# DVerse runs its governance gates in two tiers. This workflow is the
+# OFFLINE tier: it needs zero credentials (no Dataverse tenant, no OIDC,
+# no secrets or repository variables of any kind) and runs on every push
+# to main and on every pull request, including forks. The ONLINE tier
+# (gates that need a live Dataverse tenant, authenticated via OIDC) is a
+# separate, later workflow that only runs on trusted branches. Keep the
+# two tiers separate: this file must never grow auth, secrets, or tenant
+# references.
+#
+# CLI exit-code contract (see harness/DVerse.Harness.Cli/Program.cs):
+#   0 = no gate refused
+#   1 = at least one gate refused -> this is what should turn CI red on
+#       a bad solution
+#   2 = the CLI itself failed to run -> distinct from a refusal, never to
+#       be confused with a clean pass or a legitimate gate refusal
+#
+# The smoke-test step below exercises the real CLI binary against a known
+# fixture to prove, inside CI, that the exit codes actually behave this
+# way. A pipeline that is merely green proves nothing about whether the
+# gates can refuse; this step proves they can.
+
+name: offline-gates
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build and run full test suite
+        run: dotnet test harness/DVerse.Harness.slnx --nologo -v minimal
+
+      - name: CLI refusal-contract smoke test
+        shell: bash
+        run: |
+          set -e
+
+          echo "== smoke a: --help must exit 0 =="
+          code=0
+          dotnet run --project harness/DVerse.Harness.Cli -- --help || code=$?
+          if [ "$code" -ne 0 ]; then
+            echo "FAIL: --help exited $code, expected 0"
+            exit 1
+          fi
+
+          echo "== smoke b: refuse-inverted fixture must exit 1 =="
+          code=0
+          dotnet run --project harness/DVerse.Harness.Cli -- gate run \
+            --solution harness/fixtures/g4/refuse-inverted \
+            --repo "$GITHUB_WORKSPACE" \
+            --ledger "$RUNNER_TEMP/gates-offline-refuse.jsonl" || code=$?
+          if [ "$code" -ne 1 ]; then
+            echo "FAIL: refuse-inverted fixture exited $code, expected 1 (gate refusal)"
+            exit 1
+          fi
+
+          echo "== smoke c: nonexistent --solution path must exit 2 =="
+          code=0
+          dotnet run --project harness/DVerse.Harness.Cli -- gate run \
+            --solution harness/fixtures/g4/does-not-exist \
+            --ledger "$RUNNER_TEMP/gates-offline-missing.jsonl" || code=$?
+          if [ "$code" -ne 2 ]; then
+            echo "FAIL: nonexistent --solution exited $code, expected 2 (CLI error)"
+            exit 1
+          fi
+
+          echo "All three exit-code contract cases verified: 0, 1, 2."
