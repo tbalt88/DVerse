@@ -1,10 +1,10 @@
 using YamlDotNet.Core;
-using YamlDotNet.Serialization;
+using YamlDotNet.RepresentationModel;
 
 namespace DVerse.Harness.Gates;
 
 /// <summary>
-/// G9: every <c>Path:</c> entry in every <c>solutions/*/solutioncomponents.yml</c>
+/// G9: every declared component in every <c>solutions/*/solutioncomponents.yml</c>
 /// must resolve to a real file or directory under the solution root.
 /// <para>
 /// This exists because SolutionPackager's own documented behaviour makes the
@@ -13,16 +13,24 @@ namespace DVerse.Harness.Gates;
 /// import failure against a build that reported success. This gate turns that
 /// exit-code-0 lie into a refusal before the pack ever runs.
 /// </para>
+/// <para>
+/// WHY the shape below, not the one in Microsoft's docs: Microsoft's published
+/// documentation shows solutioncomponents.yml as a flat sequence
+/// (<c>- Path: entities/account</c>). Decompiling pac 2.10.1's
+/// SolutionPackagerLib.dll (DiskReader.GetSolutionComponentPaths) during slice
+/// 4.1 showed the real parser requires a <c>SolutionComponents: Component:</c>
+/// mapping whose entries carry a literal <c>@path</c> key instead. This gate
+/// parses only the pac-verified shape; the documented shape is refused on
+/// sight so a file that passes G9 is a file pac itself will actually pack.
+/// This pin is tied to pac 2.10.1's observed behaviour and may need
+/// revisiting if a future pac release changes its parser.
+/// </para>
 /// </summary>
 public sealed class SolutionComponentPathGate : IGate
 {
     public string Id => "G9";
     public string Name => "solution-component-paths";
     public bool RequiresTenant => false;
-
-    private static readonly IDeserializer Deserializer = new DeserializerBuilder()
-        .IgnoreUnmatchedProperties()
-        .Build();
 
     public IEnumerable<GateVerdict> Evaluate(GateContext context)
     {
@@ -77,15 +85,15 @@ public sealed class SolutionComponentPathGate : IGate
             yield break;
         }
 
-        List<string?>? paths;
+        ParsedManifest? manifest;
         YamlException? parseError = null;
         try
         {
-            paths = ReadComponentPaths(componentsFile);
+            manifest = ParseComponents(componentsFile);
         }
         catch (YamlException ex)
         {
-            paths = null;
+            manifest = null;
             parseError = ex;
         }
 
@@ -99,12 +107,31 @@ public sealed class SolutionComponentPathGate : IGate
             yield break;
         }
 
-        if (paths is null || paths.Count == 0)
+        if (manifest!.IsLegacyShape)
         {
             yield return Refuse(
                 context,
                 relComponentsFile,
-                $"Parsed {relComponentsFile}; it declares zero Path entries.",
+                $"Parsed {relComponentsFile}; its document root is a sequence, the flat " +
+                "'- Path: ...' shape shown in Microsoft's documentation.",
+                $"{relComponentsFile} uses the shape shown in Microsoft's own documentation for " +
+                "solutioncomponents.yml (a flat sequence of '- Path: ...' entries), but pac's " +
+                "actual parser does not accept that shape (verified by decompiling pac 2.10.1's " +
+                "SolutionPackagerLib.dll, DiskReader.GetSolutionComponentPaths, during slice 4.1). " +
+                "pac requires a 'SolutionComponents: Component:' mapping whose entries carry a " +
+                "literal '@path' key, for example: SolutionComponents: / Component: / - '@path': " +
+                $"entities/account. Rewrite {relComponentsFile} to that shape.");
+            yield break;
+        }
+
+        var paths = manifest.Paths;
+
+        if (paths.Count == 0)
+        {
+            yield return Refuse(
+                context,
+                relComponentsFile,
+                $"Parsed {relComponentsFile}; it declares zero Component entries.",
                 "solutioncomponents.yml declares no components. An empty component list packs " +
                 "successfully but ships nothing, which is indistinguishable from every declared " +
                 "component silently having been dropped.");
@@ -121,9 +148,10 @@ public sealed class SolutionComponentPathGate : IGate
                 yield return Refuse(
                     context,
                     relComponentsFile,
-                    $"Read a Path entry from {relComponentsFile}; the entry is blank.",
-                    "solutioncomponents.yml contains a Path entry with no value, so nothing can " +
-                    "be resolved for it and the packer will silently drop that component.");
+                    $"Read a Component entry from {relComponentsFile}; its '@path' value is blank.",
+                    "solutioncomponents.yml contains a Component entry with no '@path' value, so " +
+                    "nothing can be resolved for it and the packer will silently drop that " +
+                    "component.");
                 continue;
             }
 
@@ -140,7 +168,7 @@ public sealed class SolutionComponentPathGate : IGate
             yield return Refuse(
                 context,
                 relTarget,
-                $"Resolved Path '{declaredPath}' from {relComponentsFile} against disk; " +
+                $"Resolved '@path' '{declaredPath}' from {relComponentsFile} against disk; " +
                 "no file or directory exists there.",
                 $"solutioncomponents.yml declares '{declaredPath}' but no such file or directory " +
                 "exists under the solution root. SolutionPackager will omit this component and " +
@@ -152,17 +180,87 @@ public sealed class SolutionComponentPathGate : IGate
             yield return Pass(
                 context,
                 relComponentsFile,
-                $"Resolved {paths.Count} Path " +
+                $"Resolved {paths.Count} Component " +
                 $"entr{(paths.Count == 1 ? "y" : "ies")} from {relComponentsFile} against disk " +
                 $"under {RelativePath(context, context.SolutionRoot)}; all exist.");
         }
     }
 
-    private static List<string?>? ReadComponentPaths(string componentsFile)
+    /// <summary>
+    /// Parses solutioncomponents.yml with the low-level representation model rather
+    /// than a POCO mapping, so the shape of the document root (mapping vs. sequence)
+    /// can be inspected directly: that distinction is how the documented legacy shape
+    /// is told apart from the pac-verified shape.
+    /// </summary>
+    private static ParsedManifest ParseComponents(string componentsFile)
     {
         using var reader = new StreamReader(componentsFile);
-        var entries = Deserializer.Deserialize<List<ComponentEntry>?>(reader);
-        return entries?.Select(e => e.Path).ToList();
+        var yamlStream = new YamlStream();
+        yamlStream.Load(reader);
+
+        if (yamlStream.Documents.Count == 0)
+            return new ParsedManifest(IsLegacyShape: false, Paths: []);
+
+        var root = yamlStream.Documents[0].RootNode;
+
+        if (root is YamlSequenceNode)
+            return new ParsedManifest(IsLegacyShape: true, Paths: []);
+
+        var paths = new List<string?>();
+
+        if (root is YamlMappingNode rootMapping &&
+            TryGetMappingValue(rootMapping, "SolutionComponents", out var solutionComponentsNode) &&
+            solutionComponentsNode is YamlMappingNode solutionComponentsMapping &&
+            TryGetMappingValue(solutionComponentsMapping, "Component", out var componentNode) &&
+            componentNode is not null)
+        {
+            foreach (var entryNode in EnumerateComponentEntries(componentNode))
+            {
+                string? path = null;
+                if (entryNode is YamlMappingNode entryMapping &&
+                    TryGetMappingValue(entryMapping, "@path", out var pathNode) &&
+                    pathNode is YamlScalarNode pathScalar)
+                {
+                    path = pathScalar.Value;
+                }
+
+                paths.Add(path);
+            }
+        }
+
+        return new ParsedManifest(IsLegacyShape: false, Paths: paths);
+    }
+
+    /// <summary>
+    /// Component holds either a single entry (a mapping) or a list of entries
+    /// (a sequence of mappings); pac's parser accepts both.
+    /// </summary>
+    private static IEnumerable<YamlNode> EnumerateComponentEntries(YamlNode componentNode)
+    {
+        if (componentNode is YamlSequenceNode sequence)
+        {
+            foreach (var item in sequence.Children)
+                yield return item;
+        }
+        else
+        {
+            yield return componentNode;
+        }
+    }
+
+    private static bool TryGetMappingValue(YamlMappingNode mapping, string key, out YamlNode? value)
+    {
+        foreach (var child in mapping.Children)
+        {
+            if (child.Key is YamlScalarNode scalarKey && scalarKey.Value == key)
+            {
+                value = child.Value;
+                return true;
+            }
+        }
+
+        value = null;
+        return false;
     }
 
     private static string RelativePath(GateContext context, string absolutePath) =>
@@ -191,8 +289,5 @@ public sealed class SolutionComponentPathGate : IGate
         Stage = context.Stage
     };
 
-    private sealed class ComponentEntry
-    {
-        public string? Path { get; set; }
-    }
+    private sealed record ParsedManifest(bool IsLegacyShape, List<string?> Paths);
 }

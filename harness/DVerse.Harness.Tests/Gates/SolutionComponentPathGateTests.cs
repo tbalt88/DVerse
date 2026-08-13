@@ -66,6 +66,20 @@ public sealed class SolutionComponentPathGateTests
     }
 
     [Fact]
+    public void Documented_flat_list_shape_yields_refuse_naming_microsofts_documentation()
+    {
+        var verdicts = Evaluate("refuse-documented-shape");
+
+        var verdict = Assert.Single(verdicts);
+        Assert.Equal(GateOutcome.Refuse, verdict.Outcome);
+        Assert.NotNull(verdict.Reason);
+        Assert.Contains("Microsoft", verdict.Reason);
+        Assert.Contains("SolutionComponents", verdict.Reason);
+        Assert.Contains("@path", verdict.Reason);
+        Assert.Contains("solutioncomponents.yml", verdict.Evidence);
+    }
+
+    [Fact]
     public void Absent_solutioncomponents_file_yields_refuse_not_a_crash_or_a_pass()
     {
         var verdicts = Evaluate("refuse-missing-manifest");
@@ -92,7 +106,8 @@ public sealed class SolutionComponentPathGateTests
         string[] fixtures =
         [
             "pass", "refuse-missing-canvasapp", "refuse-missing-entity",
-            "refuse-three-missing", "refuse-missing-manifest", "refuse-empty-manifest"
+            "refuse-three-missing", "refuse-missing-manifest", "refuse-empty-manifest",
+            "refuse-documented-shape"
         ];
 
         foreach (var fixture in fixtures)
