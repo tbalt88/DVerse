@@ -1,0 +1,17 @@
+ImportExportXml:
+  '@languagecode': '1033'
+  '@generatedBy': 'DVerse'
+  SolutionManifest:
+    UniqueName: DVerseCore
+    LocalizedNames:
+      LocalizedName:
+        '@description': DVerse Core
+        '@languagecode': '1033'
+    Descriptions:
+      Description:
+        '@description': Minimal DVerse Core solution shell. Publisher and empty solution container only, no components yet.
+        '@languagecode': '1033'
+    Version: 0.1.0.0
+    Managed: 0
+    Publisher:
+      UniqueName: dversepublisher

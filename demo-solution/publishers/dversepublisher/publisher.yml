@@ -1,0 +1,16 @@
+Publisher:
+  UniqueName: dversepublisher
+  LocalizedNames:
+    LocalizedName:
+      '@description': DVerse Publisher
+      '@languagecode': '1033'
+  Descriptions: {}
+  EMailAddress:
+    '@xsi:nil': 'true'
+    '@xmlns:xsi': http://www.w3.org/2001/XMLSchema-instance
+  SupportingWebsiteUrl:
+    '@xsi:nil': 'true'
+    '@xmlns:xsi': http://www.w3.org/2001/XMLSchema-instance
+  CustomizationPrefix: dv
+  CustomizationOptionValuePrefix: '20260'
+  Addresses: {}

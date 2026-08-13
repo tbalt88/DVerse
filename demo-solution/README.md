@@ -1,6 +1,8 @@
 # Demo solution
 
-Empty until wave 4. This is the solution the agent builds UNDER the harness, and
+As of slice 4.1: publisher and empty solution shell exist (`publishers/dversepublisher`,
+`solutions/DVerseCore`). Entities, relationships, and canvas apps are still empty
+scaffolding. This is the solution the agent builds UNDER the harness, and
 the receipts it produces are the proof that the gates are real.
 
 Layout is the YAML source control format, which is forced rather than chosen:
