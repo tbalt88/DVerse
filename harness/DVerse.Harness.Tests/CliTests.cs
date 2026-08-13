@@ -83,6 +83,66 @@ public sealed class CliTests : IDisposable
     }
 
     [Fact]
+    public void A_solution_outside_the_repository_root_exits_two_and_names_both_paths()
+    {
+        // GateVerdict.Artifact is repository-root-relative by contract. If the
+        // solution sits outside the repo, Path.GetRelativePath silently
+        // produces ".." segments instead of failing, so the CLI must refuse to
+        // run rather than let a bogus relative artifact path through.
+        var repo = Path.Combine(_dir, "repo");
+        var solution = Path.Combine(_dir, "elsewhere", "solution");
+        Directory.CreateDirectory(repo);
+        Directory.CreateDirectory(solution);
+
+        var (code, _, err) = Invoke(
+            "gate", "run",
+            "--solution", solution,
+            "--repo", repo,
+            "--ledger", Ledger("outside.jsonl"));
+
+        Assert.Equal(CliRunner.ExitCliError, code);
+        Assert.Contains("solution root is not under the repository root", err);
+        Assert.Contains(Path.GetFullPath(solution), err);
+        Assert.Contains(Path.GetFullPath(repo), err);
+    }
+
+    [Fact]
+    public void A_sibling_directory_sharing_a_name_prefix_is_not_treated_as_contained()
+    {
+        // A naive StartsWith("C:\repo") would wrongly accept "C:\repo2" as a
+        // descendant of "C:\repo". The check must land on a full path-segment
+        // boundary.
+        var repo = Path.Combine(_dir, "x");
+        var solution = Path.Combine(_dir, "x2");
+        Directory.CreateDirectory(repo);
+        Directory.CreateDirectory(solution);
+
+        var (code, _, err) = Invoke(
+            "gate", "run",
+            "--solution", solution,
+            "--repo", repo,
+            "--ledger", Ledger("sibling.jsonl"));
+
+        Assert.Equal(CliRunner.ExitCliError, code);
+        Assert.Contains("solution root is not under the repository root", err);
+    }
+
+    [Fact]
+    public void A_solution_equal_to_the_repository_root_is_accepted()
+    {
+        var root = Path.Combine(FixtureRoot, "g10", "pass");
+
+        var (code, _, err) = Invoke(
+            "gate", "run",
+            "--solution", root,
+            "--repo", root,
+            "--ledger", Ledger("same.jsonl"));
+
+        Assert.NotEqual(CliRunner.ExitCliError, code);
+        Assert.DoesNotContain("solution root is not under the repository root", err);
+    }
+
+    [Fact]
     public void A_missing_solution_root_exits_two_not_one()
     {
         // The distinction matters: exit 1 means the gates did their job and found
