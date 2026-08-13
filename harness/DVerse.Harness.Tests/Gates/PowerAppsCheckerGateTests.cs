@@ -219,7 +219,7 @@ public sealed class PowerAppsCheckerGateTests
     [Fact]
     public void BuildVerdicts_refuses_once_per_critical_or_high_finding_with_file_reference_in_reason()
     {
-        var context = Context(@"C:\repo", @"C:\repo\demo-solution");
+        var context = Context(Root, Path.Combine(Root, "demo-solution"));
         var findings = new[]
         {
             new CheckerFinding("web-avoid-eval", "Critical", "Avoid using eval().", "webresources/foo.js"),
@@ -242,7 +242,7 @@ public sealed class PowerAppsCheckerGateTests
     [Fact]
     public void BuildVerdicts_counts_medium_and_below_in_pass_evidence_without_refusing()
     {
-        var context = Context(@"C:\repo", @"C:\repo\demo-solution");
+        var context = Context(Root, Path.Combine(Root, "demo-solution"));
         var findings = new[]
         {
             new CheckerFinding("web-use-async", "Medium", "prefer async", null),
@@ -266,7 +266,7 @@ public sealed class PowerAppsCheckerGateTests
     [Fact]
     public void BuildVerdicts_zero_findings_passes_with_zero_counts_naming_the_ruleset()
     {
-        var context = Context(@"C:\repo", @"C:\repo\demo-solution");
+        var context = Context(Root, Path.Combine(Root, "demo-solution"));
 
         var verdicts = PowerAppsCheckerGate.BuildVerdicts(context, []);
 
@@ -283,7 +283,7 @@ public sealed class PowerAppsCheckerGateTests
         // Per the ruling, any Critical/High finding produces a Refuse
         // verdict per finding; the lower-severity findings that happen to
         // ride along do not also produce a separate Pass verdict.
-        var context = Context(@"C:\repo", @"C:\repo\demo-solution");
+        var context = Context(Root, Path.Combine(Root, "demo-solution"));
         var findings = new[]
         {
             new CheckerFinding("web-avoid-eval", "Critical", "Avoid using eval().", "webresources/foo.js"),
@@ -299,7 +299,7 @@ public sealed class PowerAppsCheckerGateTests
     [Fact]
     public void BuildVerdicts_artifact_is_the_repository_relative_solution_root_not_an_absolute_path()
     {
-        var context = Context(@"C:\repo", @"C:\repo\nested\demo-solution");
+        var context = Context(Root, Path.Combine(Root, "nested", "demo-solution"));
         var findings = new[]
         {
             new CheckerFinding("web-avoid-eval", "Critical", "Avoid using eval().", "webresources/foo.js")
@@ -316,7 +316,7 @@ public sealed class PowerAppsCheckerGateTests
     [Fact]
     public void Every_verdict_stamps_gate_id_and_stage_from_context()
     {
-        var context = Context(@"C:\repo", @"C:\repo\demo-solution");
+        var context = Context(Root, Path.Combine(Root, "demo-solution"));
 
         var passVerdict = Assert.Single(PowerAppsCheckerGate.BuildVerdicts(context, []));
         Assert.Equal("G7", passVerdict.GateId);
@@ -331,6 +331,16 @@ public sealed class PowerAppsCheckerGateTests
     {
         public override DateTimeOffset GetUtcNow() => now;
     }
+
+    /// <summary>
+    /// Platform-valid absolute base for context paths. The original tests
+    /// hardcoded Windows literals like C:\repo, which are not absolute paths on
+    /// Linux, so Path.GetRelativePath produced "../C:/repo/..." and two tests
+    /// failed only in CI. Third occurrence of the Windows-only-authorship class
+    /// in this repo; the ubuntu runner is the permanent guard that catches it.
+    /// BuildVerdicts never touches the disk, so the paths need not exist.
+    /// </summary>
+    private static readonly string Root = Path.Combine(Path.GetTempPath(), "dverse-g7-repo");
 
     private static GateContext Context(string repositoryRoot, string solutionRoot) => new(
         RepositoryRoot: repositoryRoot,
