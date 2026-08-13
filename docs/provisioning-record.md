@@ -42,7 +42,7 @@ Set 2026-08-13 via `gh variable set` (variables, not secrets; nothing here is se
 
 | Variable | Value |
 |---|---|
-| `DV_CLIENT_ID` | `31e37971-d28a-f111-8077-70a8a59a66f9` |
+| `DV_CLIENT_ID` | `1f71d5bb-5f44-4e72-bffa-b382eff9cad7` (updated 2026-08-13 after app ID re-issue) |
 | `DV_TENANT_ID` | `a18bf5e0-62a5-4b3b-bb96-8b0cc7d02989` |
 | `DV_ENVIRONMENT_URL` | `https://dexevo.crm.dynamics.com/` |
 
