@@ -2,6 +2,8 @@
 
 Owner checklist for wave 2. Everything here requires credentials or admin consent, so all of it is yours. None of it can be done by the engineering seat.
 
+**Reality note (2026-08-13):** the environment actually provisioned on 2026-07-28 is **pay-as-you-go**, not the Trial (standard) this checklist describes in section B. Section B's trial mechanics (30 day expiry, no backup/restore, zero cost) do not apply to it; see [provisioning-record.md](provisioning-record.md) for the state that exists. The rest of this checklist (A, C, D, E, F, G) applies unchanged.
+
 Verified 2026-07-31 against Microsoft Learn: the Power Platform OIDC/FIC tutorial, the GitHub Actions for Power Platform tutorial, and the application user documentation. Sources linked per section.
 
 **Do not paste any secret, client secret, password, or token into chat.** The whole point of the federated credential path below is that no secret exists to leak. The only values the seat needs are non-secret identifiers.

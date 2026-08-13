@@ -12,10 +12,10 @@ Recorded 2026-08-13 from owner handback.
 | Environment URL | `https://dexevo.crm.dynamics.com/` |
 | Region | United States |
 | Created | 2026-07-28 15:18 PT |
-| **Estimated expiry** | **2026-08-27 15:18 PT** (created + 30 days) |
-| Expiry confirmed in PPAC | **NO, owner to read the Details page and confirm** |
+| Billing model | **Pay-as-you-go** (Azure subscription linked), owner correction 2026-08-13 |
+| Expiry | **None.** Not a trial; no 30 day clock |
 
-**Schedule impact, on the record:** D16 planned environment creation at wave 2 start so the full 30 days would back the tenant work. The environment was actually created 2026-07-28, one day after that decision, so the clock ran unnoticed for two weeks. About 14 days remain as of this record. All tenant-dependent work (G7, schema confirmation 2.6, golden import receipt 2.7) must land inside that window. The mitigation ordering stands, compressed: receipt work goes first once auth is live, not last.
+**Correction on the record (2026-08-13):** the first version of this file recorded the environment as a 30 day trial expiring 2026-08-27 and reordered tenant work around that deadline. The owner corrected it: this is a pay-as-you-go environment, not a trial. Consequences: no expiry deadline exists; risk R2 (trial expiry kills G7) is retired; backup, restore and copy operations are available, unlike a standard trial; and the running cost is usage-billed to the owner's Azure subscription rather than free, so the checklist's "zero incremental spend" line does not apply to the path actually taken. The golden import receipt (2.7) remains required by the receipts doctrine, but is no longer deadline-driven. D16's deferred-creation logic is moot.
 
 ## Entra app registration
 
@@ -51,4 +51,4 @@ Set 2026-08-13 via `gh variable set` (variables, not secrets; nothing here is se
 2. D: federated credential, branch-scoped to `main` (owner)
 3. E: application user with System Administrator (owner)
 4. I: device-code `pac auth` verification (owner signs in, seat verifies)
-5. PPAC expiry date confirmed and corrected above if different
+5. ~~PPAC expiry date confirmation~~ resolved: pay-as-you-go, no expiry
