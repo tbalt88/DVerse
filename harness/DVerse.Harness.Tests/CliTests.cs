@@ -212,7 +212,7 @@ public sealed class CliTests : IDisposable
     public void The_registry_exposes_every_gate_built_so_far()
     {
         var ids = GateRegistry.All.Select(g => g.Id).OrderBy(x => x).ToArray();
-        Assert.Equal(new[] { "G10", "G2", "G4", "G9" }, ids);
+        Assert.Equal(new[] { "G10", "G2", "G4", "G7", "G9" }, ids);
     }
 
     public void Dispose()

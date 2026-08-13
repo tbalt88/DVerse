@@ -1,0 +1,89 @@
+# DVerse gate ladder: ONLINE tier.
+#
+# DVerse runs its governance gates in two tiers. The OFFLINE tier
+# (gates-offline.yml) needs zero credentials and runs on every push and pull
+# request, including forks. This workflow is the ONLINE tier: it needs a live
+# Dataverse tenant, reached through OIDC federation rather than a stored
+# secret, and it therefore runs only on push to main, never on a pull
+# request. A fork PR cannot forge a token for this identity, so it is not
+# trusted with this workflow at all.
+#
+# This workflow exists for two reasons at once:
+#   1. It is how G7 (Power Apps Checker) actually runs. G7 requires a tenant,
+#      so it is skipped everywhere else; this is the only place it produces a
+#      real verdict.
+#   2. It is the proof that the federated credential works. The Entra
+#      federated credential backing DV_CLIENT_ID is scoped to GitHub's
+#      immutable subject for main, audience api://AzureADTokenExchange. That
+#      scoping cannot be exercised locally by any developer, however
+#      thoroughly they test the gate itself against their own pac profile;
+#      the only place "the OIDC exchange actually works from GitHub" can be
+#      demonstrated is a run of this workflow on main.
+#
+# permissions.id-token: write is what lets actions/setup-dotnet and pac
+# request the GitHub OIDC token this exchange is built on. Without it the
+# federated pac auth create step below fails before it ever reaches Entra.
+
+name: online-gates
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  online-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install pac
+        run: dotnet tool install --global Microsoft.PowerApps.CLI.Tool
+
+      - name: Authenticate via federated credential
+        run: |
+          pac auth create --githubFederated \
+            --applicationId ${{ vars.DV_CLIENT_ID }} \
+            --tenant ${{ vars.DV_TENANT_ID }} \
+            --environment ${{ vars.DV_ENVIRONMENT_URL }}
+
+      - name: Run gates, including G7 online
+        run: |
+          dotnet run --project harness/DVerse.Harness.Cli -- gate run \
+            --solution demo-solution \
+            --repo "$GITHUB_WORKSPACE" \
+            --online \
+            --ledger "$RUNNER_TEMP/gates-online.jsonl"
+
+      # PowerAppsCheckerGate (G7) writes its scratch pack zip and the
+      # checker's own SARIF result under $RUNNER_TEMP/dverse-g7-checker
+      # (falling back to the OS temp path only when RUNNER_TEMP is unset,
+      # which never happens on a GitHub-hosted runner). That path is an
+      # internal detail of the gate, not a CLI option, so it is repeated here
+      # deliberately: this is the one place outside the gate itself that
+      # needs to know it, in order to upload it as evidence.
+      - name: Upload ledger
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gates-online-ledger
+          path: ${{ runner.temp }}/gates-online.jsonl
+          if-no-files-found: warn
+
+      - name: Upload checker output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g7-checker-output
+          path: ${{ runner.temp }}/dverse-g7-checker
+          if-no-files-found: warn

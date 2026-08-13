@@ -20,6 +20,7 @@ public static class GateRegistry
     [
         new PublisherPrefixGate(),              // G2
         new DocumentLocationCardinalityGate(),  // G4
+        new PowerAppsCheckerGate(),             // G7
         new SolutionComponentPathGate(),        // G9
         new YamlLayoutGate()                    // G10
     ];
