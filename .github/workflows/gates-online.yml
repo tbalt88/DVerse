@@ -30,6 +30,14 @@ on:
   push:
     branches:
       - main
+    # The online tier calls a live tenant service. Doc-only pushes have
+    # nothing for it to verify, so it is restricted to paths that can
+    # actually change what it checks. The workflow file itself is included
+    # so any edit to this workflow self-proves on the next push.
+    paths:
+      - 'demo-solution/**'
+      - 'harness/**'
+      - '.github/workflows/gates-online.yml'
 
 permissions:
   contents: read
@@ -74,7 +82,7 @@ jobs:
       # needs to know it, in order to upload it as evidence.
       - name: Upload ledger
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gates-online-ledger
           path: ${{ runner.temp }}/gates-online.jsonl
@@ -82,7 +90,7 @@ jobs:
 
       - name: Upload checker output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: g7-checker-output
           path: ${{ runner.temp }}/dverse-g7-checker
