@@ -55,7 +55,7 @@ public sealed class DocumentLocationCardinalityGate : IGate
             yield return Verdict(
                 context,
                 GateOutcome.Pass,
-                RelationshipsFolder,
+                RelativeArtifact(context, root),
                 $"No {RelationshipsFolder}/ directory present, so no relationship "
                 + "to a SharePoint document table exists to violate the rule.");
             yield break;
@@ -73,7 +73,7 @@ public sealed class DocumentLocationCardinalityGate : IGate
 
         foreach (var file in files)
         {
-            var relative = Relative(context, file);
+            var relative = RelativeArtifact(context, file);
             var relationship = Parse(file, relative);
             inspected++;
 
@@ -104,7 +104,7 @@ public sealed class DocumentLocationCardinalityGate : IGate
         yield return Verdict(
             context,
             GateOutcome.Pass,
-            RelationshipsFolder,
+            RelativeArtifact(context, root),
             $"Inspected {inspected} relationship file(s) under {RelationshipsFolder}/; "
             + $"{documentRelationships} touch a SharePoint document table and all are "
             + "one-to-many with the document table on the many side.");
@@ -177,9 +177,15 @@ public sealed class DocumentLocationCardinalityGate : IGate
                 $"{relative}: no EntityRelationship node found.");
     }
 
-    private static string Relative(GateContext context, string absolute)
+    /// <summary>
+    /// Repo-relative form of an absolute path, per the frozen rule that every
+    /// Artifact is expressed relative to <see cref="GateContext.RepositoryRoot"/>,
+    /// never the solution root, so the ledger uses one path base across every
+    /// gate and stays reproducible across machines.
+    /// </summary>
+    private static string RelativeArtifact(GateContext context, string absolute)
     {
-        var rel = Path.GetRelativePath(context.SolutionRoot, absolute);
+        var rel = Path.GetRelativePath(context.RepositoryRoot, absolute);
         return rel.Replace('\\', '/');
     }
 

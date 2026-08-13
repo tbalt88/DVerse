@@ -53,7 +53,7 @@ public sealed class PublisherPrefixGate : IGate
         yield return Verdict(
             context,
             GateOutcome.Pass,
-            ".",
+            RelativeArtifact(context, context.SolutionRoot),
             string.Join(" ", evidenceParts));
     }
 
@@ -67,7 +67,7 @@ public sealed class PublisherPrefixGate : IGate
             yield return Verdict(
                 context,
                 GateOutcome.Refuse,
-                PublishersFolder,
+                RelativeArtifact(context, publishersDir),
                 $"Looked for a {PublishersFolder}/ directory under the solution root; it does not exist.",
                 $"No {PublishersFolder}/ directory found under the solution root; cannot verify CustomizationPrefix.");
             yield break;
@@ -83,7 +83,7 @@ public sealed class PublisherPrefixGate : IGate
             yield return Verdict(
                 context,
                 GateOutcome.Refuse,
-                Relative(context, publishersDir),
+                RelativeArtifact(context, publishersDir),
                 $"Looked inside {PublishersFolder}/; it contains no publisher folders.",
                 $"{PublishersFolder}/ directory contains no publisher folders; cannot verify CustomizationPrefix.");
             yield break;
@@ -94,7 +94,7 @@ public sealed class PublisherPrefixGate : IGate
         foreach (var publisherDir in publisherDirs)
         {
             var publisherYamlPath = Path.Combine(publisherDir, "publisher.yml");
-            var artifact = Relative(context, publisherYamlPath);
+            var artifact = RelativeArtifact(context, publisherYamlPath);
 
             if (!File.Exists(publisherYamlPath))
             {
@@ -103,7 +103,7 @@ public sealed class PublisherPrefixGate : IGate
                     GateOutcome.Refuse,
                     artifact,
                     $"Looked for publisher.yml at {artifact}; it does not exist.",
-                    $"publisher.yml not found under {Relative(context, publisherDir)}/.");
+                    $"publisher.yml not found under {RelativeArtifact(context, publisherDir)}/.");
                 continue;
             }
 
@@ -180,7 +180,7 @@ public sealed class PublisherPrefixGate : IGate
                 yield return Verdict(
                     context,
                     GateOutcome.Refuse,
-                    Relative(context, entityDir),
+                    RelativeArtifact(context, entityDir),
                     $"Read entity directory name '{name}' under {EntitiesFolder}/.",
                     $"Entity directory '{name}' does not start with the '{ExpectedEntityPrefix}' prefix.");
             }
@@ -206,9 +206,15 @@ public sealed class PublisherPrefixGate : IGate
         return doc.Publisher ?? throw new InvalidDataException($"{path}: no Publisher node found.");
     }
 
-    private static string Relative(GateContext context, string absolute)
+    /// <summary>
+    /// Repo-relative form of an absolute path, per the frozen rule that every
+    /// Artifact is expressed relative to <see cref="GateContext.RepositoryRoot"/>,
+    /// never the solution root, so the ledger uses one path base across every
+    /// gate and stays reproducible across machines.
+    /// </summary>
+    private static string RelativeArtifact(GateContext context, string absolute)
     {
-        var rel = Path.GetRelativePath(context.SolutionRoot, absolute);
+        var rel = Path.GetRelativePath(context.RepositoryRoot, absolute);
         return rel.Replace('\\', '/');
     }
 
