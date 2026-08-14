@@ -16,7 +16,7 @@ Status as of 2026-08-14:
 | 3 | remaining offline gates | **done** 2026-08-13: G1, G3, G6, G8 shipped (145 tests); G5 deferred to wave 4.4+ by ruling, its input shape is unobservable until a real plugin exists. See docs/wave-3-closing.md |
 | 4 | demo solution, Dataverse slice | **done** 2026-08-14, `docs/wave-4-closing.md`: five golden imports, both refusal pairs, plugin registered and active |
 | 5 | canvas app and document management | **done** 2026-08-14, `docs/wave-5-closing.md`: two-screen CRUD canvas in gated source, G11, SharePoint documents live |
-| 6 | evolved architect skill | **done** 2026-08-14, `docs/wave-6-closing.md`: plugins/dv-architect, blind eval 20/20 |
+| 6 | evolved architect skill | **done** 2026-08-14, `docs/wave-6-closing.md`: plugins/dv-architect, blind eval 20/20 (caveat in eval doc) |
 | 7 | structural diff | **done** 2026-08-14, docs/wave-7-closing.md: identity model, diff engine, G12, diff refusal pair |
 | 8 | public flip and receipts | next, awaiting owner greenlight (owner-run scrub) |
 
@@ -100,7 +100,7 @@ The thin slice from D13: one table, one form, one plugin, one document-location 
 
 ## Wave 6, the evolved architect skill
 
-**CLOSED 2026-08-14** (`docs/wave-6-closing.md`): skill evolved at plugins/dv-architect (marketplace layout, 10 gate-cited + 14 lesson-cited rules), blind transfer eval 20/20, scaffold-era duplicate removed, README truth pass.
+**CLOSED 2026-08-14** (`docs/wave-6-closing.md`): skill evolved at plugins/dv-architect (marketplace layout, 10 gate-cited + 14 lesson-cited rules), blind transfer eval 20/20 (procedurally blinded; caveat in docs/evals/wave6-skill-eval.md), scaffold-era duplicate removed, README truth pass.
 
 C1, deliberately late. The skill encodes the rules; the gates enforce them. Writing the skill *after* the gates means every rule it states has already been proven mechanically checkable, rather than the skill asserting rules that turn out to be unenforceable.
 

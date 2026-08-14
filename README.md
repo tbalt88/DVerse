@@ -45,8 +45,8 @@ Honesty about what is ours matters more here than anywhere, because this project
 
 **Inherited (consumed, not written by us):**
 - Power Apps Checker service, via `microsoft/powerplatform-actions`. The Solution Checker gate is Microsoft's, not ours. We compose it.
-- `Microsoft.PowerPlatform.Dataverse.Client`, via NuGet. Note that Microsoft states this cannot be built outside Microsoft.
-- Dataverse SDK core assemblies, via NuGet.
+- Dataverse SDK core assemblies (`Microsoft.CrmSdk.CoreAssemblies`), via NuGet, pinned.
+- `Microsoft.PowerPlatform.Dataverse.Client` is DECLARED as an upstream but not yet consumed anywhere in the tree; its pin is TBD at first use (see `docs/upstream-map.md`). Microsoft states it cannot be built outside Microsoft.
 - `d365-architect` v3, the seed skill `dv-architect` was ported from, from the archived [`tbalt88/DVerseClaudeSkills`](https://github.com/tbalt88/DVerseClaudeSkills) repository.
 
 **Built here:**
@@ -55,7 +55,7 @@ Honesty about what is ours matters more here than anywhere, because this project
 - The CLI entry point and exit-code contract (0 pass, 1 refusal, 2 CLI error): `harness/DVerse.Harness.Cli/`.
 - Two CI tiers wiring the gates into GitHub Actions: `.github/workflows/gates-offline.yml`, `gates-online.yml`.
 - The demo solution itself: `demo-solution/`, table, attributes, form, document-location relationship, plugin assembly.
-- The evolved `dv-architect` skill: `plugins/dv-architect/`, every rule cross-referenced to a gate ID (G1-G4, G6-G11) or a burned lesson (`loop/LESSONS.md`).
+- The evolved `dv-architect` skill: `plugins/dv-architect/`, every rule in its SKILL.md rules tables cross-referenced to a gate ID (G1-G4, G6-G11) or a burned lesson (`loop/LESSONS.md`); its reference docs additionally carry material honestly labeled spec-only where no gate or lesson bears on it yet.
 
 ## What this repo does not claim
 
@@ -66,7 +66,7 @@ It is not a claim that nobody builds agentic Power Platform tooling. Microsoft d
 Two further limits worth stating before someone finds them:
 
 - Canvas app gating depends on `pac canvas pack/unpack`, which Microsoft marks **Preview** (`pac canvas validate` is already removed while still documented). That foundation may shift.
-- The Power Apps Checker rung requires a live Dataverse environment and cannot run on fork pull requests. Every gate authored here runs offline with no credentials; that one does not.
+- The Power Apps Checker rung requires a live Dataverse environment and runs only on push to main, never on any pull request (see Known limits). Every gate authored here runs offline with no credentials; that one does not.
 
 ## Engineering notes
 
@@ -107,7 +107,7 @@ Eleven gates live. G5 (plugin registration sanity, correlating registration YAML
 Running the CLI against the live demo solution, this pass, offline:
 
 ```
-dverse gate run  stage=integration  gates=9
+dverse gate run  stage=integration  gates=10
 
 PASS   G1   well-formedness                    demo-solution
 PASS   G2   publisher-prefix                   demo-solution
@@ -172,7 +172,7 @@ Every gate ships a fixture it refuses (`harness/fixtures/g*/refuse-*`), discover
 Stated here rather than discovered by a reader.
 
 - **Canvas gating rests on Preview tooling.** `pac canvas pack` and `unpack` are marked Preview by Microsoft, and `pac canvas validate` is REMOVED in pac 2.10.1 while its own help text still documents it (verified live, wave 5). G11 validates `.pa.yaml` itself for that reason, and canvas gating is kept in its own module so churn stays contained.
-- **The Power Apps Checker gate (G7) cannot run on fork pull requests.** It needs a live, OIDC-authenticated tenant connection, which GitHub does not issue to forks. Every other gate is credential-free and reproducible by a stranger; this one composes Microsoft's own service and inherits its constraint.
+- **The Power Apps Checker gate (G7) never gates any pull request before merge, fork or not.** The online tier fires only on push to main: OIDC trust is pinned to the main branch, so G7 runs post-merge as a detection rung, not a pre-merge gate. Pre-merge refusal is the offline tier's job (G1 to G4, G6, G8 to G12), which runs credential-free on every PR including forks. Stated plainly because the project's central claim is refusing ungated output, and one gate of the eleven only ever checks output after it lands.
 - **The rendered UI remains a verification rung nothing mechanical covers yet.** The live example: the Matter form imported green through every gate while three of its four controls silently dropped at render because their `datafieldname` values were PascalCase instead of the attribute's lowercase logical name (fixed; `loop/LESSONS.md` entries 8 and 14). No gate yet validates datafieldname casing against entity attribute logical names; today that guard is spec-only.
 - **`pac` acceptance is not import acceptance, and import acceptance is not pack completeness.** Three separate silent-failure classes have been found and fixed this way: `generatedBy` and `DisplayMask` shapes that pack cleanly but fail import (wave 2), and `solutioncomponents.yml` entries missing for a whole artifact folder (`entityrelationships/`) that pack cleanly to exit 0 with the artifact simply absent from the zip (wave 4.3). G8 and G9 close the second class for the shapes they cover; nothing mechanically closes the first, which is why the golden imports above exist as a rung of their own.
 - **Microsoft's own documentation has contradicted Microsoft's own tooling multiple times**: the documented `solutioncomponents.yml` shape versus the real one SolutionPackagerLib reads, an obsolete permission named in the app-registration tutorial, and (per the note above) undocumented pack-vs-import gaps. Standing procedure in response: decompile before parsing, and mirror a platform-authored reference before trusting a doc-derived shape. See `loop/LESSONS.md` entries 2 to 4.
