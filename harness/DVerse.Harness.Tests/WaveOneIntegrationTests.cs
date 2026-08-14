@@ -38,7 +38,11 @@ public sealed class WaveOneIntegrationTests : IDisposable
 
     private static IGate GateFor(string id) => id switch
     {
+        "g1" => new WellFormednessGate(),
         "g2" => new PublisherPrefixGate(),
+        "g3" => new DependencyIntegrityGate(),
+        "g6" => new BuildAndTestsGate(),
+        "g8" => new RootComponentSourceGate(),
         "g4" => new DocumentLocationCardinalityGate(),
         "g9" => new SolutionComponentPathGate(),
         "g10" => new YamlLayoutGate(),
@@ -105,7 +109,11 @@ public sealed class WaveOneIntegrationTests : IDisposable
     }
 
     [Theory]
+    [InlineData("g1", "pass")]
     [InlineData("g2", "pass")]
+    [InlineData("g3", "pass")]
+    [InlineData("g6", "pass")]
+    [InlineData("g8", "pass")]
     [InlineData("g4", "pass")]
     [InlineData("g9", "pass")]
     [InlineData("g10", "pass")]

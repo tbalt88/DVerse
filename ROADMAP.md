@@ -13,7 +13,7 @@ Status as of 2026-08-13:
 | 0 | recorder, refusal ledger, frozen contract | **done**, `a61f0e5` |
 | 1 | G2, G4, G9, G10 with red fixtures | **done**, `fd76100` |
 | 2 | CLI, CI wiring, tenant, golden import receipt | **done except 2.7.** Offline lane CI-proven (`4a66e48`). G7 checker gate live-verified locally AND in CI; online workflow green with federated OIDC auth, zero secrets (runs 31751910173, 31753552568). 96 tests. Golden import receipt (2.7) remains |
-| 3 | remaining offline gates (G1, G3, G5, G6, G8) | planned |
+| 3 | remaining offline gates | **done** 2026-08-13: G1, G3, G6, G8 shipped (145 tests); G5 deferred to wave 4.4+ by ruling, its input shape is unobservable until a real plugin exists. See docs/wave-3-closing.md |
 | 4 | demo solution, Dataverse slice | **4.1 done**, `5d9deaa`: publisher + DVerseCore shell, pack-verified against pac 2.10.1; G9 realigned to pac reality `5d0b25e`. 4.2 to 4.5 planned |
 | 5 | canvas app and document management | planned (SharePoint not yet provisioned) |
 | 6 | evolved architect skill | planned |
@@ -153,7 +153,7 @@ Carried forward until discharged, so they cannot be lost between waves.
 | # | Obligation | Due |
 |---|---|---|
 | O1 | **Partially discharged, slice 4.1 (2026-08-13).** Shell shapes (publisher.yml, solution.yml, solutioncomponents.yml, rootcomponents.yml, missingdependencies.yml) verified against pac 2.10.1 by pack, unpack round-trip, and decompilation of SolutionPackagerLib. Three inferred-shape defects found: empty YAML lists must be empty mappings or pack dies with "Root element is missing"; solution.yml needs the full ImportExportXml root with Publisher as a nested UniqueName object; solutioncomponents.yml is a SolutionComponents/Component mapping with '@path' attributes, DIRECTLY CONTRADICTING Microsoft's published docs example. Component-level shapes (entities, forms, relationships, canvas) remain unverified until they exist, wave 4.2 onward. | wave 4.2+ |
-| O2 | G8 rootcomponents gate, gap left open by wave 1 | wave 3.3 |
+| O2 | **done**, wave 3.3 (`10e0495`): G8 rootcomponent-sources live, decompilation-grounded | done |
 | O3 | **done**: every slice since wave 2 runs in its own git worktree | done |
 | O4 | Re-check `microsoft/power-platform-skills` for a dataverse-backend plugin | every wave |
 | O5 | Archived seed gains its forward link | wave 8.5 |

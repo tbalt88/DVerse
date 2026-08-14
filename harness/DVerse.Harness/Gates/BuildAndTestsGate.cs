@@ -107,7 +107,8 @@ public sealed class BuildAndTestsGate : IGate
                 $"'dotnet test' against {artifact} produced no test-run summary; the run did "
                 + "not complete normally (build failure, or the run crashed before any test "
                 + "could report).",
-                $"Build or run failed for {artifact}. Output tail:{Environment.NewLine}{run.Tail}");
+                $"Build or run failed for {artifact}. Output tail:{Environment.NewLine}"
+                + SanitizePaths(context, run.Tail));
         }
 
         if (run.Failed > 0)
@@ -119,7 +120,7 @@ public sealed class BuildAndTestsGate : IGate
                 $"'dotnet test' against {artifact}: {run.Passed} passed, {run.Failed} failed, "
                 + $"{run.Skipped} skipped, {run.Total} total.",
                 $"{run.Failed} test(s) failed for {artifact}. Output tail:"
-                + $"{Environment.NewLine}{run.Tail}");
+                + $"{Environment.NewLine}{SanitizePaths(context, run.Tail)}");
         }
 
         if (run.Skipped > 0)
@@ -234,6 +235,29 @@ public sealed class BuildAndTestsGate : IGate
             return stdout;
 
         return stdout + Environment.NewLine + stderr;
+    }
+
+    /// <summary>
+    /// Scrubs absolute filesystem paths from tool output before it enters a
+    /// ledger verdict. The ledger is repo-root-relative by contract and lands
+    /// in a public repo; raw dotnet output embeds the machine's directory
+    /// layout (test dll paths, source paths in stack traces). Known roots are
+    /// rewritten to relative form; any remaining drive-rooted directory prefix
+    /// is stripped down to the file name so compiler style "file(line,col)"
+    /// detail survives. Added at wave 3 integration when the leak-scan test
+    /// caught G6's raw tail, the scan's first real catch since the wave 1
+    /// runner defect.
+    /// </summary>
+    private static string SanitizePaths(GateContext context, string text)
+    {
+        var repo = Path.TrimEndingDirectorySeparator(Path.GetFullPath(context.RepositoryRoot));
+        foreach (var root in new[] { repo, repo.Replace('\\', '/') })
+        {
+            text = text.Replace(root, ".", StringComparison.OrdinalIgnoreCase);
+        }
+
+        return System.Text.RegularExpressions.Regex.Replace(
+            text, @"[A-Za-z]:[\\/](?:[^\s""':*?<>|\\/]+[\\/])*", string.Empty);
     }
 
     /// <summary>

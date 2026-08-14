@@ -18,9 +18,13 @@ public static class GateRegistry
     /// <summary>Every gate, in stable id order.</summary>
     public static IReadOnlyList<IGate> All { get; } =
     [
+        new WellFormednessGate(),               // G1
         new PublisherPrefixGate(),              // G2
+        new DependencyIntegrityGate(),          // G3
         new DocumentLocationCardinalityGate(),  // G4
+        new BuildAndTestsGate(),                // G6
         new PowerAppsCheckerGate(),             // G7
+        new RootComponentSourceGate(),          // G8
         new SolutionComponentPathGate(),        // G9
         new YamlLayoutGate()                    // G10
     ];

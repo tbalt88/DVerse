@@ -41,9 +41,13 @@ public sealed record GateContext(
 /// repository never contains anything a gate manufactured. Scratch output
 /// OUTSIDE the repository (temp directories) is permitted when a gate composes
 /// an external tool that requires it; G7 packs the solution and captures
-/// checker output that way. This wording replaced an absolute "write nothing"
-/// after G7 surfaced the tension; the refined rule is what the original
-/// intended to protect.
+/// checker output that way. Standard toolchain byproducts in GITIGNORED
+/// locations (bin/, obj/ beside a project G6 builds) are likewise permitted:
+/// forcing MSBuild output redirection would couple gates to build internals
+/// for zero governance value, and the invariant that matters is that nothing
+/// gate-manufactured enters git or the ledger uninvited. This wording replaced
+/// an absolute "write nothing" after G7 and then G6 surfaced the tensions;
+/// the refined rule is what the original intended to protect.
 /// </para>
 /// </summary>
 public interface IGate

@@ -45,7 +45,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Build and run full test suite
-        run: dotnet test harness/DVerse.Harness.slnx --nologo -v minimal
+        run: dotnet test harness/DVerse.Harness.Tests/DVerse.Harness.Tests.csproj --nologo -v minimal
 
       - name: CLI refusal-contract smoke test
         shell: bash
