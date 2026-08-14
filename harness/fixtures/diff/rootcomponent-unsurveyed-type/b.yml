@@ -1,0 +1,33 @@
+# Slice 7.1i fixture (matching layer). Target side of the "unsurveyed
+# component type" mutation pair. The five real, surveyed entries are
+# unchanged from a.yml. Type '20' (dv_customrole) is repeated verbatim,
+# unchanged -- it must MATCH, but still carry a warning naming it
+# unsurveyed (seat ruling 8: matching an unsurveyed type is allowed, silent
+# trust in that match is not). Type '30' (dv_legacywidget) is dropped
+# entirely -- it must be reported Removed, still carrying its own
+# unsurveyed-type warning. Type '25' (dv_workflow) is new here only -- it
+# must be reported Added, also carrying an unsurveyed-type warning.
+RootComponents:
+  RootComponent:
+    - '@type': '1'
+      '@schemaName': dv_matter
+      '@behavior': '0'
+    - '@type': '62'
+      '@schemaName': dv_MatterApp
+      '@behavior': '0'
+    - '@type': '80'
+      '@schemaName': dv_MatterApp
+      '@behavior': '0'
+    - '@type': '91'
+      '@id': '{5af6f42c-9a97-f111-b8de-70a8a59a66f9}'
+      '@schemaName': 'DVerse.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f506971365378cc'
+      '@behavior': '0'
+    - '@type': '92'
+      '@id': '{10998a3b-9a97-f111-b8de-70a8a59a66f9}'
+      '@behavior': '0'
+    - '@type': '20'
+      '@schemaName': dv_customrole
+      '@behavior': '0'
+    - '@type': '25'
+      '@schemaName': dv_workflow
+      '@behavior': '0'

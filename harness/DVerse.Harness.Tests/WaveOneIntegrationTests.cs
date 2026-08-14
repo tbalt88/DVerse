@@ -151,11 +151,26 @@ public sealed class WaveOneIntegrationTests : IDisposable
         {
             var gateId = Path.GetFileName(family);
 
+            // Slice 7.1i added harness/fixtures/diff/, a fixture family for the
+            // element-identity matching layer (loop/DVerse.Harness/Diff, no gate
+            // involved at all). GateFor only knows gate ids; skip any top-level
+            // fixtures/ family it does not recognise rather than assuming every
+            // one of them is a gate's own fixture tree.
+            IGate gate;
+            try
+            {
+                gate = GateFor(gateId);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                continue;
+            }
+
             foreach (var fixture in Directory.GetDirectories(family))
             {
                 var root = fixture;
                 var context = new GateContext(root, root, GateStage.Integration, false);
-                new GateRunner(ledger).Run([GateFor(gateId)], context);
+                new GateRunner(ledger).Run([gate], context);
             }
         }
 
