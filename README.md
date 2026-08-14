@@ -7,7 +7,7 @@ Part of the DVerse series. Successor to [DVerseClaudeSkills](https://github.com/
 [![offline-gates](https://github.com/tbalt88/DVerse-v2/actions/workflows/gates-offline.yml/badge.svg)](https://github.com/tbalt88/DVerse-v2/actions/workflows/gates-offline.yml)
 [![online-gates](https://github.com/tbalt88/DVerse-v2/actions/workflows/gates-online.yml/badge.svg)](https://github.com/tbalt88/DVerse-v2/actions/workflows/gates-online.yml)
 
-> **Status: waves 4 and 5 closed, wave 6 in flight.** Ten gates run offline and online over a real, imported Dataverse solution, with 174 tests, a running model-driven app with an active plugin, live SharePoint document management, and a two-screen canvas app mirrored into gated source. Still private; the public flip is a later, owner-run wave.
+> **Status: waves 0 to 7 closed; wave 8 is the public flip.** Eleven gates (ten in the standard ladder plus the baseline-activated structural diff) run offline and online over a real, imported Dataverse solution, with 253 tests, a running model-driven app with an active plugin, live SharePoint document management, a two-screen canvas app in gated source, and a semantic diff engine that refuses silent changes between any two versions of the tree.
 
 ## What this is
 
@@ -22,7 +22,7 @@ Three components:
 | Path | Component | State |
 |---|---|---|
 | `plugins/dv-architect/` | `dv-architect` skill, evolved from the seed `d365-architect`, every rule cross-referenced to a gate ID or a burned lesson, laid out to the Microsoft marketplace convention | evolved, wave 6A |
-| `harness/` | Verification gates over declarative artifacts, refuses ungated output | ten gates live: G1 to G4, G6 to G11 |
+| `harness/` | Verification gates over declarative artifacts, refuses ungated output | eleven gates live: G1 to G4, G6 to G12 (G12 baseline-activated) |
 | `demo-solution/` | Solution built BY the agent UNDER the harness, with receipts | dv_matter table, form, registered plugin, document-location relationship, app module, canvas app; five golden imports |
 
 ## Where this sits in the Microsoft ecosystem
@@ -50,7 +50,7 @@ Honesty about what is ours matters more here than anywhere, because this project
 - `d365-architect` v3, the seed skill `dv-architect` was ported from, from the archived [`tbalt88/DVerseClaudeSkills`](https://github.com/tbalt88/DVerseClaudeSkills) repository.
 
 **Built here:**
-- Ten gates over declarative XML/YAML: `harness/DVerse.Harness/Gates/`.
+- Eleven gates over declarative XML/YAML, plus the identity model and semantic diff engine under G12: `harness/DVerse.Harness/Gates/`.
 - The refusal ledger and gate runner: `harness/DVerse.Harness/RefusalLedger.cs`, `Gate.cs`, `GateVerdict.cs`.
 - The CLI entry point and exit-code contract (0 pass, 1 refusal, 2 CLI error): `harness/DVerse.Harness.Cli/`.
 - Two CI tiers wiring the gates into GitHub Actions: `.github/workflows/gates-offline.yml`, `gates-online.yml`.
@@ -65,7 +65,7 @@ It is not a claim that nobody builds agentic Power Platform tooling. Microsoft d
 
 Two further limits worth stating before someone finds them:
 
-- Canvas app gating depends on `pac canvas pack/unpack/validate`, which Microsoft currently marks **Preview**. That foundation may shift.
+- Canvas app gating depends on `pac canvas pack/unpack`, which Microsoft marks **Preview** (`pac canvas validate` is already removed while still documented). That foundation may shift.
 - The Power Apps Checker rung requires a live Dataverse environment and cannot run on fork pull requests. Every gate authored here runs offline with no credentials; that one does not.
 
 ## Engineering notes
@@ -74,7 +74,7 @@ Practices are marked by how they are enforced, because a written rule and a gate
 
 | Practice | Enforcement |
 |---|---|
-| Ten AI DLC gates over declarative artifacts (G1 to G4, G6 to G11) | code-enforced, `harness/DVerse.Harness/Gates/` |
+| Eleven AI DLC gates over declarative artifacts (G1 to G4, G6 to G12) | code-enforced, `harness/DVerse.Harness/Gates/` |
 | Every gate ships a fixture it refuses | code-enforced, `harness/fixtures/`, discovered from disk by the integration sweep |
 | Refusal at generation and again in CI, one ledger | code-enforced, `GateRunner`, JSONL append-only |
 | A gate that throws refuses (fail closed) | code-enforced, `GateRunner.EvaluateSafely` |
@@ -87,7 +87,7 @@ Practices are marked by how they are enforced, because a written rule and a gate
 
 ## The gate ladder
 
-Ten gates live. G5 (plugin registration sanity, correlating registration YAML against plugin C# source) is deferred but now UNBLOCKED: wave 4.4 produced a real, canonical, platform-mirrored registration shape (`demo-solution/sdkmessageprocessingsteps/`), which is exactly the ground truth G5 was waiting for. It is backlog, not built.
+Eleven gates live. G5 (plugin registration sanity, correlating registration YAML against plugin C# source) is deferred but now UNBLOCKED: wave 4.4 produced a real, canonical, platform-mirrored registration shape (`demo-solution/sdkmessageprocessingsteps/`), which is exactly the ground truth G5 was waiting for. It is backlog, not built.
 
 | Gate | Rule | Failure mode it catches |
 |---|---|---|
@@ -102,6 +102,7 @@ Ten gates live. G5 (plugin registration sanity, correlating registration YAML ag
 | G9 | `solutioncomponents.yml` paths resolve | silent, exit 0 |
 | G10 | manifests under `solutions/<name>/`, not root | misleading error |
 | G11 | canvas `.pa.yaml` parses, controls declared, Properties are `=`-prefixed formulas | **silent**, controls drop at render |
+| G12 | structural diff between a baseline and the current tree refuses burned change-classes (datafieldname casing, unsurveyed types, packaging removals with source present) | **silent**, the change-time analog of G4; baseline-activated, honest SKIP otherwise |
 
 Running the CLI against the live demo solution, this pass, offline:
 
@@ -118,9 +119,13 @@ PASS   G8   rootcomponent-sources              demo-solution/solutions/DVerseCor
 PASS   G9   solution-component-paths           demo-solution/solutions/DVerseCore/solutioncomponents.yml
 PASS   G10  yaml-layout                        demo-solution/solutions
 PASS   G11  canvas-yaml                        demo-solution/canvasapps
+SKIP   G12  structural-diff                    demo-solution
+       no baseline provided; structural diff requires two trees
 
-10 passed, 0 refused, 0 skipped.
+10 passed, 0 refused, 1 skipped.
 ```
+
+With a baseline (`gate run --baseline <tree>` or the dedicated `dverse diff` verb), G12 activates and refuses the burned change-classes; the committed ledger carries a real refusal pair produced that way ([`docs/receipts/wave7-diff-refusal-pair.md`](docs/receipts/wave7-diff-refusal-pair.md)).
 
 (G7 needs a tenant connection and is not shown; it runs, and only runs, in the online CI tier.)
 
@@ -156,7 +161,7 @@ A model-driven Matter App renders `dv_matter` in the org today, and its main for
 
 ## Testing
 
-**174 tests**, zero skips, re-run for this pass. The G6 parallel-execution flake previously reported here (lesson 13) was closed by slice O11 with per-test isolated fixture copies; five consecutive full-suite runs proved the fix and it has not recurred since.
+**253 tests**, zero skips, re-run for this pass. The G6 parallel-execution flake previously reported here (lesson 13) was closed by slice O11 with per-test isolated fixture copies; five consecutive full-suite runs proved the fix and it has not recurred since.
 
 Suite command: `dotnet test harness/DVerse.Harness.Tests/DVerse.Harness.Tests.csproj --nologo -v minimal`.
 
