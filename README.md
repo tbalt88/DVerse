@@ -21,7 +21,7 @@ Three components:
 
 | Path | Component | State |
 |---|---|---|
-| `skills/` | `dv-architect` skill, ported from the seed `d365-architect` and cross-referenced to every gate ID | ported, wave 6.1 |
+| `plugins/dv-architect/` | `dv-architect` skill, evolved from the seed `d365-architect`, every rule cross-referenced to a gate ID or a burned lesson, laid out to the Microsoft marketplace convention | evolved, wave 6A |
 | `harness/` | Verification gates over declarative artifacts, refuses ungated output | nine gates live: G1 to G4, G6 to G10 |
 | `demo-solution/` | Solution built BY the agent UNDER the harness, with receipts | dv_matter table, form, plugin, document-location relationship, imported three times |
 
@@ -55,6 +55,7 @@ Honesty about what is ours matters more here than anywhere, because this project
 - The CLI entry point and exit-code contract (0 pass, 1 refusal, 2 CLI error): `harness/DVerse.Harness.Cli/`.
 - Two CI tiers wiring the gates into GitHub Actions: `.github/workflows/gates-offline.yml`, `gates-online.yml`.
 - The demo solution itself: `demo-solution/`, table, attributes, form, document-location relationship, plugin assembly.
+- The evolved `dv-architect` skill: `plugins/dv-architect/`, every rule cross-referenced to a gate ID (G1-G4, G6-G11) or a burned lesson (`loop/LESSONS.md`).
 
 ## What this repo does not claim
 
