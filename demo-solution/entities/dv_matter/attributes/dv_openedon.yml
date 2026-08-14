@@ -26,9 +26,9 @@ attribute:
   RequiredLevel: none
   DisplayMask: ValidForAdvancedFind|ValidForForm|ValidForGrid
   ImeMode: inactive
-  ValidForUpdateApi: '0'
+  ValidForUpdateApi: '1'
   ValidForReadApi: '1'
-  ValidForCreateApi: '0'
+  ValidForCreateApi: '1'
   IsCustomField: '1'
   IsAuditEnabled: '0'
   IsSecured: '0'
@@ -49,7 +49,7 @@ attribute:
   IsFilterable: '1'
   IsRetrievable: '1'
   IsLocalizable: '0'
-  Format: DateOnly
+  Format: date
   CanChangeDateTimeBehavior: '0'
   Behavior: '1'
   displaynames:
