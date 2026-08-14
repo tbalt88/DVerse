@@ -17,6 +17,15 @@
 # entry here the folder is never read at all. Confirmed empirically: packing with this entry absent
 # produced '<EntityRelationships />' empty in customizations.xml at exit 0, the same silent-omission
 # shape G9 documents for solutioncomponents.yml generally. See docs/receipts/wave4-3-refusal-pair.md.
+#
+# SLICE 4.6t: appmodules/dv_MatterApp and appmodulesitemaps/dv_MatterApp added on the STRICTEST version
+# of the lesson 2 pattern yet. Decompiling AppModuleProcessor.ReadFromFiles and
+# AppModuleSitemapProcessor.ReadFromFiles (SolutionPackagerLib.dll, pac CLI 2.10.1) shows both walk
+# Directory.GetDirectories(<appmodules|appmodulesitemaps>) and require an EXACT match
+# (`SolutionComponentFiles.Contains(item)`) of each subfolder's own resolved path -- not the StartsWith
+# prefix check FormXml/SavedQueries rely on. A parent-only "appmodules" entry would not satisfy this
+# check; the subfolder itself must be listed. Confirmed empirically in this slice's report (packed
+# customizations.xml carries AppModule/AppModuleSiteMap content only once these two entries are present).
 SolutionComponents:
   Component:
     - '@path': publishers/dversepublisher
@@ -24,3 +33,5 @@ SolutionComponents:
     - '@path': entities/dv_matter/FormXml/main
     - '@path': entities/dv_matter/SavedQueries
     - '@path': entityrelationships
+    - '@path': appmodules/dv_MatterApp
+    - '@path': appmodulesitemaps/dv_MatterApp
