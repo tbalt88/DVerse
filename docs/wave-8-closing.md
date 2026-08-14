@@ -47,3 +47,7 @@ Two representations of one app now ship deliberately: the `.pa.yaml` mirror (for
 ## Addendum 2 (2026-08-14, owner-requested): ALM strategy exercise and README polish
 
 Two final wrap items on owner request: `docs/alm-pipeline-strategy.md` maps every gate, import discipline, and OIDC pattern this repo proved onto a full DEV-to-TEST-to-PROD ALM pipeline, with the real-deployment gaps (managed exports, per-stage service principals, connection references, release-build plugin, G5, rollback) stated as the honest remainder. The README was restructured for a first-time public reader: mermaid diagrams for the big picture, the three refusal altitudes, the verification ladder, and the learning flywheel; new sections for capabilities, upskilling (the blind-eval evidence), and the AI SDLC stage mapping. Every audited number and limit carried over unchanged; no claims added beyond what the receipts already carry.
+
+## Wave complete (2026-08-14): flip done, seed linked
+
+The owner ran the scrub and flipped visibility: **DVerse is public**. Slice 8.5 executed immediately after: the archived seed's README banner now carries the live forward link (unarchive, one commit "Forward link: DVerse is public (D4 standing obligation closed)", rearchive). Remaining: 8.6 series content (owner, /dex-twin). Every seat-side item in waves 0 through 8 is closed.
