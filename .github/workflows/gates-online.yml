@@ -45,7 +45,7 @@ permissions:
 
 jobs:
   online-gates:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v7
