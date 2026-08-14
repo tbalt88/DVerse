@@ -387,11 +387,36 @@ public sealed class BuildAndTestsGateTests : IDisposable
     // stay proportionate to that cost, hence exactly three tiny fixtures:
     // one test project with a single passing test, one test project with a
     // single deliberately failing test, and one plain non-test library.
+    //
+    // Lesson 13 (O11): each real-dotnet test below runs against an ISOLATED
+    // COPY of its fixture (IsolatedFixture), never the shared csproj under
+    // harness/fixtures/g6/ directly. WaveOneIntegrationTests independently
+    // runs BuildAndTestsGate against those same three shared fixture
+    // directories (its RedFixtures theory, its g6/pass InlineData case, and
+    // its leak-scan sweep over every fixture directory). xUnit's default
+    // parallelization unit is the test collection, and a class with no
+    // explicit [Collection] attribute is its own collection, so
+    // BuildAndTestsGateTests and WaveOneIntegrationTests are two different
+    // collections that run concurrently by default; within each class its
+    // own tests still run sequentially. That meant two dotnet processes
+    // (this class's and WaveOneIntegrationTests's) could invoke
+    // restore/build/test against the exact same csproj's obj/bin at the
+    // same wall-clock moment, on whatever schedule the two collections
+    // happened to interleave on, which is exactly the flake from three
+    // sightings, always green in isolation, occasionally red in the full
+    // suite.
+    //
+    // An xUnit [Collection] tag would only serialize test classes that
+    // both carry it, and WaveOneIntegrationTests.cs is out of scope for
+    // this slice (owned files above), so it cannot be tagged into the same
+    // collection here. Giving each test its own private on-disk copy
+    // removes the shared obj/bin state directly, is narrower (touches only
+    // this file), and needs no cooperation from the other class.
 
     [Fact]
     public void Evaluate_real_dotnet_against_the_pass_fixture_yields_a_pass()
     {
-        var context = ContextFor(Fixture("pass"));
+        var context = ContextFor(IsolatedFixture("pass"));
 
         var verdicts = new BuildAndTestsGate().Evaluate(context).ToList();
 
@@ -408,7 +433,7 @@ public sealed class BuildAndTestsGateTests : IDisposable
     [Fact]
     public void Evaluate_real_dotnet_against_the_failing_fixture_refuses_for_the_stated_reason_only()
     {
-        var context = ContextFor(Fixture("refuse-failing-test"));
+        var context = ContextFor(IsolatedFixture("refuse-failing-test"));
 
         var verdicts = new BuildAndTestsGate().Evaluate(context).ToList();
 
@@ -433,7 +458,7 @@ public sealed class BuildAndTestsGateTests : IDisposable
         // no Test SDK reference must Pass via classification-then-build,
         // never Refuse for lacking a VSTest summary it was never going to
         // produce.
-        var context = ContextFor(Fixture("pass-library"));
+        var context = ContextFor(IsolatedFixture("pass-library"));
 
         var verdicts = new BuildAndTestsGate().Evaluate(context).ToList();
 
@@ -522,6 +547,53 @@ public sealed class BuildAndTestsGateTests : IDisposable
     }
 
     private static string Fixture(string name) => Path.Combine(FixturesRoot(), "g6", name);
+
+    /// <summary>
+    /// Copies the named fixture into a fresh, unique temp directory and
+    /// returns that copy's path, registered in <see cref="_tempDirs"/> for
+    /// cleanup in <see cref="Dispose"/>. See the O11 comment above the
+    /// real-dotnet tests for why: this class and
+    /// <c>WaveOneIntegrationTests</c> both run <c>BuildAndTestsGate</c>
+    /// against the same on-disk g6 fixtures from two xUnit collections that
+    /// run in parallel by default, and two concurrent dotnet invocations
+    /// against the same project's obj/bin is the lesson 13 flake. A private
+    /// copy per test removes the shared state instead of trying to
+    /// serialize two test classes only one of which this slice may edit.
+    /// </summary>
+    private string IsolatedFixture(string name)
+    {
+        var source = Fixture(name);
+        var isolated = Path.Combine(
+            Path.GetTempPath(), "dverse-g6-isolated", Guid.NewGuid().ToString("N"));
+
+        CopyDirectory(source, isolated);
+        _tempDirs.Add(isolated);
+        return isolated;
+    }
+
+    /// <summary>
+    /// Recursive copy that skips <c>obj</c> and <c>bin</c>: those are build
+    /// output, never part of a fixture's source, and copying a stale local
+    /// build into an isolated copy would defeat the isolation it exists to
+    /// provide.
+    /// </summary>
+    private static void CopyDirectory(string sourceDir, string destinationDir)
+    {
+        Directory.CreateDirectory(destinationDir);
+
+        foreach (var file in Directory.GetFiles(sourceDir))
+            File.Copy(file, Path.Combine(destinationDir, Path.GetFileName(file)));
+
+        foreach (var subDir in Directory.GetDirectories(sourceDir))
+        {
+            var name = Path.GetFileName(subDir);
+            if (string.Equals(name, "obj", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "bin", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            CopyDirectory(subDir, Path.Combine(destinationDir, name));
+        }
+    }
 
     private string NewEmptyDirectory()
     {
