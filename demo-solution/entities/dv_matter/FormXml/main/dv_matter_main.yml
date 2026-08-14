@@ -76,7 +76,7 @@ systemform:
                         control:
                           '@id': dv_name
                           '@classid': '{4273EDBD-AC1D-40d3-9FB2-095C621B552D}'
-                          '@datafieldname': dv_Name
+                          '@datafieldname': dv_name
                     - cell:
                         '@id': '{7FD3466F-2E44-4BD5-9553-79521D920A68}'
                         labels:
@@ -86,7 +86,7 @@ systemform:
                         control:
                           '@id': dv_matternumber
                           '@classid': '{4273EDBD-AC1D-40d3-9FB2-095C621B552D}'
-                          '@datafieldname': dv_MatterNumber
+                          '@datafieldname': dv_matternumber
                     - cell:
                         '@id': '{A5583A68-DD4A-4FAF-ACD9-1288F0FB415D}'
                         labels:
@@ -96,7 +96,7 @@ systemform:
                         control:
                           '@id': dv_openedon
                           '@classid': '{5B773807-9FB2-42db-97C3-7A91EFF8ADFF}'
-                          '@datafieldname': dv_OpenedOn
+                          '@datafieldname': dv_openedon
                     - cell:
                         '@id': '{A5136483-4BB1-44D6-8ED9-7A76862DE2B0}'
                         labels:
