@@ -15,7 +15,13 @@ attribute:
   Type: nvarchar
   RequiredLevel: required
   MaxLength: '100'
+  # The classic solution importer detects the primary name via the PrimaryName
+  # flag inside displaymask, NOT via an IsPrimaryName element (that name is the
+  # modern Web API metadata property). Import failed with "PrimaryName
+  # attribute not found" until this flag was added; found live, slice 4.2
+  # grading, 2026-08-13.
   IsPrimaryName: 'true'
+  DisplayMask: ValidForAdvancedFind|ValidForForm|ValidForGrid|RequiredForForm|PrimaryName
   displaynames:
     displayname:
       '@description': Matter Name

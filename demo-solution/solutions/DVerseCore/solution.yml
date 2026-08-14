@@ -16,9 +16,9 @@ ImportExportXml:
         '@languagecode': '1033'
     Descriptions:
       Description:
-        '@description': Minimal DVerse Core solution shell. Publisher and empty solution container only, no components yet.
+        '@description': DVerse Core demo solution. Publisher, dv_matter table with attributes and main form. Built by Claude models under the DVerse governance gates.
         '@languagecode': '1033'
-    Version: 0.1.0.0
+    Version: 0.2.0.0
     Managed: 0
     Publisher:
       UniqueName: dversepublisher

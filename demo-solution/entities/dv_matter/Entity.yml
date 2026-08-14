@@ -10,8 +10,25 @@
 # RibbonDiffXml are added by the same method as fresh empty elements ('xElement.Add(new
 # XElement("FormXml"))' etc.) and must NOT be declared in this file or the reader would end up with
 # duplicate elements alongside the ones it adds itself.
+# Entity labels below were added during live import refinement (slice 4.2
+# grading): the importer creates the entity and demands its display labels,
+# failing with "Entity Display Collection Name ... LocalizedCollectionName ...
+# not specified" when the plural label is absent. Each element here answers a
+# specific import error, not a guess.
 Entity:
   Name: dv_matter
   EntityInfo:
     entity:
       '@Name': dv_matter
+      LocalizedNames:
+        LocalizedName:
+          '@description': Matter
+          '@languagecode': '1033'
+      LocalizedCollectionNames:
+        LocalizedCollectionName:
+          '@description': Matters
+          '@languagecode': '1033'
+      Descriptions:
+        Description:
+          '@description': A legal matter tracked by the DVerse demo solution.
+          '@languagecode': '1033'

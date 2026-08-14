@@ -1,0 +1,22 @@
+# The primary KEY attribute (distinct from the primary NAME attribute in
+# dv_name.yml). Added during live import refinement: without it the importer
+# fails creating the SyncError relationship ("No rows could be found for
+# Entity ... if Entity were published" in
+# CreateRelationshipToSyncErrorForParentEntityRecordAccess), because every
+# entity must carry its own primarykey attribute and platform exports always
+# include it. Each element answers the importer, not a guess.
+attribute:
+  '@PhysicalName': dv_matterId
+  Name: dv_matterid
+  LogicalName: dv_matterid
+  Type: primarykey
+  RequiredLevel: systemrequired
+  DisplayMask: ValidForAdvancedFind|RequiredForForm
+  displaynames:
+    displayname:
+      '@description': Matter
+      '@languagecode': '1033'
+  Descriptions:
+    Description:
+      '@description': Unique identifier for Matter instances.
+      '@languagecode': '1033'
