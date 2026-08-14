@@ -2,11 +2,15 @@
 
   <!--
     net462, SDK-style, per the mission ruling (wave 4.4a). Strong-name
-    signing is deliberately OFF: no SignAssembly, no AssemblyOriginatorKeyFile,
-    no key.snk anywhere. The archived seed repo tbalt88/DVerseClaudeSkills set
-    SignAssembly=true with AssemblyOriginatorKeyFile=key.snk while gitignoring
-    *.snk, so a fresh clone of that repo cannot build the plugin project at
-    all. That defect is on the record and deliberately not repeated here.
+    signing is ON as of wave 4.4b grading: Dataverse refuses to register a
+    sandbox PluginAssembly whose identity has no public key token ("Public
+    assembly must have public key token", live import error, golden import
+    five). The archived seed repo tbalt88/DVerseClaudeSkills had a different
+    defect in this area: SignAssembly=true with AssemblyOriginatorKeyFile=
+    key.snk while gitignoring *.snk, so a fresh clone could not build the
+    plugin project at all. The fix is not to avoid signing (the platform
+    demands it) but to COMMIT the snk: it is assembly identity for a demo
+    plugin, not a secret, and the build must work from a fresh clone.
 
     Tests live in a SEPARATE sibling project, DVerse.Plugins.Tests, not
     nested inside this project's folder. The seed nested its Tests/ folder
@@ -23,6 +27,8 @@
     <RootNamespace>DVerse.Plugins</RootNamespace>
     <Nullable>disable</Nullable>
     <LangVersion>9.0</LangVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>DVerse.Plugins.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

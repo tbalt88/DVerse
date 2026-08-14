@@ -44,7 +44,7 @@ RootComponents:
       '@behavior': '0'
     - '@type': '91'
       '@id': 'b6ac2bd6-0432-4f70-9630-a59705f2e64e'
-      '@schemaName': 'DVerse.Plugins'
+      '@schemaName': 'DVerse.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f506971365378cc'
       '@behavior': '0'
     - '@type': '92'
       '@id': 'a4fbb0e9-2641-4c7c-9956-69dc662fdd96'

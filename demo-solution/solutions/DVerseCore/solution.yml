@@ -18,7 +18,7 @@ ImportExportXml:
       Description:
         '@description': DVerse Core demo solution. Publisher, dv_matter table with attributes and main form. Built by Claude models under the DVerse governance gates.
         '@languagecode': '1033'
-    Version: 0.4.0.0
+    Version: 0.5.0.0
     Managed: 0
     Publisher:
       UniqueName: dversepublisher

@@ -35,13 +35,11 @@
 # authored from the well-established real Dataverse SdkMessageProcessingStep solution schema, not
 # from pac decompile or from Microsoft docs consulted as authority.
 #
-# IMPORT-RISK CALLOUT (see the wave4-4b report's assumptions table for the full list): SdkMessageId
-# and SdkMessageFilterId below are NOT resolved against the live org. `pac solution clone --name
-# DVerseCore` was run read-only (dverse-ci profile) during this slice specifically to check for them;
-# the unpacked DVerseCore carries zero SdkMessage/SdkMessageFilter data, because dv_matter has never
-# had a plugin step solution-referenced before now, so there was nothing live to read those two GUIDs
-# from offline, and no other allowed read operation (pac solution clone / list / org fetch) can reach
-# them either. The two values below are self-generated placeholders, not real org data.
+# SdkMessageId and SdkMessageFilterId below are REAL org values, resolved by the seat at grading
+# (the executor could not reach them; its placeholders were replaced in the grading merge):
+# SdkMessageId from `pac org fetch` (sdkmessage where name = Create), SdkMessageFilterId from the
+# org Web API (sdkmessagefilters where primaryobjecttypecode = 'dv_matter' and sdkmessageid =
+# Create). Note primaryobjecttypecode is Edm.String in the Web API despite FetchXML typing it Int32.
 #
 # Encodings used below (Stage, Mode, SupportedDeployment) are the long-stable, widely-attested
 # Dataverse platform enum values (10/20/40 = PreValidation/PreOperation/PostOperation stage;
@@ -50,8 +48,8 @@
 SdkMessageProcessingStep:
   '@SdkMessageProcessingStepId': 'a4fbb0e9-2641-4c7c-9956-69dc662fdd96'
   Name: 'MatterNumberValidator: Create of dv_matter'
-  SdkMessageId: 'e74adc62-b893-42e5-b524-10bee5a290c8'
-  SdkMessageFilterId: '70a60e27-e77a-467f-a6d4-31c840d74ae0'
+  SdkMessageId: '9ebdbb1b-ea3e-db11-86a7-000a3a5473e8'
+  SdkMessageFilterId: '8a0bb888-8097-f111-b8dc-70a8a59a66f9'
   PluginTypeId: '67574aef-2c54-4bf8-9f29-7efebf321aed'
   Stage: 20
   Mode: 0

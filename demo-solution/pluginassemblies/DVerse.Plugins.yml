@@ -82,14 +82,14 @@
 # decompile-verified (pac carries IsolationMode as opaque data, never reads it).
 PluginAssembly:
   '@PluginAssemblyId': 'b6ac2bd6-0432-4f70-9630-a59705f2e64e'
-  '@FullName': 'DVerse.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'
+  '@FullName': 'DVerse.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f506971365378cc'
   Name: DVerse.Plugins
-  FileName: pluginassemblies/DVerse.Plugins.dll
+  FileName: /pluginassemblies/DVerse.Plugins.dll
   SourceType: 0
   IsolationMode: 2
   Culture: neutral
   Version: 1.0.0.0
-  PublicKeyToken: 'null'
+  PublicKeyToken: '9f506971365378cc'
   PluginTypes:
     PluginType:
       '@PluginTypeId': '67574aef-2c54-4bf8-9f29-7efebf321aed'

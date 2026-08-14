@@ -10,7 +10,6 @@ packages/
 project.lock.json
 
 # Strong-name keys, never commit
-*.snk
 
 # VS
 .vs/
