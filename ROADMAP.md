@@ -18,7 +18,7 @@ Status as of 2026-08-14:
 | 5 | canvas app and document management | **done** 2026-08-14, `docs/wave-5-closing.md`: two-screen CRUD canvas in gated source, G11, SharePoint documents live |
 | 6 | evolved architect skill | **done** 2026-08-14, `docs/wave-6-closing.md`: plugins/dv-architect, blind eval 20/20 (caveat in eval doc) |
 | 7 | structural diff | **done** 2026-08-14, docs/wave-7-closing.md: identity model, diff engine, G12, diff refusal pair |
-| 8 | public flip and receipts | next, awaiting owner greenlight (owner-run scrub) |
+| 8 | public flip and receipts | **seat-side done** 2026-08-14, docs/wave-8-closing.md; owner actions pending: scrub, flip, series content |
 
 The environment turned out to be pay-as-you-go, not a 30 day trial, so the ordering constraint below is historical: there is no expiry clock. Sequencing by dependency stands; urgency by deadline does not.
 
