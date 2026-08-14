@@ -1,0 +1,44 @@
+# Slice 7.2 fixture (semantic diff engine, walker + property-level verdicts).
+# The "unchanged-everything" fixture ruling 7 requires: all Unchanged, zero
+# warnings. Copied verbatim from the real committed
+# demo-solution/appmodules/dv_MatterApp/appmodule.yml (provenance comment
+# trimmed). b.yml is byte-identical. Deliberately NOT a FormXml fixture:
+# FormXml column/row always warn on every match regardless of content
+# (ruling 3, "positional WITH a warning on every such match"), so a
+# genuinely warning-free all-Unchanged fixture needs a chain with no
+# positional-fallback family in it at all. The AppModule chain (AppModule
+# -> AppModuleComponent, AppModuleRoleMapRole) is entirely GUID/exact-key
+# matched at every level, so it is the clean choice for this fixture.
+AppModule:
+  UniqueName: dv_MatterApp
+  IntroducedVersion: 0.2.0.0
+  WebResourceId: 953b9fac-1e5e-e611-80d6-00155ded156f
+  OptimizedFor: ''
+  statecode: '0'
+  statuscode: '1'
+  FormFactor: '1'
+  ClientType: '4'
+  NavigationType: '0'
+  AppModuleComponents:
+    AppModuleComponent:
+      - '@type': '1'
+        '@schemaName': dv_matter
+      - '@type': '62'
+        '@schemaName': dv_MatterApp
+  AppModuleRoleMaps:
+    Role:
+      - '@id': '{627090ff-40a3-4053-8790-584edc5be201}'
+      - '@id': '{119f245c-3cc8-4b62-b31c-d1a046ced15d}'
+  LocalizedNames:
+    LocalizedName:
+      '@description': Matter App
+      '@languagecode': '1033'
+  Descriptions:
+    Description:
+      '@description': Accelerate the creation of solutions for managing legal matters with a platform currently in initial development. Lay the foundation for streamlined processes and enhanced visibility as the app evolves.
+      '@languagecode': '1033'
+  appsettings:
+    appsetting:
+      '@settingdefinitionid.uniquename': AppChannel
+      iscustomizable: '1'
+      value: '1'

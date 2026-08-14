@@ -1,0 +1,96 @@
+# Slice 7.2 fixture (semantic diff engine, walker + property-level verdicts).
+# THE FLAGSHIP recursion-rule fixture: mission ruling 3 cites lesson 14 by
+# name as "the canonical case" the recursion rule exists to catch. Baseline
+# side, copied verbatim from the real committed
+# demo-solution/entities/dv_matter/FormXml/main/dv_matter_main.yml (same
+# formid, tab/section/cell ids, control ids and classids, same row order as
+# the real form) with only the historical provenance comment trimmed. See
+# b.yml for the ONLY mutation: the dv_openedon control's '@datafieldname'
+# changes from 'dv_openedon' to 'dv_OpenedOn' -- lesson 14's exact casing
+# bug (pack accepted it, import succeeded, publish succeeded, the platform
+# silently dropped the field at render because datafieldname binds by exact
+# lowercase LogicalName match). Every id at every level (formid, tab id,
+# section id, all four cell ids, all four control '@id's) is byte-identical
+# between a.yml and b.yml, which is exactly the false-negative risk the
+# recursion rule exists to prevent: a diff engine that stops recursing once
+# a parent's identity matches would report this whole form as Unchanged.
+systemform:
+  formid: 8d5fde37-9293-4b1e-97bb-2691167f3ee0
+  IntroducedVersion: '1.0'
+  FormPresentation: '1'
+  FormActivationState: '1'
+  form:
+    tabs:
+      tab:
+        '@verticallayout': 'true'
+        '@id': '{58DD9B95-BC51-4F57-BDFE-28A3853BEE52}'
+        '@IsUserDefined': '1'
+        labels:
+          label:
+            '@description': General
+            '@languagecode': '1033'
+        columns:
+          column:
+            '@width': '100%'
+            sections:
+              section:
+                '@showlabel': 'false'
+                '@showbar': 'false'
+                '@IsUserDefined': '0'
+                '@id': '{C949F461-933B-4528-896F-9D56D730B197}'
+                labels:
+                  label:
+                    '@description': General
+                    '@languagecode': '1033'
+                rows:
+                  row:
+                    - cell:
+                        '@id': '{040EF0AB-C03F-4F37-9A4C-B87C47DA740E}'
+                        labels:
+                          label:
+                            '@description': ''
+                            '@languagecode': '1033'
+                        control:
+                          '@id': dv_name
+                          '@classid': '{4273EDBD-AC1D-40d3-9FB2-095C621B552D}'
+                          '@datafieldname': dv_name
+                    - cell:
+                        '@id': '{7FD3466F-2E44-4BD5-9553-79521D920A68}'
+                        labels:
+                          label:
+                            '@description': Matter Number
+                            '@languagecode': '1033'
+                        control:
+                          '@id': dv_matternumber
+                          '@classid': '{4273EDBD-AC1D-40d3-9FB2-095C621B552D}'
+                          '@datafieldname': dv_matternumber
+                    - cell:
+                        '@id': '{A5583A68-DD4A-4FAF-ACD9-1288F0FB415D}'
+                        labels:
+                          label:
+                            '@description': Opened On
+                            '@languagecode': '1033'
+                        control:
+                          '@id': dv_openedon
+                          '@classid': '{5B773807-9FB2-42db-97C3-7A91EFF8ADFF}'
+                          '@datafieldname': dv_openedon
+                    - cell:
+                        '@id': '{A5136483-4BB1-44D6-8ED9-7A76862DE2B0}'
+                        labels:
+                          label:
+                            '@description': Owner
+                            '@languagecode': '1033'
+                        control:
+                          '@id': ownerid
+                          '@classid': '{270BD3DB-D9AF-4782-9025-509E298DEC0A}'
+                          '@datafieldname': ownerid
+  IsCustomizable: '1'
+  CanBeDeleted: '1'
+  LocalizedNames:
+    LocalizedName:
+      '@description': Information
+      '@languagecode': '1033'
+  Descriptions:
+    Description:
+      '@description': A form for this entity.
+      '@languagecode': '1033'
