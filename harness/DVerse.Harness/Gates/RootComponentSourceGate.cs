@@ -53,6 +53,28 @@ namespace DVerse.Harness.Gates;
 /// never been taught would make the gate cry wolf. Extend the map only for
 /// types verified the same way Entity and CanvasApp were.
 /// </para>
+/// <para>
+/// SLICE 4.4c: a RootComponent entry may legitimately carry '@id' with no
+/// '@schemaName' at all. Ground truth: `pac solution clone --name
+/// DVerseCore` (read-only, dverse-ci profile), quoted verbatim in
+/// loop/specs/wave4-4c-canonical-plugin-shapes.md, shows the platform's own
+/// export for a SdkMessageProcessingStep RootComponent
+/// (<c>&lt;RootComponent type="92" id="{...}" behavior="0" /&gt;</c>) with
+/// no schemaName attribute whatsoever -- GUID-identified component types are
+/// named by '@id' alone in the platform's own writer, matching
+/// Helper.LoadSolutionInformation's generic "type"|"schemaName"|"behavior"|
+/// "id" read (cited above) reading all four independently rather than
+/// requiring schemaName. This gate previously refused every blank
+/// '@schemaName' unconditionally, which made the 4.4b executor add a
+/// redundant schemaName workaround just to satisfy this gate -- a gate
+/// defect the canonical export exposed. An entry with a non-empty '@id' and
+/// no '@schemaName' now passes, its source verification skipped with an
+/// explicit Evidence line (the same honest-skip pattern used for unmapped
+/// types above, since no type-to-path template here is keyed by '@id').
+/// An entry with NEITHER '@id' NOR '@schemaName' still refuses: there is no
+/// way to resolve or even honestly skip a component with no identifier at
+/// all.
+/// </para>
 /// </summary>
 public sealed class RootComponentSourceGate : IGate
 {
@@ -188,20 +210,30 @@ public sealed class RootComponentSourceGate : IGate
         var unresolvedCount = 0;
         var resolvedCount = 0;
         var unmappedNotes = new List<string>();
+        var idOnlyNotes = new List<string>();
 
         foreach (var entry in entries)
         {
+            var hasId = !string.IsNullOrWhiteSpace(entry.Id);
+
             if (string.IsNullOrWhiteSpace(entry.SchemaName))
             {
+                if (hasId)
+                {
+                    var idTypeLabel = string.IsNullOrWhiteSpace(entry.Type) ? "(none)" : entry.Type;
+                    idOnlyNotes.Add($"'{entry.Id}' (type {idTypeLabel})");
+                    continue;
+                }
+
                 unresolvedCount++;
                 yield return Refuse(
                     context,
                     relRootComponentsFile,
-                    $"Read a RootComponent entry from {relRootComponentsFile}; its " +
-                    "'@schemaName' value is blank.",
-                    "rootcomponents.yml contains a RootComponent entry with no '@schemaName' " +
-                    "value, so no source path can be resolved for it and the packer will " +
-                    "silently drop that component.");
+                    $"Read a RootComponent entry from {relRootComponentsFile}; both its " +
+                    "'@schemaName' and '@id' values are blank.",
+                    "rootcomponents.yml contains a RootComponent entry with neither a " +
+                    "'@schemaName' nor an '@id' value, so no source path can be resolved for " +
+                    "it and the packer will silently drop that component.");
                 continue;
             }
 
@@ -258,6 +290,19 @@ public sealed class RootComponentSourceGate : IGate
                     "only of a gap in this gate's mapping table.";
             }
 
+            if (idOnlyNotes.Count > 0)
+            {
+                summary += " Skipped source verification for " +
+                    $"{idOnlyNotes.Count} entr{(idOnlyNotes.Count == 1 ? "y" : "ies")} " +
+                    "identified by '@id' only, no '@schemaName': " +
+                    string.Join(", ", idOnlyNotes) +
+                    ". Not refused: GUID-identified component types carry no schema name in " +
+                    "the platform's own canonical export (see " +
+                    "loop/specs/wave4-4c-canonical-plugin-shapes.md), so an id-only entry is " +
+                    "not evidence of a missing source, only of a component type this gate has " +
+                    "no id-keyed path mapping for.";
+            }
+
             yield return Pass(context, relRootComponentsFile, summary);
         }
     }
@@ -299,6 +344,8 @@ public sealed class RootComponentSourceGate : IGate
                 string? type = null;
                 string? schemaName = null;
 
+                string? id = null;
+
                 if (entryNode is YamlMappingNode entryMapping)
                 {
                     if (TryGetMappingValue(entryMapping, "@type", out var typeNode) &&
@@ -312,9 +359,15 @@ public sealed class RootComponentSourceGate : IGate
                     {
                         schemaName = schemaNameScalar.Value;
                     }
+
+                    if (TryGetMappingValue(entryMapping, "@id", out var idNode) &&
+                        idNode is YamlScalarNode idScalar)
+                    {
+                        id = idScalar.Value;
+                    }
                 }
 
-                entries.Add(new RootComponentEntry(type, schemaName));
+                entries.Add(new RootComponentEntry(type, schemaName, id));
             }
         }
 
@@ -380,7 +433,7 @@ public sealed class RootComponentSourceGate : IGate
         Stage = context.Stage
     };
 
-    private sealed record RootComponentEntry(string? Type, string? SchemaName);
+    private sealed record RootComponentEntry(string? Type, string? SchemaName, string? Id);
 
     private sealed record ParsedManifest(bool IsListShape, List<RootComponentEntry> Entries);
 }

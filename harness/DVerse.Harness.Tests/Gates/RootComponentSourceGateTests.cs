@@ -33,7 +33,7 @@ public sealed class RootComponentSourceGateTests
         Assert.Contains("empty mapping", emptySolutionVerdict.Evidence);
 
         var richSolutionVerdict = verdicts.Single(v => v.Artifact.Contains("rich-solution"));
-        Assert.Contains("resolved 2 of 3", richSolutionVerdict.Evidence);
+        Assert.Contains("resolved 2 of 4", richSolutionVerdict.Evidence);
     }
 
     [Fact]
@@ -46,6 +46,39 @@ public sealed class RootComponentSourceGateTests
         Assert.Contains("dv_customrole", richSolutionVerdict.Evidence);
         Assert.Contains("type 20", richSolutionVerdict.Evidence);
         Assert.Contains("Not refused", richSolutionVerdict.Evidence);
+    }
+
+    [Fact]
+    public void Id_only_root_component_is_accepted_and_noted_in_pass_evidence_not_refused()
+    {
+        // Slice 4.4c / G8 fix: the platform's own canonical export
+        // (loop/specs/wave4-4c-canonical-plugin-shapes.md) carries a
+        // SdkMessageProcessingStep RootComponent with '@id' and NO
+        // '@schemaName' at all. G8 must accept that shape, skipping source
+        // verification with an honest note, not refuse it.
+        var verdicts = Evaluate("pass");
+
+        var richSolutionVerdict = verdicts.Single(v => v.Artifact.Contains("rich-solution"));
+        Assert.Equal(GateOutcome.Pass, richSolutionVerdict.Outcome);
+        Assert.Null(richSolutionVerdict.Reason);
+        Assert.Contains("10998a3b-9a97-f111-b8de-70a8a59a66f9", richSolutionVerdict.Evidence);
+        Assert.Contains("'@id' only", richSolutionVerdict.Evidence);
+        Assert.Contains("Not refused", richSolutionVerdict.Evidence);
+    }
+
+    [Fact]
+    public void Root_component_with_neither_id_nor_schema_name_still_refuses()
+    {
+        // The red half of the G8 fix's fixture pair: an entry with NEITHER
+        // '@id' NOR '@schemaName' has no way to be resolved OR honestly
+        // skipped, so it must still refuse.
+        var verdicts = Evaluate("refuse-no-identifier");
+
+        var verdict = verdicts.Single(v => v.Artifact.Contains("only-solution"));
+        Assert.Equal(GateOutcome.Refuse, verdict.Outcome);
+        Assert.NotNull(verdict.Reason);
+        Assert.Contains("neither a '@schemaName' nor an '@id' value", verdict.Reason);
+        Assert.Contains("both its", verdict.Evidence);
     }
 
     [Fact]
@@ -113,7 +146,10 @@ public sealed class RootComponentSourceGateTests
     [Fact]
     public void No_verdict_across_any_fixture_contains_an_absolute_filesystem_path()
     {
-        string[] fixtures = ["pass", "refuse-missing-entity-source", "refuse-missing-file"];
+        string[] fixtures =
+        [
+            "pass", "refuse-missing-entity-source", "refuse-missing-file", "refuse-no-identifier"
+        ];
 
         foreach (var fixture in fixtures)
         {

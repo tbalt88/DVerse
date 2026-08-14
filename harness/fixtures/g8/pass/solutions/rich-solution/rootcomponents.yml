@@ -6,3 +6,5 @@ RootComponents:
       '@schemaName': dv_matterapp
     - '@type': '20'
       '@schemaName': dv_customrole
+    - '@type': '92'
+      '@id': '{10998a3b-9a97-f111-b8de-70a8a59a66f9}'
