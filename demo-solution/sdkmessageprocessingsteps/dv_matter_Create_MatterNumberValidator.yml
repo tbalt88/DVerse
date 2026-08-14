@@ -1,0 +1,62 @@
+# GROUND TRUTH (slice 4.4b, ilspycmd 11.0.0.9375 against pac 2.10.1's SolutionPackagerLib.dll, same
+# assembly and technique as pluginassemblies/PluginAssemblies.yml's header; see that file for the
+# exact tool path).
+#
+# FOLDER NAME AND READ SHAPE: SdkMessageProcessingStepProcessor's ctor is
+# base("SdkMessageProcessingSteps", ComponentType.SdkMessageProcessingStep) with isCollectionComponent
+# = true, and it overrides ReadFromFiles completely rather than using the base class's
+# GetComponentPath / single-collection-file convention PluginAssembly uses. Its own ReadFromFiles:
+#   1. mainDirectory = GetMainDirectory(SdkMessageProcessingStep) -> the ComponentConfigurationCollection
+#      entry ("SdkMessageProcessingSteps", "$(PrimaryName)"), lowercased for the new format, resolves
+#      to solutions-root-relative "sdkmessageprocessingsteps/".
+#   2. Directory.GetFiles(mainDirectory, "*.yml", SearchOption.AllDirectories) -- every .yml anywhere
+#      under this folder, not gated to one level.
+#   3. files = ApplySolutionFilter(files, mainDirectory) -- the generic StartsWith-prefix filter
+#      (ComponentProcessorBase.ApplySolutionFilter) shared by most processors, distinct from the
+#      strict Directory.GetDirectories + exact-match check AppModule/AppModuleSiteMap/Role use. Because
+#      solutions/DVerseCore/solutioncomponents.yml already has entries (a non-empty
+#      SolutionComponentFiles set), this filter is ACTIVE: a file only survives if its directory equals
+#      or is nested under some '@path' entry. A path entry for this folder is required per lesson 2;
+#      see solutions/DVerseCore/solutioncomponents.yml, which now lists 'sdkmessageprocessingsteps'.
+#      Because the filter is prefix-based (not the AppModule-style exact subfolder match), one entry
+#      for the parent folder covers this file regardless of nesting depth.
+#   4. Each surviving file is loaded whole (XUtils.LoadElement -> Helper.ConvertYamlToXml, the same
+#      YAML-to-XML round trip behind every other '@attr' file in this repo) and its root element is
+#      added AS ONE COMPONENT into the SdkMessageProcessingSteps wrapper: one file = one step. This
+#      file is authored standalone (not nested under a $(PrimaryName) subfolder) because nothing in
+#      the decompiled reader requires that nesting for this component type -- unlike AppModule/Role,
+#      which do require it.
+#
+# FIELD READ BY PAC ITSELF (CreateComponent, same decompiled type): only
+# '@SdkMessageProcessingStepId' (XML ATTRIBUTE, Helper.GetAttributeValue, GUID, throwIfNull: true,
+# required). PrimaryName is never set by this processor (stays null). Every other field below is
+# passed through into the packed customizations.xml completely opaque to pac (the same
+# AddComponentElement raw-append behaviour documented in PluginAssemblies.yml's header) and is
+# authored from the well-established real Dataverse SdkMessageProcessingStep solution schema, not
+# from pac decompile or from Microsoft docs consulted as authority.
+#
+# IMPORT-RISK CALLOUT (see the wave4-4b report's assumptions table for the full list): SdkMessageId
+# and SdkMessageFilterId below are NOT resolved against the live org. `pac solution clone --name
+# DVerseCore` was run read-only (dverse-ci profile) during this slice specifically to check for them;
+# the unpacked DVerseCore carries zero SdkMessage/SdkMessageFilter data, because dv_matter has never
+# had a plugin step solution-referenced before now, so there was nothing live to read those two GUIDs
+# from offline, and no other allowed read operation (pac solution clone / list / org fetch) can reach
+# them either. The two values below are self-generated placeholders, not real org data.
+#
+# Encodings used below (Stage, Mode, SupportedDeployment) are the long-stable, widely-attested
+# Dataverse platform enum values (10/20/40 = PreValidation/PreOperation/PostOperation stage;
+# 0/1 = Synchronous/Asynchronous mode; 0 = Server Only deployment), not pac-decompiled -- pac carries
+# this whole element as opaque data and never reads these fields itself.
+SdkMessageProcessingStep:
+  '@SdkMessageProcessingStepId': 'a4fbb0e9-2641-4c7c-9956-69dc662fdd96'
+  Name: 'MatterNumberValidator: Create of dv_matter'
+  SdkMessageId: 'e74adc62-b893-42e5-b524-10bee5a290c8'
+  SdkMessageFilterId: '70a60e27-e77a-467f-a6d4-31c840d74ae0'
+  PluginTypeId: '67574aef-2c54-4bf8-9f29-7efebf321aed'
+  Stage: 20
+  Mode: 0
+  Rank: 1
+  SupportedDeployment: 0
+  MessagePropertyName: Target
+  Description: 'Validates dv_matternumber on Create of dv_matter (MatterNumberValidator, PreOperation, synchronous).'
+  CustomizationLevel: 1

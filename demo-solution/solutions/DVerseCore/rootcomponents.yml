@@ -6,6 +6,31 @@
 # subcomponent of dv_matter's entity root; each needs its own RootComponent entry to be included in the
 # solution at all. behavior="0" (include-all) is carried over from the same ground truth for the existing
 # dv_matter entry too, made explicit here rather than left to the packer's default.
+#
+# SLICE 4.4b: PluginAssembly (type 91) and SdkMessageProcessingStep (type 92) added, numeric codes
+# decompile-verified against pac 2.10.1's SolutionPackagerLib.dll's ComponentType enum (ilspycmd; see
+# pluginassemblies/DVerse.Plugins.yml's header for the exact tool path). Both entries are REQUIRED for
+# pack to succeed, not merely conventional: a first pack attempt with no RootComponent entries for
+# these two new components failed outright (exit code 2, "RootComponent validation failed... Following
+# objects, required by the solution, are not present. Type='PluginAssembly', Id (or schema
+# name)='{...}'. Type='SdkMessageProcessingStep', Id (or schema name)='{...}'."). This is empirical,
+# stronger than decompile alone.
+#
+# BOTH '@id' (the real GUID, matching '@PluginAssemblyId'/'@SdkMessageProcessingStepId' on the
+# corresponding component) AND '@schemaName' are supplied on each entry. Real Dataverse solution.xml,
+# and pac's own decompiled reader (RootComponentSourceGate.cs's header cites
+# Helper.LoadSolutionInformation reading "type"|"schemaName"|"behavior"|"id" generically), identify
+# GUID-typed components like these two by '@id' alone; a real pac-authored RootComponent for a
+# schema-named object (Entity, AppModule, Role) would not normally carry '@id' at all, and vice versa,
+# so carrying both here is NOT the shape pac's own writer would produce -- an admitted, deliberate
+# deviation. It is done anyway because this repo's own G8 gate (RootComponentSourceGate.cs, forbidden
+# to modify under this slice's owned-files list) unconditionally refuses any RootComponent entry with a
+# blank '@schemaName' and has no concept of '@id' at all; omitting '@schemaName' would fail G8 (a hard
+# "all offline gates exit 0" requirement), and omitting '@id' would remove the field pac's own error
+# message above explicitly asked for. Pack was re-run after adding both attributes and succeeded
+# (exit 0); this does not prove import will accept the redundant '@schemaName' on a GUID-identified
+# type, only that the local pack pipeline tolerates it. See the wave4-4b report's import-risk
+# assumptions table.
 RootComponents:
   RootComponent:
     - '@type': '1'
@@ -16,5 +41,13 @@ RootComponents:
       '@behavior': '0'
     - '@type': '80'
       '@schemaName': dv_MatterApp
+      '@behavior': '0'
+    - '@type': '91'
+      '@id': 'b6ac2bd6-0432-4f70-9630-a59705f2e64e'
+      '@schemaName': 'DVerse.Plugins'
+      '@behavior': '0'
+    - '@type': '92'
+      '@id': 'a4fbb0e9-2641-4c7c-9956-69dc662fdd96'
+      '@schemaName': 'dv_matter_Create_MatterNumberValidator'
       '@behavior': '0'
 
