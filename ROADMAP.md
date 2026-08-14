@@ -17,7 +17,8 @@ Status as of 2026-08-14:
 | 4 | demo solution, Dataverse slice | **done** 2026-08-14, `docs/wave-4-closing.md`: five golden imports, both refusal pairs, plugin registered and active |
 | 5 | canvas app and document management | **done** 2026-08-14, `docs/wave-5-closing.md`: two-screen CRUD canvas in gated source, G11, SharePoint documents live |
 | 6 | evolved architect skill | **done** 2026-08-14, `docs/wave-6-closing.md`: plugins/dv-architect, blind eval 20/20 |
-| 7 | structural diff | next, awaiting owner greenlight |
+| 7 | structural diff | **done** 2026-08-14, docs/wave-7-closing.md: identity model, diff engine, G12, diff refusal pair |
+| 8 | public flip and receipts | next, awaiting owner greenlight (owner-run scrub) |
 | 8 | public flip and receipts | planned |
 
 The environment turned out to be pay-as-you-go, not a 30 day trial, so the ordering constraint below is historical: there is no expiry clock. Sequencing by dependency stands; urgency by deadline does not.
@@ -114,6 +115,8 @@ C1, deliberately late. The skill encodes the rules; the gates enforce them. Writ
 6.3 keeps the deferred D2 option (a) alive: contributing upstream from a position of demonstrated work rather than to establish it.
 
 ## Wave 7, structural diff
+
+**CLOSED 2026-08-14** (`docs/wave-7-closing.md`): ratified 28-class identity model (platform ids empirically byte-stable), matching layer, recursive diff engine, G12 structural-diff gate + dverse diff verb, and the diff refusal pair receipted in the committed ledger. 253 tests.
 
 Deferred from D9 on purpose. **A diff engine that gets FormXML element identity wrong produces confident wrong answers, which is worse than no diff.**
 
