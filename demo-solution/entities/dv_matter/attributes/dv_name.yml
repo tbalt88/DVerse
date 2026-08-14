@@ -1,29 +1,66 @@
 # GROUND TRUTH: EntityProcessor.ReadEntityDirectory reads every file under
 # entities/<schemaname>/attributes/ via ReadCollectionFromFolder, which loads each file
 # (ComponentProcessorBase.ReadCollectionFromFiles -> XUtils.LoadElement) and appends its root
-# element as-is under EntityInfo/entity/attributes (AddComponentElement ->
-# XElement.AddAndLiftNamespace). SolutionPackagerLib does not parse or validate individual
-# attribute fields during pack; the 'attribute' root name and '@PhysicalName' follow the XPath
-# convention EntityProcessor's own constructor uses for localization
-# ("//entity/attributes/attribute/..."), and the fields below (Type, RequiredLevel, MaxLength,
-# displayname) are real Dataverse AttributeMetadata shape carried over for import realism, not
-# something this decompiled reader demonstrably requires. Primary name column per mission ruling 1.
+# element as-is under EntityInfo/entity/attributes (AddComponentElement -> XElement.AddAndLiftNamespace).
+# SolutionPackagerLib does not parse or validate individual attribute fields during pack; the
+# 'attribute' root name and '@PhysicalName' follow the XPath convention EntityProcessor's own
+# constructor uses for localization ("//entity/attributes/attribute/...").
+#
+# SLICE 4.2b: shape mirrors the reference platform-authored primary name attribute verbatim (dv_Name
+# on dv_Probe, C:\Users\dmdom\AppData\Local\Temp\probe-clone\DVerseCore\src\Entities\dv_Probe\Entity.xml,
+# attribute PhysicalName="dv_Name"), per mission ruling 1, with exactly three deltas: MaxLength 850 ->
+# 100 (and Length derived 2x -> 200, following the reference's own MaxLength*2=Length relationship),
+# RequiredLevel none -> required, and our display name. Everything else, including DisplayMask's exact
+# flag order ("PrimaryName|ValidForAdvancedFind|ValidForForm|ValidForGrid|RequiredForForm", PrimaryName
+# listed FIRST) and the full ImeMode/ValidFor*Api/Is*/Can* element set, is copied verbatim.
+#
+# LESSON PRESERVED (DisplayMask casing, found live during slice 4.2 grading, 2026-08-13): the classic
+# solution importer detects the primary name via the PrimaryName flag inside DisplayMask, NOT via a
+# standalone IsPrimaryName element (that name is the modern Web API metadata property, not classic
+# solution XML). Import failed with "PrimaryName attribute not found" until this flag was added. The
+# reference confirms this directly: it carries no IsPrimaryName element at all, only the DisplayMask
+# flag, in this exact position and casing. 4.2's separate `IsPrimaryName: 'true'` element is therefore
+# dropped here as redundant against platform ground truth; the DisplayMask flag alone is what the
+# reference (and the importer) actually requires.
 attribute:
-  '@PhysicalName': dv_name
+  '@PhysicalName': dv_Name
+  Type: nvarchar
   Name: dv_name
   LogicalName: dv_name
-  Type: nvarchar
   RequiredLevel: required
+  DisplayMask: PrimaryName|ValidForAdvancedFind|ValidForForm|ValidForGrid|RequiredForForm
+  ImeMode: auto
+  ValidForUpdateApi: '1'
+  ValidForReadApi: '1'
+  ValidForCreateApi: '1'
+  IsCustomField: '1'
+  IsAuditEnabled: '1'
+  IsSecured: '0'
+  IntroducedVersion: '1.0'
+  IsCustomizable: '1'
+  IsRenameable: '1'
+  CanModifySearchSettings: '1'
+  CanModifyRequirementLevelSettings: '1'
+  CanModifyAdditionalSettings: '1'
+  SourceType: '0'
+  IsGlobalFilterEnabled: '0'
+  IsSortableEnabled: '0'
+  CanModifyGlobalFilterSettings: '1'
+  CanModifyIsSortableSettings: '1'
+  IsDataSourceSecret: '0'
+  AutoNumberFormat: ''
+  IsSearchable: '1'
+  IsFilterable: '0'
+  IsRetrievable: '1'
+  IsLocalizable: '0'
+  Format: text
   MaxLength: '100'
-  # The classic solution importer detects the primary name via the PrimaryName
-  # flag inside displaymask, NOT via an IsPrimaryName element (that name is the
-  # modern Web API metadata property). Import failed with "PrimaryName
-  # attribute not found" until this flag was added; found live, slice 4.2
-  # grading, 2026-08-13.
-  IsPrimaryName: 'true'
-  DisplayMask: ValidForAdvancedFind|ValidForForm|ValidForGrid|RequiredForForm|PrimaryName
+  Length: '200'
   displaynames:
     displayname:
       '@description': Matter Name
       '@languagecode': '1033'
-  Descriptions: {}
+  Descriptions:
+    Description:
+      '@description': ''
+      '@languagecode': '1033'

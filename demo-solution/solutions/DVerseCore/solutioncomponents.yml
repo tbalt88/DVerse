@@ -5,8 +5,13 @@
 # alone (which is enough for attributes/, which is read with no such filter) silently drops the main
 # form from the packed zip while pac still exits 0. Ground truth: decompiled slice 4.2, confirmed
 # empirically (a pack with only the parent entry produced '<FormXml />' empty in customizations.xml).
+#
+# SLICE 4.2b: entities/dv_matter/SavedQueries added on the same expectation (subfolder paths need
+# their own path entry, per the FormXml lesson above); confirmed empirically by the pack/unpack
+# round-trip in this slice's report rather than re-decompiled independently.
 SolutionComponents:
   Component:
     - '@path': publishers/dversepublisher
     - '@path': entities/dv_matter
     - '@path': entities/dv_matter/FormXml/main
+    - '@path': entities/dv_matter/SavedQueries

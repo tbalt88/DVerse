@@ -4,60 +4,116 @@
 # <forms type="main"> wrapper, and for every file inside reads it with ReadCollectionFromFiles.
 # Because ParentTagForNestedMultiLcids="forms" and ChildTagForNestedMultiLcids="systemform" are set
 # just before the call, AddNestedSubcollection accepts a file whose root is either 'forms' (with
-# nested 'systemform' children extracted) or 'systemform' directly (added as-is); this file uses the
-# simpler 'systemform' root. The resulting shape after pack is
-# FormXml/forms[@type=main]/systemform, the same <FormXml><forms type="..."><systemform> shape
-# documented for legacy (non-yml) unpacked solutions. The systemform/formxml/form internal layout
-# (tabs/columns/sections/rows/cells/control, and the control classid GUIDs) is standard Dataverse
-# main-form XML carried over from general knowledge, not something SolutionPackagerLib parses or
-# validates during pack; it is unverified against a decompiled reader.
+# nested 'systemform' children extracted) or 'systemform' directly (added as-is); this file keeps
+# 4.2's established simpler 'systemform' root per mission ruling 2 ("keep the established @attr and
+# element conventions the packer round-trips").
+#
+# SLICE 4.2b: REPLACES 4.2's invented form. Transcribed structurally from the reference
+# platform-authored unmanaged main form
+# (C:\Users\dmdom\AppData\Local\Temp\probe-clone\DVerseCore\src\Entities\dv_Probe\FormXml\main\
+# {3a9c8b5f-5305-4ec4-a3f4-0fa78635fb36}.xml, READ-ONLY). That comparison proved 4.2's form shape was
+# wrong at the systemform level, not just at the field level: 4.2 had `name: Matter`, `type: '2'`, and
+# lowercase `formactivationstate` -- none of which exist in the reference at all. The reference instead
+# carries IntroducedVersion, FormPresentation, and PascalCase FormActivationState as direct systemform
+# children, no `name` or `type` element (the form's "main" classification comes from the FormXml/main/
+# folder wrapper the reader builds, not from file content), plus LocalizedNames/Descriptions blocks
+# 4.2 never had. Those structural elements, and the tab/section/row/cell attribute shapes
+# (verticallayout, IsUserDefined, showlabel="false"/showbar="false", GUID-braced ids), are copied
+# verbatim from the reference below, with fresh GUIDs per mission ruling 5 (formid and the internal
+# tab/section/cell ids are none of them reused from the probe).
+#
+# FIELD ROWS: the reference form has exactly one custom-attribute row (dv_Name) plus the standard
+# ownerid row; the probe table has no matternumber/openedon analogue. The dv_name and ownerid rows
+# below are a literal transcription (same control classids, same cell/label shape). The
+# dv_matternumber and dv_openedon rows are NOT literally evidenced by the reference -- they are
+# added by repeating the reference's own row/cell/control pattern once per remaining business
+# attribute, matching control classid by type: dv_matternumber reuses dv_name's text-box classid
+# (both are nvarchar); dv_openedon uses classid {5B773807-9FB2-42db-97C3-7A91EFF8ADFF}, the standard
+# Dataverse DateTime control (carried from 4.2's original, unverified-by-reference authoring, since
+# the probe reference has no datetime custom field to mirror). This is the one part of this file that
+# is pattern-extension rather than literal transcription; flagged here and in the slice report.
+#
+# datafieldname casing: the reference's dv_Name control uses datafieldname="dv_Name" (PhysicalName
+# casing), while its ownerid control uses lowercase "ownerid" (LogicalName casing, a system field).
+# Mirrored here: our three custom controls use PhysicalName casing (dv_Name, dv_MatterNumber,
+# dv_OpenedOn); the ownerid control keeps lowercase, matching the reference's own system-field pattern.
 systemform:
-  formid: ea779326-ee1e-428e-8728-04f1a6397971
-  name: Matter
-  type: '2'
-  formactivationstate: '1'
+  formid: 8d5fde37-9293-4b1e-97bb-2691167f3ee0
+  IntroducedVersion: '1.0'
+  FormPresentation: '1'
+  FormActivationState: '1'
+  form:
+    tabs:
+      tab:
+        '@verticallayout': 'true'
+        '@id': '{58DD9B95-BC51-4F57-BDFE-28A3853BEE52}'
+        '@IsUserDefined': '1'
+        labels:
+          label:
+            '@description': General
+            '@languagecode': '1033'
+        columns:
+          column:
+            '@width': '100%'
+            sections:
+              section:
+                '@showlabel': 'false'
+                '@showbar': 'false'
+                '@IsUserDefined': '0'
+                '@id': '{C949F461-933B-4528-896F-9D56D730B197}'
+                labels:
+                  label:
+                    '@description': General
+                    '@languagecode': '1033'
+                rows:
+                  row:
+                    - cell:
+                        '@id': '{040EF0AB-C03F-4F37-9A4C-B87C47DA740E}'
+                        labels:
+                          label:
+                            '@description': ''
+                            '@languagecode': '1033'
+                        control:
+                          '@id': dv_name
+                          '@classid': '{4273EDBD-AC1D-40d3-9FB2-095C621B552D}'
+                          '@datafieldname': dv_Name
+                    - cell:
+                        '@id': '{7FD3466F-2E44-4BD5-9553-79521D920A68}'
+                        labels:
+                          label:
+                            '@description': Matter Number
+                            '@languagecode': '1033'
+                        control:
+                          '@id': dv_matternumber
+                          '@classid': '{4273EDBD-AC1D-40d3-9FB2-095C621B552D}'
+                          '@datafieldname': dv_MatterNumber
+                    - cell:
+                        '@id': '{A5583A68-DD4A-4FAF-ACD9-1288F0FB415D}'
+                        labels:
+                          label:
+                            '@description': Opened On
+                            '@languagecode': '1033'
+                        control:
+                          '@id': dv_openedon
+                          '@classid': '{5B773807-9FB2-42db-97C3-7A91EFF8ADFF}'
+                          '@datafieldname': dv_OpenedOn
+                    - cell:
+                        '@id': '{A5136483-4BB1-44D6-8ED9-7A76862DE2B0}'
+                        labels:
+                          label:
+                            '@description': Owner
+                            '@languagecode': '1033'
+                        control:
+                          '@id': ownerid
+                          '@classid': '{270BD3DB-D9AF-4782-9025-509E298DEC0A}'
+                          '@datafieldname': ownerid
   IsCustomizable: '1'
-  formxml:
-    form:
-      tabs:
-        tab:
-          '@name': tab_general
-          '@id': tab_general
-          '@IsUserDefined': '0'
-          labels:
-            label:
-              '@description': General
-              '@languagecode': '1033'
-          columns:
-            column:
-              '@width': '100%'
-              sections:
-                section:
-                  '@name': section_general
-                  '@id': section_general
-                  '@showlabel': 'true'
-                  '@showbar': 'false'
-                  labels:
-                    label:
-                      '@description': General
-                      '@languagecode': '1033'
-                  rows:
-                    row:
-                      - cell:
-                          '@id': cell_dv_name
-                          control:
-                            '@id': dv_name
-                            '@classid': '{4273EDBD-AC1D-40d3-9FB2-095C621B552D}'
-                            '@datafieldname': dv_name
-                      - cell:
-                          '@id': cell_dv_matternumber
-                          control:
-                            '@id': dv_matternumber
-                            '@classid': '{4273EDBD-AC1D-40d3-9FB2-095C621B552D}'
-                            '@datafieldname': dv_matternumber
-                      - cell:
-                          '@id': cell_dv_openedon
-                          control:
-                            '@id': dv_openedon
-                            '@classid': '{5B773807-9FB2-42db-97C3-7A91EFF8ADFF}'
-                            '@datafieldname': dv_openedon
+  CanBeDeleted: '1'
+  LocalizedNames:
+    LocalizedName:
+      '@description': Information
+      '@languagecode': '1033'
+  Descriptions:
+    Description:
+      '@description': A form for this entity.
+      '@languagecode': '1033'
