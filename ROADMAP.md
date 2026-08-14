@@ -68,6 +68,8 @@ G5 is a candidate for slicing further. It is the only gate that reads two source
 
 ## Wave 4, the Dataverse slice of the demo solution
 
+**CLOSED 2026-08-14** (`docs/wave-4-closing.md`): five golden imports, both refusal pairs (build-time G4, runtime plugin), app + form + registered-and-active plugin all declaratively in source, 159 tests, ledger committed. Lessons 14 to 17 appended.
+
 The thin slice from D13: one table, one form, one plugin, one document-location relationship, gated by the gates that already exist.
 
 | Slice | Deliverable |
