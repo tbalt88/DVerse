@@ -44,7 +44,7 @@ Every gate ships with a fixture it refuses. A gate with no red case is an assert
 
 G8, G9 and G10 were added during wave 1 after reading Microsoft's YAML format reference, which documents three failure modes the platform does not report usefully: a declared component whose source is absent is dropped from the pack while **pack still exits 0**; `solutioncomponents.yml` omitting dependency paths **packs clean and fails at import**; and manifests placed at the folder root cause a fallback to XML and a **misleading error about a missing Customizations.xml**.
 
-**Honest gap.** G8 and G9 address two different files. G9 (built) validates `solutioncomponents.yml`. G8 (not built) would validate `rootcomponents.yml`, which is the file Microsoft's exit-code-0 note actually names. The two overlap in spirit but not in coverage. G8 is outstanding work, not covered by G9.
+**Coverage note.** G8 and G9 address two different files and both are built. G9 validates `solutioncomponents.yml` dependency paths; G8 validates `rootcomponents.yml`, the file Microsoft's exit-code-0 note actually names. The two overlap in spirit but not in coverage, which is why both exist. (An earlier revision of this paragraph recorded G8 as outstanding; that closed during wave 1.)
 
 G4 is the flagship because its violation fails **silently**. Microsoft documents that a non-1:N relationship to a document-location entity causes documents to simply not appear. No error, no import failure, no checker warning. That is precisely the failure class governance exists for, and nothing upstream catches it.
 
