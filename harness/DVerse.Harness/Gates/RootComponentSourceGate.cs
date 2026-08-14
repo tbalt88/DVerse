@@ -91,8 +91,15 @@ public sealed class RootComponentSourceGate : IGate
     private static readonly IReadOnlyDictionary<string, string> TypePathTemplates =
         new Dictionary<string, string>
         {
-            ["1"] = "entities/{0}",     // Entity
-            ["300"] = "canvasapps/{0}"  // CanvasApp
+            ["1"] = "entities/{0}",             // Entity
+            // CanvasApp: the wave-1 template guessed a directory named after the
+            // schemaName; the first REAL canvas component (wave 8 addendum,
+            // Matter Canvas as dv_mattercanvas_791bc) proved the platform's
+            // YAML-format shape is a file, canvasapps/<name>.meta.yml
+            // (decompile: CanvasAppsProcessor registers "$(PrimaryName).meta.xml"
+            // and GetNewFormatFileName swaps to .yml). Lesson 16's class: when a
+            // gate refuses platform-authored output, suspect the gate first.
+            ["300"] = "canvasapps/{0}.meta.yml" // CanvasApp
         };
 
     /// <summary>Friendly names for the numeric ids above, used only in messages.</summary>

@@ -30,3 +30,16 @@ Open backlog, carried honestly: G5 (unblocked, not built), O12 (edit-cycle id st
 4. **8.6 Series content**: via /dex-twin, out of this seat's scope.
 
 Nothing else blocks. The badges go live the moment the repo does.
+
+## Addendum (2026-08-14, post-audit, owner-approved): Matter Canvas made solution-aware
+
+Microsoft's ALM guidance says canvas apps belong in solutions; Matter Canvas was Studio-born outside one. With the owner's approval this was closed after the L3 round, disclosed here as an addendum rather than silently folded into the audited state:
+
+1. Added to DVerseCore via the maker portal (seat write); the platform registered it in Dataverse as `dv_mattercanvas_791bc` (our publisher prefix applied) with canvasappid d47a037c-9a54-4c47-ac27-a0da3f96dc41.
+2. Platform-mirrored the packaging shape (clone, decompile): the YAML source format wants `canvasapps/<name>.meta.yml` plus the msapp EXPLODED as a directory (`<name>_DocumentUri/`) that pack re-zips, plus flat background-image and identity parts. The exploded msapp puts the app's internals under version control.
+3. G8 refused the platform's real shape: its wave-1 CanvasApp template guessed a directory named after the schemaName; corrected to the decompile-confirmed `.meta.yml` file template (lesson 16's class: when a gate refuses platform-authored output, suspect the gate). Fixture updated; suite 253/253.
+4. Golden import #6 (0.6.0.0) with `--activate-plugins`: org confirms the version, the canvas app as a solution component, the plugin still blocking bad input (NOPE-1 refused), the step still active.
+
+The pre-flip audit (`docs/assurance/l3-round-1.md`) ran against the five-import state; this addendum changes the tree after that audit. The change is CI-verified and its claims carry their own receipts above; the audit's verdict (nothing blocks the flip) is not weakened by an addition that strengthens the round-trip claim, but the sequencing is stated here so the record stays honest.
+
+Two representations of one app now ship deliberately: the `.pa.yaml` mirror (for gating and review, G11/G12) and the solution packaging (for import). The `docs/receipts/` inventory and README import table carry the sixth row.

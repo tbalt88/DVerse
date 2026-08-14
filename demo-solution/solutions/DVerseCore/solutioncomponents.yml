@@ -58,3 +58,4 @@ SolutionComponents:
     - '@path': appmodulesitemaps/dv_MatterApp
     - '@path': pluginassemblies
     - '@path': sdkmessageprocessingsteps
+    - '@path': canvasapps

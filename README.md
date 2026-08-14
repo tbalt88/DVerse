@@ -23,7 +23,7 @@ Three components:
 |---|---|---|
 | `plugins/dv-architect/` | `dv-architect` skill, evolved from the seed `d365-architect`, every rule cross-referenced to a gate ID or a burned lesson, laid out to the Microsoft marketplace convention | evolved, wave 6A |
 | `harness/` | Verification gates over declarative artifacts, refuses ungated output | eleven gates live: G1 to G4, G6 to G12 (G12 baseline-activated) |
-| `demo-solution/` | Solution built BY the agent UNDER the harness, with receipts | dv_matter table, form, registered plugin, document-location relationship, app module, canvas app; five golden imports |
+| `demo-solution/` | Solution built BY the agent UNDER the harness, with receipts | dv_matter table, form, registered plugin, document-location relationship, app module, solution-aware canvas app; six golden imports |
 
 ## Where this sits in the Microsoft ecosystem
 
@@ -143,9 +143,9 @@ Both pack clean with `pac solution pack` at exit 0. Dataverse's own documentatio
 - **Offline** (`gates-offline.yml`): ubuntu-latest, zero credentials, runs on every push to main and every pull request including forks. Runs the full test suite and a CLI exit-code smoke test proving the 0/1/2 contract actually behaves that way in CI, not just locally.
 - **Online** (`gates-online.yml`): windows-latest (net462 plugin projects need a .NET Framework runtime, which the Linux runner does not have), path-filtered to `demo-solution/**`, `harness/**`, and its own workflow file. Authenticates to the tenant via OIDC federation, no stored secret. Runs the full gate set including G7 against the real environment and uploads the ledger and checker output as artifacts.
 
-## Five golden imports
+## Six golden imports
 
-Reality checked against a real Dataverse environment five times, not just against the packer:
+Reality checked against a real Dataverse environment six times, not just against the packer:
 
 | Version | What | Receipt |
 |---|---|---|
@@ -154,6 +154,7 @@ Reality checked against a real Dataverse environment five times, not just agains
 | 0.3.0.0 | Document-location relationship, imported first try after the refusal pair was proven offline | [`docs/receipts/wave4-3-refusal-pair.md`](docs/receipts/wave4-3-refusal-pair.md) |
 | 0.4.0.0 | App module and sitemap in source; app still renders all four form fields after the overwrite | [`docs/receipts/wave4-6-form-fixed-all-fields.png`](docs/receipts/wave4-6-form-fixed-all-fields.png) |
 | 0.5.0.0 | Declarative plugin registration (canonical shapes via platform-mirror); step ACTIVE only with `--activate-plugins`, proven by a negative-input probe that caught the disabled-step escape | [`docs/receipts/wave4-4-plugin-blocks-invalid-number.png`](docs/receipts/wave4-4-plugin-blocks-invalid-number.png) |
+| 0.6.0.0 | Matter Canvas made solution-aware (wave 8 addendum, post-audit): CanvasApp component in source as `canvasapps/dv_mattercanvas_791bc.meta.yml` with the msapp EXPLODED as a directory the packer re-zips (decompile-confirmed shape); G8's wave-1 directory guess for type 300 refused the platform's real file shape and was corrected, lesson 16's class again; post-import probes confirm plugin active and app registered | `docs/wave-8-closing.md` addendum |
 
 Beyond imports, runtime receipts: SharePoint document upload with the auto-created 1:N document location ([`wave5-3`](docs/receipts/wave5-3-documents-tab-live-upload.png)), and a two-screen canvas app driven through full CRUD against the same table ([`wave5-5`](docs/receipts/wave5-5-canvas-crud-created.png), [`wave5-2`](docs/receipts/wave5-2-canvas-screen2-detail.png)).
 

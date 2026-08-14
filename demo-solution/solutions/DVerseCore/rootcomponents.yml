@@ -46,6 +46,9 @@ RootComponents:
     - '@type': '80'
       '@schemaName': dv_MatterApp
       '@behavior': '0'
+    - '@type': '300'
+      '@schemaName': dv_mattercanvas_791bc
+      '@behavior': '0'
     - '@type': '91'
       '@id': '{5af6f42c-9a97-f111-b8de-70a8a59a66f9}'
       '@schemaName': 'DVerse.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f506971365378cc'

@@ -1,0 +1,156 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  Screen2:
+    Children:
+      - FormViewer1:
+          Control: FormViewer@2.3.4
+          Layout: Vertical
+          Properties:
+            DataSource: |+
+              =Matters
+            Item: |+
+              =Gallery1.Selected
+            Width: |+
+              =900
+            X: |+
+              =40
+            Y: =40
+          Children:
+            - Matter Name_DataCard2:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualView
+                IsLocked: true
+                Properties:
+                  DataField: ="dv_name"
+                  Default: =ThisItem.'Matter Name'
+                  DisplayName: =DataSourceInfo([@Matters],DataSourceInfo.DisplayName,'dv_name')
+                  Required: =true
+                  Width: =300
+                  X: =0
+                  Y: =0
+                Children:
+                  - DataCardKey4:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =App.Theme.Colors.Darker30
+                        Height: =34
+                        Text: =Parent.DisplayName
+                        Width: =Parent.Width - 60
+                        Wrap: =false
+                        X: =30
+                        Y: =10
+                  - DataCardValue3:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldValue
+                      Properties:
+                        AutoHeight: =true
+                        DisplayMode: =Parent.DisplayMode
+                        Height: =27
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Text: =Parent.Default
+                        Width: =Parent.Width - 60
+                        X: =30
+                        Y: =DataCardKey4.Y + DataCardKey4.Height + 5
+            - Matter Number_DataCard2:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualView
+                IsLocked: true
+                Properties:
+                  DataField: ="dv_matternumber"
+                  Default: =ThisItem.'Matter Number'
+                  DisplayName: =DataSourceInfo([@Matters],DataSourceInfo.DisplayName,'dv_matternumber')
+                  Required: =false
+                  Width: =300
+                  X: =1
+                  Y: =0
+                Children:
+                  - DataCardKey5:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =App.Theme.Colors.Darker30
+                        Height: =34
+                        Text: =Parent.DisplayName
+                        Width: =Parent.Width - 60
+                        Wrap: =false
+                        X: =30
+                        Y: =10
+                  - DataCardValue4:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldValue
+                      Properties:
+                        AutoHeight: =true
+                        DisplayMode: =Parent.DisplayMode
+                        Height: =27
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Text: =Parent.Default
+                        Width: =Parent.Width - 60
+                        X: =30
+                        Y: =DataCardKey5.Y + DataCardKey5.Height + 5
+            - Opened On_DataCard2:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualView
+                IsLocked: true
+                Properties:
+                  DataField: ="dv_openedon"
+                  Default: =ThisItem.'Opened On'
+                  DisplayName: =DataSourceInfo([@Matters],DataSourceInfo.DisplayName,'dv_openedon')
+                  Required: =false
+                  Width: =300
+                  X: =2
+                  Y: =0
+                Children:
+                  - DataCardKey6:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =App.Theme.Colors.Darker30
+                        Height: =34
+                        Text: =Parent.DisplayName
+                        Width: =Parent.Width - 60
+                        Wrap: =false
+                        X: =30
+                        Y: =10
+                  - DataCardValue5:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldValue
+                      Properties:
+                        AutoHeight: =true
+                        DisplayMode: =Parent.DisplayMode
+                        Height: =27
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Text: =Parent.Default
+                        Width: =Parent.Width - 60
+                        X: =30
+                        Y: =DataCardKey6.Y + DataCardKey6.Height + 5
+      - Button4:
+          Control: ModernButton@1.0.0
+          Properties:
+            OnSelect: |+
+              =Back()
+            Text: |+
+              ="Back"
+            X: |+
+              =40
+            Y: |+
+              =660

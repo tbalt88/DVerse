@@ -1,0 +1,55 @@
+# AUTHORITY: platform-mirror (wave 8 addendum). Matter Canvas was added to DVerseCore via the maker
+# portal (seat write), then `pac solution clone --name DVerseCore` (read-only) produced the canonical
+# CanvasApp XML this file transcribes verbatim; the clone output is the sole authority for the element
+# set (lesson 15: platform-mirror is mandatory for a component type's first declarative shape).
+#
+# FOLDER AND FILE NAME: decompile-confirmed (ilspycmd, SolutionPackagerLib.dll, pac 2.10.1).
+# ComponentConfigurationCollection registers CanvasApp as ("CanvasApps", "$(PrimaryName).meta.xml");
+# GetConfiguration lowercases MainDirectory for the new format and GetNewFormatFileName swaps the
+# extension to .yml because ".xml" is in the converter's extension set, yielding
+# canvasapps/$(PrimaryName).meta.yml, which is exactly this file.
+#
+# FILE-BACKED PARTS: the msapp, background image, and identity json ride as sibling files in this
+# folder, referenced by the *Uri elements below. The URIs are lowercased to match this repo's on-disk
+# folder (precedent: the PluginAssembly's /pluginassemblies/ part path, wave 4.4 grading); the
+# canonical export used /CanvasApps/ casing.
+#
+# The .pa.yaml SOURCE for this same app lives at canvasapps/MatterCanvas/Src/ (the pac canvas
+# download/unpack mirror, gated by G11). That mirror is for gating and review; THIS file and its
+# sibling parts are what the solution packer ships. Two representations, one app, both committed.
+CanvasApp:
+  Name: dv_mattercanvas_791bc
+  AppVersion: '2026-08-14T05:48:47Z'
+  Status: Ready
+  CreatedByClientVersion: 3.26082.5.0
+  MinClientVersion: 3.26082.5.0
+  Tags: '{"primaryDeviceWidth":"1366","primaryDeviceHeight":"768","supportsPortrait":"true","supportsLandscape":"true","primaryFormFactor":"Tablet","showStatusBar":"false","publisherVersion":"3.26082.5","minimumRequiredApiVersion":"2.2.0","hasComponent":"false","hasUnlockedComponent":"false","isUnifiedRootApp":"false","m365CopilotSettingValue":"0","sienaVersion":"20260814T054847Z-3.26082.5.0"}'
+  IsCdsUpgraded: 0
+  GalleryItemId:
+    '@xsi:nil': 'true'
+  BackgroundColor: 'RGBA(0,176,240,1)'
+  DisplayName: Matter Canvas
+  Description:
+    '@xsi:nil': 'true'
+  CommitMessage:
+    '@xsi:nil': 'true'
+  Publisher:
+    '@xsi:nil': 'true'
+  AuthorizationReferences: '[]'
+  ConnectionReferences: '{}'
+  DatabaseReferences: '{"default.cds":{"databaseDetails":{"referenceType":"Environmental","environmentName":"default.cds","overrideValues":{"status":"NotSpecified","environmentVariableName":""}},"dataSources":{"Matters":{"entitySetName":"dv_matters","logicalName":"dv_matter"}}}}'
+  AppComponents: '[]'
+  AppComponentDependencies: '[]'
+  CanConsumeAppPass: 1
+  CanvasAppType: 0
+  BypassConsent: 0
+  AdminControlBypassConsent: 0
+  EmbeddedApp:
+    '@xsi:nil': 'true'
+  IntroducedVersion: '1.0'
+  CdsDependencies: '{"cdsdependencies":[{"logicalname":"dv_matter","componenttype":1}]}'
+  IsCustomizable: 1
+  BackgroundImageUri: /canvasapps/dv_mattercanvas_791bc_BackgroundImageUri
+  DocumentUri: /canvasapps/dv_mattercanvas_791bc_DocumentUri.msapp
+  AdditionalUris:
+    AdditionalUri: /canvasapps/dv_mattercanvas_791bc_AdditionalUris0_identity.json
