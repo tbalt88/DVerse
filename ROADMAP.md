@@ -142,6 +142,10 @@ This is the most impressive engineering in the project and the least urgent. It 
 - **Multi-vendor models.** Claude only, D12.
 - **GitHub Pro.** Declined; refusal lives in the harness, not in branch protection.
 
+## External assurance (L3) applicability
+
+Owner ruling 2026-08-13: waves 1 and 2 carry no production-worthy, external-facing output, so no external audit round was required for their closes. The requirement arms when output becomes production-worthy: at latest, one full rotated round (report, management response, disposition) must converge BEFORE the wave 8 public flip, and earlier if the demo solution starts serving anything real in wave 5. Until then, wave closes need the closing doc and the seat's internal audit only.
+
 ## Cross-wave obligations
 
 Carried forward until discharged, so they cannot be lost between waves.
