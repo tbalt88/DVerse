@@ -19,7 +19,6 @@ Status as of 2026-08-14:
 | 6 | evolved architect skill | **done** 2026-08-14, `docs/wave-6-closing.md`: plugins/dv-architect, blind eval 20/20 |
 | 7 | structural diff | **done** 2026-08-14, docs/wave-7-closing.md: identity model, diff engine, G12, diff refusal pair |
 | 8 | public flip and receipts | next, awaiting owner greenlight (owner-run scrub) |
-| 8 | public flip and receipts | planned |
 
 The environment turned out to be pay-as-you-go, not a 30 day trial, so the ordering constraint below is historical: there is no expiry clock. Sequencing by dependency stands; urgency by deadline does not.
 
