@@ -1,0 +1,13 @@
+MissingDependencies:
+  MissingDependency:
+    Required:
+      '@type': '1'
+      '@schemaName': 'new_externalentity'
+      '@displayName': 'External Entity'
+      '@parentSchemaName': ''
+      '@parentDisplayName': ''
+      '@solution': 'ExternalSolution, 1.0.0.0'
+    Dependent:
+      '@type': '1'
+      '@schemaName': 'dv_matter'
+      '@displayName': 'Matter'
