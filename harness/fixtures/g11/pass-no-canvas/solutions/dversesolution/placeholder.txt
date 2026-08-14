@@ -1,0 +1,1 @@
+Placeholder so this fixture directory (a solution with no canvasapps/ folder at all) is tracked by git. G11 must Pass here with "no canvas sources" evidence rather than forcing canvas onto a solution that has none.

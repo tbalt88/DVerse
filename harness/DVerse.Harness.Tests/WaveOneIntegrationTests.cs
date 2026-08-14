@@ -46,6 +46,7 @@ public sealed class WaveOneIntegrationTests : IDisposable
         "g4" => new DocumentLocationCardinalityGate(),
         "g9" => new SolutionComponentPathGate(),
         "g10" => new YamlLayoutGate(),
+        "g11" => new CanvasYamlGate(),
         _ => throw new ArgumentOutOfRangeException(nameof(id), id, "Unknown gate fixture family.")
     };
 
@@ -119,6 +120,8 @@ public sealed class WaveOneIntegrationTests : IDisposable
     [InlineData("g10", "pass")]
     [InlineData("g10", "pass-multi")]
     [InlineData("g4", "no-relationships")]
+    [InlineData("g11", "pass")]
+    [InlineData("g11", "pass-no-canvas")]
     public void Every_green_fixture_passes_with_real_evidence(string gateId, string fixtureName)
     {
         var solutionRoot = Path.Combine(FixtureRoot, gateId, fixtureName);
