@@ -6,18 +6,18 @@ Design authority is [`ARCHITECTURE.md`](ARCHITECTURE.md). Wave 1 scope and the r
 
 ## Status
 
-Status as of 2026-08-13:
+Status as of 2026-08-14:
 
 | Wave | Content | State |
 |---|---|---|
 | 0 | recorder, refusal ledger, frozen contract | **done**, `a61f0e5` |
 | 1 | G2, G4, G9, G10 with red fixtures | **done**, `fd76100` |
-| 2 | CLI, CI wiring, tenant, golden import receipt | **done except 2.7.** Offline lane CI-proven (`4a66e48`). G7 checker gate live-verified locally AND in CI; online workflow green with federated OIDC auth, zero secrets (runs 31751910173, 31753552568). 96 tests. Golden import receipt (2.7) remains |
+| 2 | CLI, CI wiring, tenant, golden import receipt | **done.** Offline lane CI-proven (`4a66e48`); online workflow green with federated OIDC, zero secrets; golden import 0.1.0.0 receipted (`docs/receipts/wave2-*`) |
 | 3 | remaining offline gates | **done** 2026-08-13: G1, G3, G6, G8 shipped (145 tests); G5 deferred to wave 4.4+ by ruling, its input shape is unobservable until a real plugin exists. See docs/wave-3-closing.md |
-| 4 | demo solution, Dataverse slice | **4.1 and 4.2 done.** 4.1: shell (`5d9deaa`). 4.2: dv_matter table + form + view IMPORTED to dexevo as 0.2.0.0 after a five-attempt import refinement that produced the platform-mirror method (portal-authored Probe reference, cloned back); G8 @type=1 empirically confirmed; receipts in docs/receipts/. 4.3 to 4.5 next |
-| 5 | canvas app and document management | planned (SharePoint not yet provisioned) |
-| 6 | evolved architect skill | planned |
-| 7 | structural diff | planned |
+| 4 | demo solution, Dataverse slice | **done** 2026-08-14, `docs/wave-4-closing.md`: five golden imports, both refusal pairs, plugin registered and active |
+| 5 | canvas app and document management | **done** 2026-08-14, `docs/wave-5-closing.md`: two-screen CRUD canvas in gated source, G11, SharePoint documents live |
+| 6 | evolved architect skill | **done** 2026-08-14, `docs/wave-6-closing.md`: plugins/dv-architect, blind eval 20/20 |
+| 7 | structural diff | next, awaiting owner greenlight |
 | 8 | public flip and receipts | planned |
 
 The environment turned out to be pay-as-you-go, not a 30 day trial, so the ordering constraint below is historical: there is no expiry clock. Sequencing by dependency stands; urgency by deadline does not.
