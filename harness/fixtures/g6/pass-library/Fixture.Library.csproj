@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Deliberately NOT a test project: no Microsoft.NET.Test.Sdk reference, so
+    IsTestProject is never set by any SDK import and reports empty when
+    queried. This is the fixture for G6's non-test branch (slice G6b): a
+    tiny real class library that must Pass via 'dotnet build', with no
+    VSTest summary expected or required.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

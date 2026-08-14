@@ -4,18 +4,27 @@ using DVerse.Harness.Gates;
 namespace DVerse.Harness.Tests.Gates;
 
 /// <summary>
-/// G6 shells the real <c>dotnet test</c>, so what this gate owns is (1)
-/// parsing its console output into pass/fail/skip counts and skipped test
-/// names, and (2) mapping that parse to a verdict: build failure or any
-/// failed test refuses, a nonzero skip count on an otherwise green project
-/// also refuses (tests that skip are not tests that pass), and everything
-/// else passes. Per the architect ruling for this slice, the parsing and
-/// mapping rules are proven with synthetic output strings
-/// (<see cref="BuildAndTestsGate.ParseDotnetTestOutput"/> and
-/// <see cref="BuildAndTestsGate.BuildVerdict"/>, both pure), while a small
-/// second group of tests runs the REAL dotnet against two tiny fixture
+/// G6 classifies each project first (slice G6b) via
+/// <c>dotnet msbuild -getProperty:IsTestProject</c>, then routes it: test
+/// projects go through <c>dotnet test</c> exactly as before wave G6b, and
+/// non-test projects (a plain library) go through <c>dotnet build</c>, no
+/// VSTest summary expected or required. What this gate owns is (1) parsing
+/// <c>dotnet test</c> console output into pass/fail/skip counts and skipped
+/// test names, (2) classifying a project from restore and property-query
+/// results, and (3) mapping each of those to a verdict: for test projects,
+/// build failure or any failed test refuses, a nonzero skip count on an
+/// otherwise green project also refuses (tests that skip are not tests that
+/// pass), and everything else passes; for non-test projects, a nonzero
+/// build exit refuses and a clean build passes; classification itself
+/// refuses fail-closed on a nonzero exit or unparseable property output.
+/// Per the architect ruling for this slice, all three are proven with
+/// synthetic values (<see cref="BuildAndTestsGate.ParseDotnetTestOutput"/>,
+/// <see cref="BuildAndTestsGate.BuildVerdict"/>,
+/// <see cref="BuildAndTestsGate.ClassifyProject"/>, and
+/// <see cref="BuildAndTestsGate.BuildNonTestVerdict"/>, all pure), while a
+/// small second group of tests runs the REAL dotnet against tiny fixture
 /// projects under <c>harness/fixtures/g6/</c> to prove the whole gate end to
-/// end, including process execution.
+/// end, including process execution and real classification.
 /// </summary>
 public sealed class BuildAndTestsGateTests : IDisposable
 {
@@ -154,6 +163,11 @@ public sealed class BuildAndTestsGateTests : IDisposable
     // Verdict mapping: BuildAndTestsGate.BuildVerdict. Pure, synthetic
     // DotnetTestRun values only.
 
+    // NARROWED at slice G6b: BuildVerdict is now reached only for
+    // test-classified projects (Evaluate routes non-test projects to
+    // BuildNonTestVerdict instead, tested separately below). The rule this
+    // test proves is unchanged, just scoped: for a project already known to
+    // be a test project, no VSTest summary means the run did not complete.
     [Fact]
     public void BuildVerdict_no_summary_refuses_with_tail_in_reason()
     {
@@ -230,10 +244,149 @@ public sealed class BuildAndTestsGateTests : IDisposable
         Assert.Equal(FixedNow, verdict.At);
     }
 
+    // Classification: BuildAndTestsGate.ClassifyProject. Pure, synthetic
+    // ProcessResult values only, no process ever started. Mirrors the
+    // frozen ruling for slice G6b: restore, then the property query;
+    // nonzero exit or unparseable output fails closed.
+
+    [Fact]
+    public void ClassifyProject_property_true_classifies_as_test()
+    {
+        var restore = new ProcessResult(0, "Restored.", "");
+        var property = new ProcessResult(0, "true\r\n", "");
+
+        var result = BuildAndTestsGate.ClassifyProject(restore, property);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal(ProjectKind.Test, result.Kind);
+    }
+
+    [Fact]
+    public void ClassifyProject_property_empty_classifies_as_non_test()
+    {
+        // Observed shape for a plain library with no Test SDK reference:
+        // IsTestProject is never set, so the property query prints nothing
+        // but a blank line.
+        var restore = new ProcessResult(0, "Restored.", "");
+        var property = new ProcessResult(0, "\r\n", "");
+
+        var result = BuildAndTestsGate.ClassifyProject(restore, property);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal(ProjectKind.NonTest, result.Kind);
+    }
+
+    [Fact]
+    public void ClassifyProject_property_explicit_false_classifies_as_non_test()
+    {
+        var restore = new ProcessResult(0, "Restored.", "");
+        var property = new ProcessResult(0, "false\r\n", "");
+
+        var result = BuildAndTestsGate.ClassifyProject(restore, property);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal(ProjectKind.NonTest, result.Kind);
+    }
+
+    [Fact]
+    public void ClassifyProject_is_case_insensitive_and_trims_whitespace()
+    {
+        var restore = new ProcessResult(0, "Restored.", "");
+        var property = new ProcessResult(0, "  TRUE  \r\n", "");
+
+        var result = BuildAndTestsGate.ClassifyProject(restore, property);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal(ProjectKind.Test, result.Kind);
+    }
+
+    [Fact]
+    public void ClassifyProject_restore_failure_refuses_classification_fail_closed()
+    {
+        var restore = new ProcessResult(1, "", "error NU1101: Unable to find package Foo");
+        var property = new ProcessResult(0, "true\r\n", "");
+
+        var result = BuildAndTestsGate.ClassifyProject(restore, property);
+
+        Assert.False(result.Succeeded);
+        Assert.Contains("NU1101", result.Tail);
+    }
+
+    [Fact]
+    public void ClassifyProject_property_query_nonzero_exit_refuses_classification_fail_closed()
+    {
+        var restore = new ProcessResult(0, "Restored.", "");
+        var property = new ProcessResult(1, "", "MSBUILD : error MSB1009: Project file does not exist.");
+
+        var result = BuildAndTestsGate.ClassifyProject(restore, property);
+
+        Assert.False(result.Succeeded);
+        Assert.Contains("MSB1009", result.Tail);
+    }
+
+    [Fact]
+    public void ClassifyProject_unparseable_property_output_refuses_classification_fail_closed()
+    {
+        var restore = new ProcessResult(0, "Restored.", "");
+        var property = new ProcessResult(0, "maybe?\r\n", "");
+
+        var result = BuildAndTestsGate.ClassifyProject(restore, property);
+
+        Assert.False(result.Succeeded);
+        Assert.Contains("maybe?", result.Tail);
+    }
+
+    // Non-test verdict mapping: BuildAndTestsGate.BuildNonTestVerdict. Pure,
+    // synthetic ProcessResult values only.
+
+    [Fact]
+    public void BuildNonTestVerdict_clean_build_passes_with_no_test_project_evidence_and_a_null_reason()
+    {
+        var build = new ProcessResult(0, "Build succeeded.", "");
+
+        var verdict = BuildAndTestsGate.BuildNonTestVerdict(
+            Context(), "demo-solution/plugins/DVerse.Plugins/DVerse.Plugins.csproj", build);
+
+        Assert.Equal(GateOutcome.Pass, verdict.Outcome);
+        Assert.Contains("built clean", verdict.Evidence);
+        Assert.Contains("not a test project", verdict.Evidence);
+        Assert.Contains("IsTestProject false", verdict.Evidence);
+        Assert.Contains("sibling projects", verdict.Evidence);
+        Assert.Null(verdict.Reason);
+    }
+
+    [Fact]
+    public void BuildNonTestVerdict_nonzero_exit_refuses_with_tail_in_reason()
+    {
+        var build = new ProcessResult(1, "BadLib.cs(3,1): error CS1002: ; expected", "");
+
+        var verdict = BuildAndTestsGate.BuildNonTestVerdict(
+            Context(), "demo-solution/plugins/DVerse.Plugins/DVerse.Plugins.csproj", build);
+
+        Assert.Equal(GateOutcome.Refuse, verdict.Outcome);
+        Assert.Contains("dotnet build", verdict.Evidence);
+        Assert.Contains("error CS1002", verdict.Reason);
+    }
+
+    [Fact]
+    public void BuildNonTestVerdict_no_summary_is_never_required_unlike_the_test_path()
+    {
+        // The defining difference from BuildVerdict: an empty/no-summary
+        // output on a clean exit is a Pass here, not a Refuse, because a
+        // non-test project produces no VSTest summary by definition and
+        // none is expected.
+        var build = new ProcessResult(0, "", "");
+
+        var verdict = BuildAndTestsGate.BuildNonTestVerdict(
+            Context(), "harness/fixtures/g6/pass-library/Fixture.Library.csproj", build);
+
+        Assert.Equal(GateOutcome.Pass, verdict.Outcome);
+    }
+
     // Real dotnet, real fixtures. These start an actual process and must
-    // stay proportionate to that cost, hence exactly two tiny fixtures:
-    // one project with a single passing test, one with a single
-    // deliberately failing test.
+    // stay proportionate to that cost, hence exactly three tiny fixtures:
+    // one test project with a single passing test, one test project with a
+    // single deliberately failing test, and one plain non-test library.
 
     [Fact]
     public void Evaluate_real_dotnet_against_the_pass_fixture_yields_a_pass()
@@ -271,6 +424,26 @@ public sealed class BuildAndTestsGateTests : IDisposable
         Assert.Contains("1 test(s) failed", verdict.Reason);
         Assert.Contains("deliberate failure for G6 fixture coverage", verdict.Reason);
         Assert.Contains("This_test_deliberately_fails", verdict.Reason);
+    }
+
+    [Fact]
+    public void Evaluate_real_dotnet_against_the_pass_library_fixture_yields_a_pass_via_build_not_test()
+    {
+        // The whole point of slice G6b: a real, non-test class library with
+        // no Test SDK reference must Pass via classification-then-build,
+        // never Refuse for lacking a VSTest summary it was never going to
+        // produce.
+        var context = ContextFor(Fixture("pass-library"));
+
+        var verdicts = new BuildAndTestsGate().Evaluate(context).ToList();
+
+        var verdict = Assert.Single(verdicts);
+        Assert.Equal(GateOutcome.Pass, verdict.Outcome);
+        Assert.Equal("G6", verdict.GateId);
+        Assert.Contains("Fixture.Library.csproj", verdict.Artifact);
+        Assert.Contains("not a test project", verdict.Evidence);
+        Assert.Contains("IsTestProject false", verdict.Evidence);
+        Assert.Null(verdict.Reason);
     }
 
     [Fact]
