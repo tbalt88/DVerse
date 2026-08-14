@@ -34,7 +34,7 @@ Recorded 2026-08-13 from owner handback.
 
 ## SharePoint (section F)
 
-**Not provisioned yet.** Owner deferred. Needed by wave 4 (document-management footprint), not by G7 or the import receipt. The G4 gate is offline and does not depend on it.
+SharePoint Online confirmed present, 2026-08-13: owner provided the admin center URL `https://dmdllc08-admin.sharepoint.com/` (tenant `dmdllc08.sharepoint.com`). Remaining F steps: pick the site collection (root `https://dmdllc08.sharepoint.com` or a dedicated `/sites/dverse`), enable server-based integration in PPAC pointing at it (F2, F3), record the final site URL here. Per-table document management stays OFF (F6); wave 4.3 enables it declaratively as the gated change. Needed by wave 5 runtime behavior; the G4 gate and the 4.3 declarative work do not depend on it.
 
 ## GitHub repository variables
 
