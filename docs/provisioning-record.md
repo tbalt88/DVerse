@@ -34,7 +34,7 @@ Recorded 2026-08-13 from owner handback.
 
 ## SharePoint (section F)
 
-SharePoint Online confirmed, 2026-08-13. Tenant `dmdllc08.sharepoint.com`, admin center `https://dmdllc08-admin.sharepoint.com/`. **Site collection (owner-designated): `https://dmdllc08.sharepoint.com/sites/DMDLLC`** (existence probe: unauthenticated HEAD returns 302 to login, site resolves). Remaining F step: enable server-based integration in PPAC pointing at that site (F2, F3); the owner clicks it or the seat drives the signed-in browser on an explicit go. Per-table document management stays OFF (F6); wave 4.3 enables it declaratively as the gated change. Needed by wave 5 runtime behavior; G4 and the 4.3 declarative work do not depend on it.
+SharePoint Online confirmed, 2026-08-13. Tenant `dmdllc08.sharepoint.com`, admin center `https://dmdllc08-admin.sharepoint.com/`. **Site collection (owner-designated): `https://dmdllc08.sharepoint.com/sites/DMDLLC`** (existence probe: unauthenticated HEAD returns 302 to login, site resolves). F COMPLETE 2026-08-13: owner enabled server-based integration; verified from inside Dataverse (sharepointsite record "Default Site", absoluteurl matching, isdefault Yes, validationstatus Valid). Per-table document management stays OFF (F6); wave 4.3 enables it declaratively as the gated change. Needed by wave 5 runtime behavior; G4 and the 4.3 declarative work do not depend on it.
 
 Note: the owner's pasted URL carried invisible bidirectional text marks (U+200E) around "DMDLLC"; the recorded URL above is the cleaned form.
 
