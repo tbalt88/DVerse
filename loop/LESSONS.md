@@ -1,0 +1,16 @@
+# Burned lessons
+
+Append-only. One entry per lesson that cost real time. EVERY slice spec includes the line "Read loop/LESSONS.md before writing anything"; every executor reads this file at boot. When you burn a new lesson, the grading seat appends it here in the same merge.
+
+Format: what bites, how it was caught, where the mechanical guard lives (or "spec-only" if none).
+
+1. **Windows-only paths in code or tests bite on the Linux runner.** Hardcoded `C:\`, temp dirs outside the repo root, separator-dependent assertions. Three authors hit this independently. Guard: ubuntu CI plus the no-absolute-path leak-scan test (WaveOneIntegrationTests); use `Path.Combine(Path.GetTempPath(), ...)` and repo-relative artifacts always.
+2. **`pac solution pack` exit 0 does not mean the artifact is in the zip.** Components silently drop when their path is not individually listed in `solutioncomponents.yml`: FormXml subfolders (4.2), entityrelationships (4.3). Guard: G9 for declared paths; for NEW artifact types, verify presence inside the packed customizations.xml before claiming success.
+3. **pack acceptance does not mean import acceptance.** generatedBy must be CrmLive with a version attribute; DisplayMask is PascalCase with the PrimaryName flag; entities need the full platform capability element set. Guard: spec-only plus the golden import step at grading; the seat imports, never the executor.
+4. **Microsoft documentation contradicts Microsoft tooling.** solutioncomponents shape (docs list vs real mapping), the obsolete tutorial permission, form element names that do not exist. Guard: decompile-before-parse (ilspycmd against SolutionPackagerLib) and platform-mirror (portal-author a reference, clone it back) are standing procedure; never author from docs alone.
+5. **A runtime is present only when it has EXECUTED something.** Get-Command resolves Windows Store stubs for python and node. Guard: spec-only; run `--version` and require exit 0.
+6. **Green suites can be structurally blind.** Wave 0's tests passed relative paths so the absolute-path bug could not manifest; unit tests prove the author's expectation, not reality. Guard: integration sweep discovers fixtures from disk; every gate ships a red fixture; mutation-check when strengthening tests (revert the fix, confirm red).
+7. **Do not trust stated baselines; measure them.** Wave 1 manifests said "96 tests" when siblings had already moved the number. Guard: spec-only; every executor verifies the baseline in its own worktree before and after.
+8. **The rendered UI is a verification rung nothing else covers.** The Matter form imported clean, gates green, and rendered with only an Owner field; every lower rung passed. Guard: spec-only today; drive the running app for any UI-bearing deliverable.
+9. **Tests live in a SIBLING project, never nested; no snk files.** The seed repo's two build defects, verified empirically by the 4.4a agent before avoiding them. Guard: G6 discovers and builds every csproj; the layout rule rides in plugin specs.
+10. **dotnet test on a non-test library emits no summary at all.** G6 originally read that as build failure. Guard: G6 classifies via IsTestProject (slice G6b); classification failure refuses.
