@@ -20,7 +20,7 @@ Creating the Dataverse environment starts a 30 day trial life (D16). Do section 
 | A2 | **Power Platform Administrator** or **Global Administrator** role | required to create the environment and the application user |
 | A3 | Permission to create Entra app registrations | some tenants restrict this to admins; check before you get to C |
 | A4 | Microsoft 365 subscription with **SharePoint Online** | required for the document management footprint, section F |
-| A5 | GitHub repo admin on `tbalt88/DVerse-v2` | you have this |
+| A5 | GitHub repo admin on `tbalt88/DVerse` | you have this |
 
 If A3 is blocked by tenant policy, everything in section C stops until it is lifted. Worth checking first because it is the least visible blocker on this list.
 
@@ -89,9 +89,9 @@ Source: [OIDC/FIC tutorial for Power Platform](https://learn.microsoft.com/power
 
 ### Why branch-scoped rather than workflow-scoped
 
-Microsoft's tutorial uses a `repository, workflow` subject claim, producing `repo:tbalt88/DVerse-v2:workflow:<Name>`. That bakes the workflow *name* into the credential, so renaming a workflow silently breaks auth.
+Microsoft's tutorial uses a `repository, workflow` subject claim, producing `repo:tbalt88/DVerse:workflow:<Name>`. That bakes the workflow *name* into the credential, so renaming a workflow silently breaks auth.
 
-**Branch-scoped** (`repo:tbalt88/DVerse-v2:ref:refs/heads/main`) is better for us for a structural reason: it matches the D8b tier split exactly. Only `main` can obtain a token, so a fork or a feature branch **cannot** reach the tenant even if a workflow is modified to try. The offline tier needs no credential at all, so nothing legitimate is blocked.
+**Branch-scoped** (`repo:tbalt88/DVerse:ref:refs/heads/main`) is better for us for a structural reason: it matches the D8b tier split exactly. Only `main` can obtain a token, so a fork or a feature branch **cannot** reach the tenant even if a workflow is modified to try. The offline tier needs no credential at all, so nothing legitimate is blocked.
 
 Environment-scoped credentials with required reviewers would be stronger still, but GitHub environment protection rules are restricted on free private repositories, the same family of limitation as the branch-protection 403 we already hit. Revisit at the public flip in wave 8.
 

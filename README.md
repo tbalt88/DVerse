@@ -1,13 +1,13 @@
-# DVerse v2
+# DVerse
 
 **Governed, pro-code agentic development for Microsoft Dataverse.**
 
 AI agents build Power Platform solutions here, and a verification harness mechanically **refuses** anything that breaks the rules, including the failures the platform itself accepts silently. Every claim in this README has a receipt in this repository.
 
-Part of the DVerse series. Successor to [DVerseClaudeSkills](https://github.com/tbalt88/DVerseClaudeSkills) (d365-architect-v3).
+Second generation of the DVerse series: successor to the archived [DVerseClaudeSkills](https://github.com/tbalt88/DVerseClaudeSkills) seed (d365-architect-v3), rebuilt from the ground up as a governed system.
 
-[![offline-gates](https://github.com/tbalt88/DVerse-v2/actions/workflows/gates-offline.yml/badge.svg)](https://github.com/tbalt88/DVerse-v2/actions/workflows/gates-offline.yml)
-[![online-gates](https://github.com/tbalt88/DVerse-v2/actions/workflows/gates-online.yml/badge.svg)](https://github.com/tbalt88/DVerse-v2/actions/workflows/gates-online.yml)
+[![offline-gates](https://github.com/tbalt88/DVerse/actions/workflows/gates-offline.yml/badge.svg)](https://github.com/tbalt88/DVerse/actions/workflows/gates-offline.yml)
+[![online-gates](https://github.com/tbalt88/DVerse/actions/workflows/gates-online.yml/badge.svg)](https://github.com/tbalt88/DVerse/actions/workflows/gates-online.yml)
 
 > **Status: waves 0 to 8 complete.** Eleven gates run offline and online over a real, imported Dataverse solution, with 253 tests, six golden imports, a running model-driven app with an active plugin, live SharePoint document management, a solution-aware two-screen canvas app in gated source, and a semantic diff engine that refuses silent changes between any two versions of the tree. Externally audited before publication ([`docs/assurance/l3-round-1.md`](docs/assurance/l3-round-1.md)).
 
@@ -15,7 +15,7 @@ Part of the DVerse series. Successor to [DVerseClaudeSkills](https://github.com/
 
 The Power Platform describes everything it builds as **declarative artifacts**: Dataverse solution XML, FormXML, sitemaps, canvas app sources unpacked to `.pa.yaml`. Declarative means diffable. **Diffable means gateable.**
 
-DVerse v2 tests whether that property can carry real governance: instead of a human reviewing what an AI agent built, code-enforced gates run natively against the artifacts and **mechanically refuse** ungated output, with an auditable ledger of every verdict. Everything here is built by Claude models; no other vendor's models are used.
+DVerse tests whether that property can carry real governance: instead of a human reviewing what an AI agent built, code-enforced gates run natively against the artifacts and **mechanically refuse** ungated output, with an auditable ledger of every verdict. Everything here is built by Claude models; no other vendor's models are used.
 
 ```mermaid
 flowchart LR
@@ -91,7 +91,7 @@ Growth has a defined path too: the gate catalogue is a registry, every gate foll
 
 ## Where this sits in the AI SDLC
 
-DVerse v2 is a working implementation of an AI-governed software development lifecycle for one platform. Mapping each AI SDLC stage to what runs here:
+DVerse is a working implementation of an AI-governed software development lifecycle for one platform. Mapping each AI SDLC stage to what runs here:
 
 | AI SDLC stage | DVerse implementation | Enforcement |
 |---|---|---|
