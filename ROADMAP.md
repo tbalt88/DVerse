@@ -100,6 +100,8 @@ The thin slice from D13: one table, one form, one plugin, one document-location 
 
 ## Wave 6, the evolved architect skill
 
+**CLOSED 2026-08-14** (`docs/wave-6-closing.md`): skill evolved at plugins/dv-architect (marketplace layout, 10 gate-cited + 14 lesson-cited rules), blind transfer eval 20/20, scaffold-era duplicate removed, README truth pass.
+
 C1, deliberately late. The skill encodes the rules; the gates enforce them. Writing the skill *after* the gates means every rule it states has already been proven mechanically checkable, rather than the skill asserting rules that turn out to be unenforceable.
 
 | Slice | Deliverable |
