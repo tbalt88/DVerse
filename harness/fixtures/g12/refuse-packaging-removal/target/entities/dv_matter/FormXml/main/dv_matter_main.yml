@@ -1,0 +1,14 @@
+# Slice 7.3 fixture (G12 structural-diff gate). Proof that the FormXml
+# source this fixture's solutioncomponents.yml stopped listing (see
+# ../../solutions/DVerseCore/solutioncomponents.yml) is still physically
+# present on disk under the target tree; that presence is exactly what makes
+# the sibling solutioncomponents.yml pair a refuse, not a pass. Minimal,
+# real-shaped content; not itself part of what G12's packaging-removal check
+# inspects (that check only tests File.Exists/Directory.Exists on the
+# resolved '@path', never this file's own content).
+systemform:
+  formid: 8d5fde37-9293-4b1e-97bb-2691167f3ee0
+  form:
+    tabs:
+      tab:
+        '@id': '{58DD9B95-BC51-4F57-BDFE-28A3853BEE52}'

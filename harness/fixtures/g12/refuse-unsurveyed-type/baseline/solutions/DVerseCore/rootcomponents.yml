@@ -1,0 +1,15 @@
+# Slice 7.3 fixture (G12 structural-diff gate). Red fixture, baseline side:
+# the real dv_matter entry (type 1, surveyed) plus one entry of a component
+# type this project's identity model has never platform-mirror confirmed
+# (type '20', seat ruling 8). Repeated byte-identical in
+# ../../../../../target/... on purpose: the point of this fixture is that
+# even a MATCHED, wholly UNCHANGED entry of an unsurveyed type must still
+# refuse, because the doctrine is "unverifiable", not "different".
+RootComponents:
+  RootComponent:
+    - '@type': '1'
+      '@schemaName': dv_matter
+      '@behavior': '0'
+    - '@type': '20'
+      '@schemaName': dv_customrole
+      '@behavior': '0'

@@ -63,6 +63,22 @@ public sealed class WaveOneIntegrationTests : IDisposable
         {
             var gateId = Path.GetFileName(family);
 
+            // Slice 7.1i added fixtures/diff/ (the element-identity matching layer, no gate
+            // involved). Slice 7.3 added fixtures/g12/ (G12, structural-diff), whose fixtures are
+            // two-tree pairs (baseline/ and target/ subfolders) rather than the single SolutionRoot
+            // every other family here assumes -- G12 gets its own dedicated integration sweep in
+            // StructuralDiffGateTests.cs instead. GateFor only knows single-tree gate ids; skip any
+            // top-level fixtures/ family it does not recognise rather than assuming every one of
+            // them fits this file's single-root loop.
+            try
+            {
+                GateFor(gateId);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                continue;
+            }
+
             foreach (var fixture in Directory
                          .GetDirectories(family, "refuse-*")
                          .OrderBy(d => d, StringComparer.Ordinal))
