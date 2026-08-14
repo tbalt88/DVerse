@@ -55,3 +55,16 @@ Set 2026-08-13 via `gh variable set` (variables, not secrets; nothing here is se
 3. E: application user with System Administrator (owner)
 4. I: device-code `pac auth` verification (owner signs in, seat verifies)
 5. ~~PPAC expiry date confirmation~~ resolved: pay-as-you-go, no expiry
+
+## Wave 5.3 addendum (2026-08-14)
+
+The original document management configuration predated dv_matter, so the
+site had libraries only for Account/Contact. The seat created the
+`dv_matter` document library on https://dmdllc08.sharepoint.com/sites/DMDLLC
+via the SharePoint REST API (list id 8f17643d-504b-4ac1-9ea0-c3b23d808fb5,
+BaseTemplate 101), after which the Matter App's Documents tab uploaded
+M-0001-engagement-letter.txt and Dataverse auto-created the per-record
+folder and SharePointDocumentLocation (d68188be-9e97-f111-b8de-70a8a59a66f9,
+relativeurl "First DVerse Matter_06B40B388F97F111B8DC70A8A59A66F9"),
+regarding the First DVerse Matter record: the live 1:N behavior gate G4
+exists to protect. Receipt: docs/receipts/wave5-3-documents-tab-live-upload.png
