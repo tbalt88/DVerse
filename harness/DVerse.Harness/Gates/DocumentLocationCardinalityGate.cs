@@ -1,5 +1,5 @@
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Core;
+using YamlDotNet.RepresentationModel;
 
 namespace DVerse.Harness.Gates;
 
@@ -24,13 +24,47 @@ namespace DVerse.Harness.Gates;
 /// That combination, legal to author and invisible when wrong, is precisely
 /// what a governance gate is for.
 /// </para>
+/// <para>
+/// REALIGNMENT, slice 4.3, following the G9 precedent exactly: the wave 1
+/// shape below was an inferred YAML mapping (<c>Name:</c> as a plain child,
+/// <c>RelationshipType:</c>) never checked against a real pac reader. Decompiling
+/// pac 2.10.1's SolutionPackagerLib.dll with ilspycmd
+/// (<c>Microsoft.Crm.Tools.SolutionPackager.EntityRelationshipProcessor</c> and
+/// its base <c>ComponentProcessorBase</c>) shows the real reader:
+/// <c>ReadFromFilesInNewFormat</c> walks every file under
+/// <c>entityrelationships/</c>, loads each one via <c>XUtils.LoadElement</c> ->
+/// <c>Helper.ConvertYamlToXml</c> (the same YAML-to-XML round trip behind every
+/// other <c>@attr</c> file in this repo, and the one G9 first identified), and
+/// appends the file's root element as-is under an <c>&lt;EntityRelationships&gt;</c>
+/// collection. <c>ComponentProcessorBase.CreateComponent</c> then requires
+/// <c>Helper.GetAttributeValue(element, "Name", throwIfNull: true)</c>: the
+/// relationship's name is an XML ATTRIBUTE on the root <c>EntityRelationship</c>
+/// element, not a child element. This is confirmed directly by the
+/// platform-authored reference embedded in the slice 4.3 spec
+/// (<c>&lt;EntityRelationship Name="contact_SharePointDocumentLocations"&gt;</c>),
+/// and by an empirical pack round trip run this slice (see
+/// docs/receipts/wave4-3-refusal-pair.md): a file with <c>Name</c> as a child
+/// element produces a component pac's own writer never emits.
+/// </para>
+/// <para>
+/// This gate therefore parses only the pac-verified shape, the same low-level
+/// representation-model technique G9, G8, and G3 already use for every other
+/// <c>@attr</c>-keyed file in this repo, rather than a POCO mapping that cannot
+/// see the "@Name" attribute distinctly from a same-named child element. The
+/// SEMANTICS are unchanged from wave 1: an entity-to-SharePointDocumentLocation
+/// (or SharePointSite) relationship must be one-to-many with the document table
+/// as the REFERENCING (many) side; anything else refuses, naming the silent
+/// empty-Documents-tab symptom. This pin is tied to pac 2.10.1's observed
+/// behaviour and may need revisiting if a future pac release changes its parser.
+/// </para>
 /// </summary>
 public sealed class DocumentLocationCardinalityGate : IGate
 {
     /// <summary>
     /// The Dataverse document-location table. Comparison is case-insensitive
     /// because logical names are lowercase by convention but schema names are
-    /// not, and both appear in relationship metadata.
+    /// not (the platform-authored reference uses "SharePointDocumentLocation"),
+    /// and both appear in relationship metadata.
     /// </summary>
     private const string DocumentLocationEntity = "sharepointdocumentlocation";
 
@@ -92,7 +126,7 @@ public sealed class DocumentLocationCardinalityGate : IGate
                 GateOutcome.Refuse,
                 relative,
                 $"Inspected relationship '{relationship.Name}': type "
-                + $"{relationship.RelationshipType ?? "(unspecified)"}, referencing "
+                + $"{relationship.EntityRelationshipType ?? "(unspecified)"}, referencing "
                 + $"'{relationship.ReferencingEntityName ?? "(none)"}', referenced "
                 + $"'{relationship.ReferencedEntityName ?? "(none)"}'.",
                 problem);
@@ -115,7 +149,7 @@ public sealed class DocumentLocationCardinalityGate : IGate
     /// </summary>
     private static string? Diagnose(RelationshipModel r)
     {
-        var type = r.RelationshipType?.Replace(" ", string.Empty) ?? string.Empty;
+        var type = r.EntityRelationshipType?.Replace(" ", string.Empty) ?? string.Empty;
 
         if (type.Equals("ManyToMany", StringComparison.OrdinalIgnoreCase))
         {
@@ -138,6 +172,13 @@ public sealed class DocumentLocationCardinalityGate : IGate
                  + "entity). As authored, the Documents tab will be silently empty.";
         }
 
+        // Not empirically observed from a real pac writer (Dataverse's own
+        // EntityRelationshipType enum carries only OneToMany and ManyToMany; a
+        // many-to-one authoring shows up as the inverted OneToMany case above),
+        // but Microsoft's own documentation names "many-to-one" as an authorable
+        // failure mode in its own right. Kept as a defensive second check so an
+        // explicitly-authored ManyToOne value is still caught rather than
+        // silently falling through an unrecognised type.
         if (type.Equals("ManyToOne", StringComparison.OrdinalIgnoreCase)
             && IsDocumentTable(referencing) is false)
         {
@@ -156,26 +197,61 @@ public sealed class DocumentLocationCardinalityGate : IGate
         && (name.Equals(DocumentLocationEntity, StringComparison.OrdinalIgnoreCase)
             || name.Equals(DocumentSiteEntity, StringComparison.OrdinalIgnoreCase));
 
+    /// <summary>
+    /// Parses one entityrelationships/*.yml file with the low-level
+    /// representation model rather than a POCO mapping, so the pac-verified
+    /// '@Name' ATTRIBUTE can be told apart from a same-named child element,
+    /// the same technique G9, G8, and G3 use for every other '@attr'-keyed
+    /// file in this repo. A malformed document (bad YAML syntax, or no
+    /// EntityRelationship mapping at all) throws rather than returning a
+    /// half-populated model: GateRunner converts that into a Refuse, so
+    /// failing closed here is correct, not merely convenient.
+    /// </summary>
     private static RelationshipModel Parse(string file, string relative)
     {
-        var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(PascalCaseNamingConvention.Instance)
-            .IgnoreUnmatchedProperties()
-            .Build();
+        using var reader = new StreamReader(file);
+        var yamlStream = new YamlStream();
+        yamlStream.Load(reader);
 
-        var text = File.ReadAllText(file);
+        if (yamlStream.Documents.Count == 0)
+            throw new InvalidDataException($"{relative}: empty relationship document.");
 
-        // A malformed relationship file is a gate defect surfaced as an
-        // exception, which GateRunner converts into a Refuse. Failing closed is
-        // correct: an unparseable relationship is exactly the case where we
-        // cannot claim the rule holds.
-        var doc = deserializer.Deserialize<RelationshipDocument>(text)
-            ?? throw new InvalidDataException($"{relative}: empty relationship document.");
+        var root = yamlStream.Documents[0].RootNode;
 
-        return doc.EntityRelationship
-            ?? throw new InvalidDataException(
-                $"{relative}: no EntityRelationship node found.");
+        if (root is not YamlMappingNode rootMapping ||
+            !TryGetMappingValue(rootMapping, "EntityRelationship", out var relationshipNode) ||
+            relationshipNode is not YamlMappingNode relationshipMapping)
+        {
+            throw new InvalidDataException(
+                $"{relative}: no EntityRelationship mapping found.");
+        }
+
+        return new RelationshipModel(
+            Name: TryGetScalar(relationshipMapping, "@Name"),
+            EntityRelationshipType: TryGetScalar(relationshipMapping, "EntityRelationshipType"),
+            ReferencingEntityName: TryGetScalar(relationshipMapping, "ReferencingEntityName"),
+            ReferencedEntityName: TryGetScalar(relationshipMapping, "ReferencedEntityName"));
     }
+
+    private static bool TryGetMappingValue(YamlMappingNode mapping, string key, out YamlNode? value)
+    {
+        foreach (var child in mapping.Children)
+        {
+            if (child.Key is YamlScalarNode scalarKey && scalarKey.Value == key)
+            {
+                value = child.Value;
+                return true;
+            }
+        }
+
+        value = null;
+        return false;
+    }
+
+    private static string? TryGetScalar(YamlMappingNode mapping, string key) =>
+        TryGetMappingValue(mapping, key, out var value) && value is YamlScalarNode scalar
+            ? scalar.Value
+            : null;
 
     /// <summary>
     /// Repo-relative form of an absolute path, per the frozen rule that every
@@ -206,26 +282,15 @@ public sealed class DocumentLocationCardinalityGate : IGate
             Stage = context.Stage
         };
 
-    // Serialization shape.
-    //
-    // HONEST LIMIT, must be resolved in wave 2: this shape is INFERRED from the
-    // documented YAML source-control format, not observed from a real
-    // `pac solution clone`. No Dataverse tenant exists yet, so no genuine
-    // unpacked solution has been seen. The RULE is grounded in Microsoft's
-    // documentation and is correct; the exact YAML node names must be confirmed
-    // against real clone output when the trial environment is created, and this
-    // parser adjusted if they differ. Tracked as a wave 2 obligation.
-
-    private sealed class RelationshipDocument
-    {
-        public RelationshipModel? EntityRelationship { get; set; }
-    }
-
-    private sealed class RelationshipModel
-    {
-        public string? Name { get; set; }
-        public string? RelationshipType { get; set; }
-        public string? ReferencingEntityName { get; set; }
-        public string? ReferencedEntityName { get; set; }
-    }
+    /// <summary>
+    /// Serialization shape, pac-verified this slice (see the class-level
+    /// REALIGNMENT remarks): '@Name' is the XML attribute pac's own
+    /// CreateComponent requires; every other field is a plain child element,
+    /// matching the platform-authored reference's element names exactly.
+    /// </summary>
+    private sealed record RelationshipModel(
+        string? Name,
+        string? EntityRelationshipType,
+        string? ReferencingEntityName,
+        string? ReferencedEntityName);
 }

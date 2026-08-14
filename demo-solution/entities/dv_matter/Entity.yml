@@ -55,7 +55,7 @@ Entity:
       AutoRouteToOwnerQueue: '0'
       IsConnectionsEnabled: '0'
       EntityColor: ''
-      IsDocumentManagementEnabled: '0'
+      IsDocumentManagementEnabled: '1'
       AutoCreateAccessTeams: '0'
       IsOneNoteIntegrationEnabled: '0'
       IsKnowledgeManagementEnabled: '0'
