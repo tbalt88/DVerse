@@ -9,9 +9,18 @@
 # SLICE 4.2b: entities/dv_matter/SavedQueries added on the same expectation (subfolder paths need
 # their own path entry, per the FormXml lesson above); confirmed empirically by the pack/unpack
 # round-trip in this slice's report rather than re-decompiled independently.
+#
+# SLICE 4.3: entityrelationships added on the same expectation, but for a different reason than
+# FormXml/SavedQueries. Decompiling EntityRelationshipProcessor.ReadFromFilesInNewFormat (slice 4.3)
+# shows it walks only the entries of context.SolutionInformation.SolutionComponentFiles (this file's
+# resolved '@path' values) that are directories at or under entityrelationships/; without a matching
+# entry here the folder is never read at all. Confirmed empirically: packing with this entry absent
+# produced '<EntityRelationships />' empty in customizations.xml at exit 0, the same silent-omission
+# shape G9 documents for solutioncomponents.yml generally. See docs/receipts/wave4-3-refusal-pair.md.
 SolutionComponents:
   Component:
     - '@path': publishers/dversepublisher
     - '@path': entities/dv_matter
     - '@path': entities/dv_matter/FormXml/main
     - '@path': entities/dv_matter/SavedQueries
+    - '@path': entityrelationships

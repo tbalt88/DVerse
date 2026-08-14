@@ -1,0 +1,50 @@
+# GROUND TRUTH (slice 4.3, ilspycmd against pac 2.10.1's SolutionPackagerLib.dll):
+# EntityRelationshipProcessor.ReadFromFilesInNewFormat reads every file under entityrelationships/
+# via ReadCollectionFromFolder, which loads each file (XUtils.LoadElement -> Helper.ConvertYamlToXml,
+# the same YAML-to-XML conversion behind every other '@attr' file in this repo) and appends its root
+# element as-is under the <EntityRelationships> collection (AddComponentElement ->
+# XElement.AddAndLiftNamespace). ComponentProcessorBase.CreateComponent then requires
+# Helper.GetAttributeValue(element, "Name", throwIfNull: true): the relationship's Name is read as an
+# XML ATTRIBUTE on the root EntityRelationship element, not a child element. This is the one shape
+# error the wave 1 inferred fixtures got wrong (they carried Name as a plain child), confirmed against
+# the platform-authored reference below, which also names it as an XML attribute
+# (<EntityRelationship Name="contact_SharePointDocumentLocations">).
+#
+# HONEST FINDING, the G9 failure class recurring: ReadFromFilesInNewFormat additionally filters
+# context.SolutionInformation.SolutionComponentFiles (the resolved @path entries from
+# solutions/*/solutioncomponents.yml) for directories at or under entityrelationships/, and reads
+# ONLY those. An entityrelationships/ folder with no matching solutioncomponents.yml entry is walked
+# by nothing: pack exits 0 and customizations.xml simply has no <EntityRelationships> content, exactly
+# the silent-omission shape G9 documented for solutioncomponents.yml generally. Proven empirically this
+# slice by packing once without the entry (relationship absent from the zip) and once with it
+# (relationship present); see solutioncomponents.yml and docs/receipts/wave4-3-refusal-pair.md.
+#
+# Every element below the '@Name' attribute is copied verbatim from the platform-authored reference
+# (the stock contact -> SharePointDocumentLocation relationship, cloned from the live org to
+# C:\Users\dmdom\AppData\Local\Temp\account-ref2\DVerseCore\src\Other\Relationships\Contact.xml,
+# READ-ONLY, embedded in the slice 4.3 spec), including the full cascade block and the exact
+# RelationshipDescription/Descriptions/Description text, with two substitutions per mission ruling 1:
+# the relationship Name and ReferencedEntityName swapped from Contact to dv_Matter.
+# ReferencingEntityName keeps the reference's schema-name casing (SharePointDocumentLocation),
+# matching the same PhysicalName-style casing convention already used for Entity.yml and every
+# attribute file in this solution.
+EntityRelationship:
+  '@Name': dv_matter_SharePointDocumentLocations
+  EntityRelationshipType: OneToMany
+  IsCustomizable: '1'
+  IntroducedVersion: '1.0'
+  IsHierarchical: '0'
+  ReferencingEntityName: SharePointDocumentLocation
+  ReferencedEntityName: dv_Matter
+  CascadeAssign: Cascade
+  CascadeDelete: Cascade
+  CascadeArchive: NoCascade
+  CascadeReparent: Cascade
+  CascadeShare: Cascade
+  CascadeUnshare: Cascade
+  ReferencingAttributeName: RegardingObjectId
+  RelationshipDescription:
+    Descriptions:
+      Description:
+        '@description': Unique identifier of the object with which the SharePoint document location record is associated.
+        '@languagecode': '1033'

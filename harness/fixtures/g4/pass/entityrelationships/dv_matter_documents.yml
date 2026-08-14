@@ -1,5 +1,5 @@
 EntityRelationship:
-  Name: dv_matter_SharePointDocumentLocations
-  RelationshipType: OneToMany
+  '@Name': dv_matter_SharePointDocumentLocations
+  EntityRelationshipType: OneToMany
   ReferencingEntityName: sharepointdocumentlocation
   ReferencedEntityName: dv_matter

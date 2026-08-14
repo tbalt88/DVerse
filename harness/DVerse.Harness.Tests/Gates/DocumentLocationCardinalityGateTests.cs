@@ -7,6 +7,15 @@ namespace DVerse.Harness.Tests.Gates;
 /// G4 is the flagship gate, so its red cases matter more than its green one.
 /// Each refusal below corresponds to a configuration Dataverse accepts without
 /// complaint and then silently fails to honour.
+/// <para>
+/// REALIGNED, slice 4.3: fixtures now use the pac-verified shape ('@Name' as
+/// an XML attribute, 'EntityRelationshipType' instead of the wave 1 guess
+/// 'RelationshipType'), confirmed by decompiling pac 2.10.1's
+/// EntityRelationshipProcessor and by an empirical pack round trip (see the
+/// gate's class-level remarks and docs/receipts/wave4-3-refusal-pair.md).
+/// Every assertion below is unchanged in intent from wave 1: same fixture
+/// names, same semantics, only the YAML on disk moved to the real shape.
+/// </para>
 /// </summary>
 public sealed class DocumentLocationCardinalityGateTests
 {
@@ -92,6 +101,13 @@ public sealed class DocumentLocationCardinalityGateTests
         Assert.Equal(
             "refuse-inverted/entityrelationships/dv_matter_documents.yml",
             verdict.Artifact);
+
+        // Pins the slice 4.3 realignment itself: the fixture's relationship
+        // name lives on an XML ATTRIBUTE ('@Name': ...), not a child element.
+        // If the parser regressed to reading a same-named child instead, this
+        // would come back empty rather than the fixture's actual name.
+        Assert.Contains(
+            "dv_matter_SharePointDocumentLocations", verdict.Evidence);
     }
 
     [Fact]
