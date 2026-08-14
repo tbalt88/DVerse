@@ -307,3 +307,18 @@ missingdependencies}.yml`, `publishers/dversepublisher/publisher.yml`,
 Studio-authoring history referenced in section 2. Plugin C# source
 (`plugins/DVerse.Plugins/*.cs`, `.csproj`, `.snk`) is compiled source, not a
 declarative solution artifact, and is out of this survey's scope.
+
+## Seat ratification (2026-08-14)
+
+The model above is RATIFIED with the following rulings on the open questions, by number:
+
+1. Read-stability is adopted as the working assumption. Edit-and-republish stability is NOT yet proven; standing obligation O12: on the next real form edit, re-clone and verify id stability across the edit BEFORE trusting diff verdicts that span it. No dedicated org write just to test this now.
+2. FormXml column/row positional-with-warning is ratified. Generalization to multi-column forms is obligation O13, to be closed by the first real multi-column form this project authors.
+3. Control identity via bound-attribute-LogicalName is ratified for field-bound controls. Any control class not yet surveyed (subgrid, quick view, web resource, iframe) must produce an unknown-class WARNING verdict, never a silent positional match.
+4. Canvas DataCard MetadataKey is NOT an identity key. It may appear in changed-verdict detail as advisory context only.
+5. Canvas rename = delete + add is ratified as matching the platform's own semantics. Obligation O14: a live Studio rename-and-remirror experiment (seat, cheap) verifies before the canvas diff ships as trusted.
+6. Wave 7 diffs are INTRA-environment only. AppModuleRoleMaps role GUIDs across environments are out of scope; a cross-env diff must emit an environment-specific-id warning, not a match and not a silent removal.
+7. Ratified: packaging-manifest changes (solutioncomponents paths, and rootcomponents entries when the underlying component is unchanged) are their own verdict class, "packaging changed", distinct from component add/remove/change.
+8. The dual RootComponents rule (id if present, else type+schemaName) is the DEFAULT for known types. Any component type's FIRST appearance in a diff input that this model has not surveyed triggers a per-type platform-mirror confirmation before its verdicts are trusted (lessons 15 and 16 precedent). The diff engine must surface "unsurveyed type" explicitly.
+
+Obligations opened: O12 (edit-cycle id stability), O13 (multi-column form generalization), O14 (canvas rename experiment).
