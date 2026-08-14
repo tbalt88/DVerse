@@ -1,0 +1,6 @@
+RootComponents:
+  RootComponent:
+    - '@type': '1'
+      '@schemaName': dv_ghost_one
+    - '@type': '1'
+      '@schemaName': dv_ghost_two

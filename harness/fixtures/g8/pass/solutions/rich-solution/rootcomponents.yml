@@ -1,0 +1,8 @@
+RootComponents:
+  RootComponent:
+    - '@type': '1'
+      '@schemaName': dv_matter
+    - '@type': '300'
+      '@schemaName': dv_matterapp
+    - '@type': '20'
+      '@schemaName': dv_customrole
