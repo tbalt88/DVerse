@@ -31,14 +31,14 @@ Every gate ships with a fixture it refuses. A gate with no red case is an assert
 
 | Gate | Asserts | Tier | Novel? | Built |
 |---|---|---|---|---|
-| G1 well-formedness | artifacts parse, match schema | offline | no, table stakes | not yet |
+| G1 well-formedness | artifacts parse, match schema | offline | no, table stakes | **wave 3** |
 | G2 publisher prefix | `CustomizationPrefix: dv`, entity dirs `dv_` prefixed | offline | no, trivial | **wave 1** |
-| G3 dependency integrity | no dangling refs; `MissingDependencies` honest | offline | yes | not yet |
+| G3 dependency integrity | no dangling refs; `MissingDependencies` honest | offline | yes | **wave 3** |
 | G4 document-location cardinality | entity to `SharePointDocumentLocation` is 1:N, never N:1 or N:N | offline | **yes, flagship** | **wave 1** |
-| G5 plugin registration sanity | stage, mode, `FilteringAttributes` match the code | offline | yes | not yet |
-| G6 build and unit tests | plugins compile, xUnit suite green | offline | no, inherited | not yet |
-| G7 Power Apps Checker | Microsoft's ruleset | **online** | no, composed | wave 2 |
-| G8 rootcomponent source presence | every `rootcomponents.yml` declaration has source on disk | offline | yes, silent failure | **NOT BUILT, see gap** |
+| G5 plugin registration sanity | stage, mode, `FilteringAttributes` match the code | offline | yes | **deferred, wave 4.4+ by ruling (input shape unobservable until a real plugin existed)** |
+| G6 build and unit tests | plugins compile, xUnit suite green | offline | no, inherited | **wave 3** |
+| G7 Power Apps Checker | Microsoft's ruleset | **online** | no, composed | **wave 2** |
+| G8 rootcomponent source presence | every `rootcomponents.yml` declaration has source on disk | offline | yes, silent failure | **wave 3** |
 | G9 solution component paths | every `solutioncomponents.yml` `Path:` resolves on disk | offline | yes, silent failure | **wave 1** |
 | G10 YAML layout conformance | manifests under `solutions/<name>/`, not at root | offline | yes, misleading error | **wave 1** |
 
