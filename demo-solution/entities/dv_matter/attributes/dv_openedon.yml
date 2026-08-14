@@ -1,15 +1,62 @@
 # See dv_name.yml in this folder for the ground truth citation covering how
 # EntityProcessor.ReadEntityDirectory reads every file in this folder (unchanged here).
 # Custom datetime attribute per mission ruling: dv_openedon.
+#
+# SLICE 4.2b: no reference attribute is named dv_openedon; the reference has no custom datetime field
+# at all. Per mission ruling 1 ("dv_openedon takes the datetime shape from the reference's
+# createdon-class attributes but with IsCustomField 1 and our labels (Format DateOnly)"), this file
+# takes the reference's system `createdon` attribute (a datetime-class attribute; ImeMode inactive,
+# ValidForUpdateApi 0, ValidForCreateApi 0, IsAuditEnabled 0, Behavior 1, Format datetime) as its exact
+# template, changing ONLY the two elements the ruling names (IsCustomField 0->1, Format ->DateOnly) plus
+# our identity/labels. Every other element, INCLUDING ValidForUpdateApi/ValidForCreateApi staying 0, is
+# carried over verbatim per the ruling's literal wording ("but with X and Y") rather than corrected by
+# judgment. FLAG: this is a real inconsistency worth the seat's attention -- as authored, dv_openedon
+# is IsCustomField=1 (a genuine custom column) but ValidForCreateApi=0/ValidForUpdateApi=0 (mirrored
+# from createdon, a system-computed field), meaning the literal mirrored shape would not be settable
+# through the standard create/update API even though it is meant to be user-entered. Not corrected here
+# because the ruling names only IsCustomField and Format as deltas; surfaced for review instead of
+# silently overridden. Format is set to the literal string "DateOnly" per the ruling, though the
+# reference's own datetime-class attributes use "datetime" or "date", not "DateOnly" -- also flagged,
+# not corrected, since the ruling states the value explicitly.
 attribute:
-  '@PhysicalName': dv_openedon
+  '@PhysicalName': dv_OpenedOn
+  Type: datetime
   Name: dv_openedon
   LogicalName: dv_openedon
-  Type: datetime
   RequiredLevel: none
+  DisplayMask: ValidForAdvancedFind|ValidForForm|ValidForGrid
+  ImeMode: inactive
+  ValidForUpdateApi: '0'
+  ValidForReadApi: '1'
+  ValidForCreateApi: '0'
+  IsCustomField: '1'
+  IsAuditEnabled: '0'
+  IsSecured: '0'
+  IntroducedVersion: '1.0'
+  IsCustomizable: '1'
+  IsRenameable: '1'
+  CanModifySearchSettings: '1'
+  CanModifyRequirementLevelSettings: '1'
+  CanModifyAdditionalSettings: '1'
+  SourceType: '0'
+  IsGlobalFilterEnabled: '0'
+  IsSortableEnabled: '0'
+  CanModifyGlobalFilterSettings: '1'
+  CanModifyIsSortableSettings: '1'
+  IsDataSourceSecret: '0'
+  AutoNumberFormat: ''
+  IsSearchable: '0'
+  IsFilterable: '1'
+  IsRetrievable: '1'
+  IsLocalizable: '0'
   Format: DateOnly
+  CanChangeDateTimeBehavior: '0'
+  Behavior: '1'
   displaynames:
     displayname:
       '@description': Opened On
       '@languagecode': '1033'
-  Descriptions: {}
+  Descriptions:
+    Description:
+      '@description': ''
+      '@languagecode': '1033'

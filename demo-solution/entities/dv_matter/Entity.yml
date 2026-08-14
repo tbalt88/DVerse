@@ -10,16 +10,30 @@
 # RibbonDiffXml are added by the same method as fresh empty elements ('xElement.Add(new
 # XElement("FormXml"))' etc.) and must NOT be declared in this file or the reader would end up with
 # duplicate elements alongside the ones it adds itself.
-# Entity labels below were added during live import refinement (slice 4.2
-# grading): the importer creates the entity and demands its display labels,
-# failing with "Entity Display Collection Name ... LocalizedCollectionName ...
-# not specified" when the plural label is absent. Each element here answers a
-# specific import error, not a guess.
+#
+# SLICE 4.2b: rebuilt against the PLATFORM-AUTHORED reference (a real `Probe` table created via the
+# maker portal, cloned back with `pac solution clone` to
+# C:\Users\dmdom\AppData\Local\Temp\probe-clone\DVerseCore\src\Entities\dv_Probe\Entity.xml, READ-ONLY).
+# 4.2's Entity.yml carried only the LocalizedNames/LocalizedCollectionNames/Descriptions block; the
+# reference proves a real platform-authored entity carries a large flat set of entity-level default
+# elements below that (EntitySetName through IsSolutionAware) that 4.2 never had at all. The mission's
+# "SyncError relationship step, which points at missing ownership metadata" (see dv_matterid.yml) is
+# most directly explained by the absence of OwnershipTypeMask below: 4.2's file had no ownership
+# metadata whatsoever. All values below are copied verbatim from the reference except where renamed
+# for our table (EntitySetName dv_probes -> dv_matters); every other scalar default is the platform's
+# own value for a plain UserOwned custom entity, not a guess.
+#
+# CASING: the reference's top-level Name element and its EntityInfo/entity/@Name attribute both read
+# "dv_Probe" (schema-name casing, capital P), distinct from the all-lowercase LogicalName used
+# everywhere inside attributes (dv_probeid, dv_name, ...). This mirrors the same PhysicalName-style
+# casing seen on attribute PhysicalName values (dv_ProbeId, dv_Name). Renamed to "dv_Matter" here.
+# The folder path itself stays lowercase dv_matter (owned-files scope in the wave4-2b spec), unrelated
+# to this element's text value.
 Entity:
-  Name: dv_matter
+  Name: dv_Matter
   EntityInfo:
     entity:
-      '@Name': dv_matter
+      '@Name': dv_Matter
       LocalizedNames:
         LocalizedName:
           '@description': Matter
@@ -32,3 +46,66 @@ Entity:
         Description:
           '@description': A legal matter tracked by the DVerse demo solution.
           '@languagecode': '1033'
+      EntitySetName: dv_matters
+      IsDuplicateCheckSupported: '1'
+      IsBusinessProcessEnabled: '0'
+      IsRequiredOffline: '0'
+      IsInteractionCentricEnabled: '0'
+      IsCollaboration: '0'
+      AutoRouteToOwnerQueue: '0'
+      IsConnectionsEnabled: '0'
+      EntityColor: ''
+      IsDocumentManagementEnabled: '0'
+      AutoCreateAccessTeams: '0'
+      IsOneNoteIntegrationEnabled: '0'
+      IsKnowledgeManagementEnabled: '0'
+      IsSLAEnabled: '0'
+      IsDocumentRecommendationsEnabled: '0'
+      IsBPFEntity: '0'
+      OwnershipTypeMask: UserOwned
+      IsAuditEnabled: '0'
+      IsRetrieveAuditEnabled: '0'
+      IsRetrieveMultipleAuditEnabled: '0'
+      IsActivity: '0'
+      ActivityTypeMask: ''
+      IsActivityParty: '0'
+      IsReplicated: '0'
+      IsReplicationUserFiltered: '0'
+      IsMailMergeEnabled: '1'
+      IsVisibleInMobile: '0'
+      IsVisibleInMobileClient: '0'
+      IsReadOnlyInMobileClient: '0'
+      IsOfflineInMobileClient: '0'
+      DaysSinceRecordLastModified: '0'
+      MobileOfflineFilters: ''
+      IsMapiGridEnabled: '1'
+      IsReadingPaneEnabled: '1'
+      IsQuickCreateEnabled: '0'
+      SyncToExternalSearchIndex: '0'
+      IntroducedVersion: '1.0'
+      IsCustomizable: '1'
+      IsRenameable: '1'
+      IsMappable: '1'
+      CanModifyAuditSettings: '1'
+      CanModifyMobileVisibility: '1'
+      CanModifyMobileClientVisibility: '1'
+      CanModifyMobileClientReadOnly: '1'
+      CanModifyMobileClientOffline: '1'
+      CanModifyConnectionSettings: '1'
+      CanModifyDuplicateDetectionSettings: '1'
+      CanModifyMailMergeSettings: '1'
+      CanModifyQueueSettings: '1'
+      CanCreateAttributes: '1'
+      CanCreateForms: '1'
+      CanCreateCharts: '1'
+      CanCreateViews: '1'
+      CanModifyAdditionalSettings: '1'
+      CanEnableSyncToExternalSearchIndex: '1'
+      EnforceStateTransitions: '0'
+      CanChangeHierarchicalRelationship: '1'
+      EntityHelpUrlEnabled: '0'
+      ChangeTrackingEnabled: '0'
+      CanChangeTrackingBeEnabled: '1'
+      IsEnabledForExternalChannels: '0'
+      IsMSTeamsIntegrationEnabled: '0'
+      IsSolutionAware: '0'

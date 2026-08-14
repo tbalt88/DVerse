@@ -1,22 +1,55 @@
-# The primary KEY attribute (distinct from the primary NAME attribute in
-# dv_name.yml). Added during live import refinement: without it the importer
-# fails creating the SyncError relationship ("No rows could be found for
-# Entity ... if Entity were published" in
-# CreateRelationshipToSyncErrorForParentEntityRecordAccess), because every
-# entity must carry its own primarykey attribute and platform exports always
-# include it. Each element answers the importer, not a guess.
+# The primary KEY attribute (distinct from the primary NAME attribute in dv_name.yml). Added during
+# live import refinement (slice 4.2): without it the importer fails creating the SyncError
+# relationship ("No rows could be found for Entity ... if Entity were published" in
+# CreateRelationshipToSyncErrorForParentEntityRecordAccess), because every entity must carry its own
+# primarykey attribute and platform exports always include it. That lesson (a primarykey attribute
+# must exist) is preserved here.
+#
+# SLICE 4.2b: shape mirrors the reference platform-authored primary key attribute verbatim (dv_ProbeId
+# on dv_Probe, C:\Users\dmdom\AppData\Local\Temp\probe-clone\DVerseCore\src\Entities\dv_Probe\Entity.xml,
+# attribute PhysicalName="dv_ProbeId"), renamed dv_probe(id) -> dv_matter(id). Two corrections this
+# mirroring surfaced against 4.2's hand-inferred version: DisplayMask reads
+# "ValidForAdvancedFind|RequiredForGrid" in the reference, not "...|RequiredForForm" as 4.2 guessed;
+# and the reference carries a full platform-standard attribute-metadata element set (ImeMode, the
+# ValidFor*Api triad, Is*/Can* capability flags) that 4.2's minimal file omitted entirely. Description
+# text "Unique identifier for entity instances" is copied verbatim from the reference (it is already
+# entity-generic there, not Probe-specific, so no rename needed).
 attribute:
-  '@PhysicalName': dv_matterId
+  '@PhysicalName': dv_MatterId
+  Type: primarykey
   Name: dv_matterid
   LogicalName: dv_matterid
-  Type: primarykey
   RequiredLevel: systemrequired
-  DisplayMask: ValidForAdvancedFind|RequiredForForm
+  DisplayMask: ValidForAdvancedFind|RequiredForGrid
+  ImeMode: auto
+  ValidForUpdateApi: '0'
+  ValidForReadApi: '1'
+  ValidForCreateApi: '1'
+  IsCustomField: '0'
+  IsAuditEnabled: '0'
+  IsSecured: '0'
+  IntroducedVersion: '1.0'
+  IsCustomizable: '1'
+  IsRenameable: '1'
+  CanModifySearchSettings: '1'
+  CanModifyRequirementLevelSettings: '0'
+  CanModifyAdditionalSettings: '1'
+  SourceType: '0'
+  IsGlobalFilterEnabled: '0'
+  IsSortableEnabled: '0'
+  CanModifyGlobalFilterSettings: '1'
+  CanModifyIsSortableSettings: '1'
+  IsDataSourceSecret: '0'
+  AutoNumberFormat: ''
+  IsSearchable: '0'
+  IsFilterable: '1'
+  IsRetrievable: '1'
+  IsLocalizable: '0'
   displaynames:
     displayname:
       '@description': Matter
       '@languagecode': '1033'
   Descriptions:
     Description:
-      '@description': Unique identifier for Matter instances.
+      '@description': Unique identifier for entity instances
       '@languagecode': '1033'

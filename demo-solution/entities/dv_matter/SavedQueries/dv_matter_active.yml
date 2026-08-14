@@ -1,0 +1,66 @@
+# GROUND TRUTH: not independently re-decompiled for this slice; inferred by direct structural analogy
+# to the FormXml folder-reading path documented in FormXml/main/dv_matter_main.yml
+# (EntityProcessor.ReadEntityDirectory -> ReadFormXmlCollectionsFromFolder). SavedQueries/ has no
+# main/card/quick subfolder split, so it is read the same flat way attributes/ is (ReadCollectionFromFolder,
+# each file's root element appended as-is). This file follows the same established convention as
+# dv_matter_main.yml: a bare 'savedquery' root rather than a 'savedqueries' wrapper. Proof of fidelity
+# is the pack/unpack round-trip per mission ruling 2, not this citation.
+#
+# SLICE 4.2b: transcribes the reference platform-authored "Active Probes" saved query (querytype 0,
+# the default active-records grid view), the only SavedQuery the mission asks to carry
+# (C:\Users\dmdom\AppData\Local\Temp\probe-clone\DVerseCore\src\Entities\dv_Probe\SavedQueries\
+# {a229e954-ebbf-4383-9628-da6a84d673cf}.xml, READ-ONLY). Renamed dv_probe -> dv_matter, dv_probeid ->
+# dv_matterid throughout per mission ruling 1's blanket rename. The `createdon` column is kept
+# verbatim from the reference rather than substituted with one of our custom attributes: `createdon`
+# is a standard system attribute every real Dataverse entity carries regardless of which custom
+# attribute YAML files we happen to author, and the mission's attribute-substitution instruction
+# (ruling 3) names it for the FORM only, not for SavedQueries, so this is a literal transcription, not
+# a per-attribute substitution. Flagged as a judgment call in the slice report. savedqueryid is a fresh
+# GUID per mission ruling 5 (not reused from the probe).
+savedquery:
+  IsCustomizable: '1'
+  CanBeDeleted: '0'
+  isquickfindquery: '0'
+  isprivate: '0'
+  isdefault: '1'
+  savedqueryid: 4521f2c8-0e1b-4e51-b549-8161ccbe8979
+  layoutxml:
+    grid:
+      '@name': resultset
+      '@jump': dv_name
+      '@select': '1'
+      '@icon': '1'
+      '@preview': '1'
+      row:
+        '@name': result
+        '@id': dv_matterid
+        cell:
+          - '@name': dv_name
+            '@width': '300'
+          - '@name': createdon
+            '@width': '125'
+  querytype: '0'
+  fetchxml:
+    fetch:
+      '@version': '1.0'
+      '@mapping': logical
+      entity:
+        '@name': dv_matter
+        attribute:
+          - '@name': dv_matterid
+          - '@name': dv_name
+          - '@name': createdon
+        order:
+          '@attribute': dv_name
+          '@descending': 'false'
+        filter:
+          '@type': and
+          condition:
+            '@attribute': statecode
+            '@operator': eq
+            '@value': '0'
+  IntroducedVersion: '1.0'
+  LocalizedNames:
+    LocalizedName:
+      '@description': Active Matters
+      '@languagecode': '1033'

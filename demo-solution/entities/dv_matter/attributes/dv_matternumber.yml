@@ -1,15 +1,58 @@
 # See dv_name.yml in this folder for the ground truth citation covering how
 # EntityProcessor.ReadEntityDirectory reads every file in this folder (unchanged here).
 # Custom string attribute per mission ruling: dv_matternumber.
+#
+# SLICE 4.2b: no reference attribute is literally named dv_matternumber (the platform-authored Probe
+# table has exactly one custom attribute, dv_Name). Per mission ruling 1 ("dv_matternumber mirrors the
+# nvarchar shape"), this file takes the reference's dv_Name attribute (the only nvarchar shape
+# available) as its template for the generic ImeMode/ValidFor*Api/Is*/Can* element set, with the
+# PrimaryName-specific parts removed since those describe dv_name's role, not a generic nvarchar field:
+# DisplayMask drops "PrimaryName" and "RequiredForForm" (this field is optional, RequiredLevel none,
+# unchanged from 4.2), and IsSearchable drops from the reference's 1 to 0 (1 is a primary-name-specific
+# default in the reference, not a generic nvarchar default). MaxLength 100 / Length 200 is kept from
+# 4.2's original authoring rather than the reference's 850/1700, because 100 is the Dataverse maker
+# portal's own default MaxLength for a newly created plain Text column (850 is specific to the primary
+# name field, which gets a larger reserved length). This MaxLength choice is flagged as an assumption,
+# not a literal reference value, in the slice report.
 attribute:
-  '@PhysicalName': dv_matternumber
+  '@PhysicalName': dv_MatterNumber
+  Type: nvarchar
   Name: dv_matternumber
   LogicalName: dv_matternumber
-  Type: nvarchar
   RequiredLevel: none
+  DisplayMask: ValidForAdvancedFind|ValidForForm|ValidForGrid
+  ImeMode: auto
+  ValidForUpdateApi: '1'
+  ValidForReadApi: '1'
+  ValidForCreateApi: '1'
+  IsCustomField: '1'
+  IsAuditEnabled: '1'
+  IsSecured: '0'
+  IntroducedVersion: '1.0'
+  IsCustomizable: '1'
+  IsRenameable: '1'
+  CanModifySearchSettings: '1'
+  CanModifyRequirementLevelSettings: '1'
+  CanModifyAdditionalSettings: '1'
+  SourceType: '0'
+  IsGlobalFilterEnabled: '0'
+  IsSortableEnabled: '0'
+  CanModifyGlobalFilterSettings: '1'
+  CanModifyIsSortableSettings: '1'
+  IsDataSourceSecret: '0'
+  AutoNumberFormat: ''
+  IsSearchable: '0'
+  IsFilterable: '0'
+  IsRetrievable: '1'
+  IsLocalizable: '0'
+  Format: text
   MaxLength: '100'
+  Length: '200'
   displaynames:
     displayname:
       '@description': Matter Number
       '@languagecode': '1033'
-  Descriptions: {}
+  Descriptions:
+    Description:
+      '@description': ''
+      '@languagecode': '1033'
