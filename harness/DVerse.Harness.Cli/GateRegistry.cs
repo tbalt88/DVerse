@@ -27,7 +27,10 @@ public static class GateRegistry
         new RootComponentSourceGate(),          // G8
         new SolutionComponentPathGate(),        // G9
         new YamlLayoutGate(),                   // G10
-        new CanvasYamlGate()                    // G11
+        new CanvasYamlGate(),                   // G11
+        new StructuralDiffGate(baselineRoot: null) // G12: no baseline by default, honest SKIP (ruling 1);
+                                                    // the CLI substitutes a baseline-carrying instance
+                                                    // for this one when --baseline is supplied.
     ];
 
     /// <summary>Gates that need no tenant. These run everywhere, including fork pull requests.</summary>

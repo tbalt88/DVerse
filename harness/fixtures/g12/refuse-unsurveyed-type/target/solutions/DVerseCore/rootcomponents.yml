@@ -1,0 +1,16 @@
+# Slice 7.3 fixture (G12 structural-diff gate). Red fixture, target side:
+# byte-identical to ../../../../../baseline/... The type '1' entry is an
+# ordinary surveyed match (Pass-worthy on its own). The type '20' entry
+# matches too, unchanged, but RootComponentMatcher still attaches an
+# unsurveyed-type warning to every match of a type outside its surveyed set
+# (seat ruling 8), which is exactly what G12's refuse class 2 exists to
+# catch: matching an unsurveyed type is allowed, trusting that match
+# silently is not. G12 must REFUSE this pair on the '20' entry.
+RootComponents:
+  RootComponent:
+    - '@type': '1'
+      '@schemaName': dv_matter
+      '@behavior': '0'
+    - '@type': '20'
+      '@schemaName': dv_customrole
+      '@behavior': '0'

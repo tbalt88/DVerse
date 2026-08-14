@@ -1,0 +1,12 @@
+# Slice 7.3 fixture (G12 structural-diff gate). Red fixture, target side:
+# the 'entities/dv_matter/FormXml/main' Component entry present in
+# ../../../../../baseline/... has been dropped here. But
+# entities/dv_matter/FormXml/main/ (see the sibling directory under this
+# same target tree) still exists on disk: nobody deleted the form source,
+# only the packaging entry that tells pac to include it. lesson 2's class:
+# SolutionPackager will silently omit this component and still exit 0. G12
+# must REFUSE this pair on the removed 'entities/dv_matter/FormXml/main'
+# entry.
+SolutionComponents:
+  Component:
+    - '@path': entities/dv_matter

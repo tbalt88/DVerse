@@ -1,0 +1,10 @@
+# Slice 7.3 fixture (G12 structural-diff gate). Red fixture, baseline side:
+# two Component entries, mirroring the shape of the real
+# demo-solution/solutions/DVerseCore/solutioncomponents.yml. Compare to
+# ../../../../../target/... : the 'entities/dv_matter/FormXml/main' entry is
+# dropped there, while the actual FormXml folder still sits on disk under
+# the target tree (see target/entities/dv_matter/FormXml/main/).
+SolutionComponents:
+  Component:
+    - '@path': entities/dv_matter
+    - '@path': entities/dv_matter/FormXml/main
