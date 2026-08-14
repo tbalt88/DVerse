@@ -1,0 +1,63 @@
+# GROUND TRUTH: EntityProcessor.ReadEntityDirectory calls
+# ReadFormXmlCollectionsFromFolder(entityDirectory/FormXml, xElement.Element("FormXml"), "forms",
+# "type") unconditionally. That method lists each subdirectory of FormXml/ (here: "main"), builds a
+# <forms type="main"> wrapper, and for every file inside reads it with ReadCollectionFromFiles.
+# Because ParentTagForNestedMultiLcids="forms" and ChildTagForNestedMultiLcids="systemform" are set
+# just before the call, AddNestedSubcollection accepts a file whose root is either 'forms' (with
+# nested 'systemform' children extracted) or 'systemform' directly (added as-is); this file uses the
+# simpler 'systemform' root. The resulting shape after pack is
+# FormXml/forms[@type=main]/systemform, the same <FormXml><forms type="..."><systemform> shape
+# documented for legacy (non-yml) unpacked solutions. The systemform/formxml/form internal layout
+# (tabs/columns/sections/rows/cells/control, and the control classid GUIDs) is standard Dataverse
+# main-form XML carried over from general knowledge, not something SolutionPackagerLib parses or
+# validates during pack; it is unverified against a decompiled reader.
+systemform:
+  formid: ea779326-ee1e-428e-8728-04f1a6397971
+  name: Matter
+  type: '2'
+  formactivationstate: '1'
+  IsCustomizable: '1'
+  formxml:
+    form:
+      tabs:
+        tab:
+          '@name': tab_general
+          '@id': tab_general
+          '@IsUserDefined': '0'
+          labels:
+            label:
+              '@description': General
+              '@languagecode': '1033'
+          columns:
+            column:
+              '@width': '100%'
+              sections:
+                section:
+                  '@name': section_general
+                  '@id': section_general
+                  '@showlabel': 'true'
+                  '@showbar': 'false'
+                  labels:
+                    label:
+                      '@description': General
+                      '@languagecode': '1033'
+                  rows:
+                    row:
+                      - cell:
+                          '@id': cell_dv_name
+                          control:
+                            '@id': dv_name
+                            '@classid': '{4273EDBD-AC1D-40d3-9FB2-095C621B552D}'
+                            '@datafieldname': dv_name
+                      - cell:
+                          '@id': cell_dv_matternumber
+                          control:
+                            '@id': dv_matternumber
+                            '@classid': '{4273EDBD-AC1D-40d3-9FB2-095C621B552D}'
+                            '@datafieldname': dv_matternumber
+                      - cell:
+                          '@id': cell_dv_openedon
+                          control:
+                            '@id': dv_openedon
+                            '@classid': '{5B773807-9FB2-42db-97C3-7A91EFF8ADFF}'
+                            '@datafieldname': dv_openedon

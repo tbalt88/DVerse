@@ -1,0 +1,17 @@
+# GROUND TRUTH (slice 4.2, ilspycmd against pac 2.10.1's SolutionPackagerLib.dll):
+# EntityProcessor.ReadEntityDirectory (class Microsoft.Crm.Tools.SolutionPackager.EntityProcessor)
+# loads this file via ComponentProcessorBase.ReadSubComponent(entityDirectory, "Entity", ".yml"),
+# i.e. entities/<schemaname>/Entity.yml, and requires a top-level 'Name' child
+# (Helper.GetElementValue(element, "Name", throwIfNull: true) inside CreateComponent) holding the
+# entity schema name as plain text. EntityInfo/entity must exist (non-null) because the same method
+# does 'xElement.Element("EntityInfo")?.Element("entity")?.Add(new XElement("attributes"))' and the
+# matching call for EntityKeys: a null EntityInfo or entity silently drops the folder-sourced
+# attributes instead of erroring, so both must be present here. FormXml, SavedQueries, and
+# RibbonDiffXml are added by the same method as fresh empty elements ('xElement.Add(new
+# XElement("FormXml"))' etc.) and must NOT be declared in this file or the reader would end up with
+# duplicate elements alongside the ones it adds itself.
+Entity:
+  Name: dv_matter
+  EntityInfo:
+    entity:
+      '@Name': dv_matter

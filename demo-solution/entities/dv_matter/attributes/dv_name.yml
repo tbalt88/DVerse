@@ -1,0 +1,23 @@
+# GROUND TRUTH: EntityProcessor.ReadEntityDirectory reads every file under
+# entities/<schemaname>/attributes/ via ReadCollectionFromFolder, which loads each file
+# (ComponentProcessorBase.ReadCollectionFromFiles -> XUtils.LoadElement) and appends its root
+# element as-is under EntityInfo/entity/attributes (AddComponentElement ->
+# XElement.AddAndLiftNamespace). SolutionPackagerLib does not parse or validate individual
+# attribute fields during pack; the 'attribute' root name and '@PhysicalName' follow the XPath
+# convention EntityProcessor's own constructor uses for localization
+# ("//entity/attributes/attribute/..."), and the fields below (Type, RequiredLevel, MaxLength,
+# displayname) are real Dataverse AttributeMetadata shape carried over for import realism, not
+# something this decompiled reader demonstrably requires. Primary name column per mission ruling 1.
+attribute:
+  '@PhysicalName': dv_name
+  Name: dv_name
+  LogicalName: dv_name
+  Type: nvarchar
+  RequiredLevel: required
+  MaxLength: '100'
+  IsPrimaryName: 'true'
+  displaynames:
+    displayname:
+      '@description': Matter Name
+      '@languagecode': '1033'
+  Descriptions: {}
