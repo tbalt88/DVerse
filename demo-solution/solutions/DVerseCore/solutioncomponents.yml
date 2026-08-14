@@ -26,6 +26,27 @@
 # prefix check FormXml/SavedQueries rely on. A parent-only "appmodules" entry would not satisfy this
 # check; the subfolder itself must be listed. Confirmed empirically in this slice's report (packed
 # customizations.xml carries AppModule/AppModuleSiteMap content only once these two entries are present).
+#
+# SLICE 4.4b: pluginassemblies and sdkmessageprocessingsteps added, both on the StartsWith-prefix
+# pattern (FormXml/SavedQueries/entityrelationships's pattern, not appmodules's strict one). Both
+# entries are load-bearing, confirmed empirically, not merely by decompile:
+#   - pluginassemblies/DVerse.Plugins.yml is deliberately NOT named "PluginAssemblies.yml" (the single
+#     collection-file name PluginAssemblyProcessor's primary read branch looks for), because that
+#     primary branch never loads the referenced DLL's bytes (LoadComponentFiles is not called on it) --
+#     a first attempt using that name packed exit 0 with the DLL silently absent from the zip. Any
+#     other file name forces PluginAssemblyProcessor.ReadFromFiles into its SECOND branch
+#     (isFileBackedComponent && Directory.Exists(...)), which builds the SolutionPluginAssemblies
+#     wrapper in code, scans this folder for "*.yml" via GetComponentFiles -> ApplySolutionFilter (this
+#     path entry), and DOES call LoadComponentFiles, embedding the DLL bytes into the packed zip.
+#     Without this '@path' entry the filter drops the file entirely (the standard lesson 2 shape).
+#   - sdkmessageprocessingsteps/*.yml: SdkMessageProcessingStepProcessor.ReadFromFiles ALWAYS calls
+#     Directory.GetFiles(mainDirectory, "*.yml", AllDirectories) followed by ApplySolutionFilter, no
+#     bypass branch exists for this type at all.
+# Both decompiled against pac 2.10.1's SolutionPackagerLib.dll (ilspycmd); see
+# pluginassemblies/DVerse.Plugins.yml and sdkmessageprocessingsteps/dv_matter_Create_MatterNumberValidator.yml
+# for the full citations, including the empirical pack-and-inspect trail that found the file-naming
+# trap above. Presence of both components AND the DLL part in the packed zip verified empirically in
+# this slice's report per lesson 2's guard, not assumed from the entries alone.
 SolutionComponents:
   Component:
     - '@path': publishers/dversepublisher
@@ -35,3 +56,5 @@ SolutionComponents:
     - '@path': entityrelationships
     - '@path': appmodules/dv_MatterApp
     - '@path': appmodulesitemaps/dv_MatterApp
+    - '@path': pluginassemblies
+    - '@path': sdkmessageprocessingsteps

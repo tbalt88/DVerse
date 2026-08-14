@@ -1,0 +1,100 @@
+# GROUND TRUTH (slice 4.4b, ilspycmd 11.0.0.9375 against pac 2.10.1's SolutionPackagerLib.dll, found
+# under the dotnet tools store at
+# ~/.dotnet/tools/.store/microsoft.powerapps.cli.tool/2.10.1/microsoft.powerapps.cli.tool/2.10.1/tools/net10.0/any/SolutionPackagerLib.dll,
+# same tool and pac version as every prior slice's decompile citations).
+#
+# FOLDER NAME: PluginAssemblyProcessor's ctor is base("SolutionPluginAssemblies",
+# ComponentType.PluginAssembly). ComponentConfigurationManager.GetConfiguration lowercases the
+# ComponentConfigurationCollection entry's directory ("PluginAssemblies" -> "pluginassemblies") for the
+# new (YAML) format, so pac looks for plugin assembly content under demo-solution/pluginassemblies/.
+#
+# WHY THIS FILE IS NOT NAMED PluginAssemblies.yml, AND WHY THAT MATTERS (caught empirically this
+# slice, not merely inferred from decompile): PluginAssemblyProcessor sets neither
+# isSingleComponentElement nor isWriteIndividualComponent (both default false), so
+# ComponentProcessorBase.ReadFromFiles takes the "isSingleComponentElement || !isWriteIndividualComponent"
+# branch, which FIRST checks File.Exists(componentPath) where componentPath resolves (via
+# GetNewFormatFileName's ".xml"->".yml" swap on the config entry's "PluginAssemblies.xml") to
+# pluginassemblies/PluginAssemblies.yml specifically -- a single named collection file. A first attempt
+# authored exactly that file, top key 'SolutionPluginAssemblies' (see below for why that key name, not
+# 'PluginAssemblies'). Pack exited 0, and pac's own single-file branch DOES parse and read it (Verbose
+# log: "Reading: ...\pluginassemblies\PluginAssemblies.yml"), but that branch never calls
+# LoadComponentFiles (only the fallback branch below does), so the referenced DLL's bytes never enter
+# context.Customizations.ComponentFiles, so ZipWriter.WriteComponents's final
+# `foreach (ComponentFile value2 in _context.Customizations.ComponentFiles.Values) AddFile(...)` loop
+# never adds pluginassemblies/DVerse.Plugins.dll to the packed zip at all -- the <FileName> reference in
+# customizations.xml would point at a part the zip does not contain. Confirmed empirically: that first
+# pack's extracted zip had zero DLL files outside the unrelated demo-solution/plugins/**/bin passthrough.
+#
+# Renaming the file to anything other than "PluginAssemblies.yml" (this file, DVerse.Plugins.yml) makes
+# File.Exists(componentPath) false, so ReadFromFiles falls into its SECOND branch instead:
+# `isFileBackedComponent && Directory.Exists(Path.GetDirectoryName(componentPath))` -- true, since
+# isFileBackedComponent=true and the pluginassemblies/ folder exists. That branch:
+#   1. builds its OWN wrapper in code, `XElement xElement = new XElement(SupportedElementName)`, i.e.
+#      literally "SolutionPluginAssemblies" -- correct by construction, no top-key risk;
+#   2. scans GetComponentFiles(componentPath, "*.yml") -- Directory.GetFiles(pluginassemblies/, "*.yml",
+#      AllDirectories), filtered through ApplySolutionFilter (why solutions/DVerseCore/solutioncomponents.yml
+#      lists '@path': pluginassemblies, per lesson 2) -- and appends each found file's root element (this
+#      file's, top key 'PluginAssembly' singular, matching what a *child* of the wrapper must be here) as
+#      a child of that wrapper;
+#   3. calls CreateComponents(xElement) then, critically, LoadComponentFiles(componentCollection) --
+#      THIS is the call the single-file branch skips, and it is what reads
+#      Path.Combine(context.RootFolder, DiskFileName) off disk and registers the DLL's bytes into
+#      context.Customizations.ComponentFiles, so it DOES reach the packed zip this way.
+# Confirmed empirically after the rename: the packed zip carries pluginassemblies/DVerse.Plugins.dll as
+# its own part, and customizations.xml's SolutionPluginAssemblies wrapper is populated (not empty). See
+# the wave4-4b report's packed-zip evidence block for both.
+#
+# FIELDS READ BY PAC ITSELF (CreateComponent, same decompiled type):
+#   '@PluginAssemblyId' : XML ATTRIBUTE (Helper.GetAttributeValue), GUID, throwIfNull: true (required)
+#   '@FullName'         : XML ATTRIBUTE, throwIfNull: false -> becomes Component.PrimaryName
+#   FileName            : CHILD ELEMENT (Helper.GetElementValue), throwIfNull: false
+#   SourceType          : CHILD ELEMENT, throwIfNull: false, Helper.IntConverter, default 0
+# Every other field on this element (Name, Culture, Version, PublicKeyToken, IsolationMode,
+# PluginTypes/PluginType/*) is passed through into the packed customizations.xml completely opaque to
+# pac: AddComponentElement / XElement.AddAndLiftNamespace is a raw append, pac neither validates nor
+# reshapes it. Those fields are authored here from the well-established real Dataverse PluginAssembly
+# solution schema, NOT from pac decompile (nothing in SolutionPackagerLib encodes it, so lesson 4's
+# "docs alone forbidden" ban does not have a decompiled alternative to defer to here) and NOT from
+# Microsoft docs consulted as authority. See the wave4-4b report's import-risk assumptions table.
+#
+# HOW THE BINARY ITSELF IS CARRIED (decompile-confirmed and empirically verified, per the rename note
+# above): FileBackedComponent.DiskFileName defaults to FileName itself (leading slash stripped,
+# separators normalized) because this processor never overrides it; LoadComponentFile reads
+# Path.Combine(context.RootFolder, DiskFileName) directly off disk at pack time and registers those raw
+# bytes keyed by FileName's relative Uri -- the DLL is carried as a SIBLING FILE inside the packaged
+# solution zip at the exact path FileName names below, never as inline base64 in this YAML or in
+# customizations.xml. PluginAssemblyProcessor.WriteComponentFile (the unpack-direction mirror) confirms
+# the same convention in reverse: it writes the tracked component file's raw Bytes straight to
+# Path.Combine(context.RootFolder, DiskFileName), no encode/decode step either way.
+#
+# BUILD CONFIGURATION: pluginassemblies/DVerse.Plugins.dll is the Debug, net462 build of
+# demo-solution/plugins/DVerse.Plugins (`dotnet build demo-solution/plugins/DVerse.Plugins/DVerse.Plugins.csproj -c Debug`),
+# a placeholder per the mission ruling, not a Release build. '@FullName's Version=1.0.0.0 was read back
+# from that exact built artifact with [System.Reflection.AssemblyName]::GetAssemblyName(...).FullName,
+# not assumed: "DVerse.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null".
+#
+# SourceType=0 (Database): well-established platform enum value (0=Database, 1=Disk, 2=GAC), partly
+# decompile-corroborated -- PluginAssemblyProcessor.WriteComponentFile has an explicit
+# "else if (fileBackedComponent.SourceType == 3)" branch labelled "WebConnected" in its own log message,
+# confirming 3=WebConnected and, by exclusion from that one verified data point, that 0 is not
+# WebConnected; 0=Database itself is not decompile-verified beyond that. IsolationMode=2 (Sandbox) is
+# the well-established platform enum value (1=None, 2=Sandbox) per the mission ruling; not
+# decompile-verified (pac carries IsolationMode as opaque data, never reads it).
+PluginAssembly:
+  '@PluginAssemblyId': 'b6ac2bd6-0432-4f70-9630-a59705f2e64e'
+  '@FullName': 'DVerse.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'
+  Name: DVerse.Plugins
+  FileName: pluginassemblies/DVerse.Plugins.dll
+  SourceType: 0
+  IsolationMode: 2
+  Culture: neutral
+  Version: 1.0.0.0
+  PublicKeyToken: 'null'
+  PluginTypes:
+    PluginType:
+      '@PluginTypeId': '67574aef-2c54-4bf8-9f29-7efebf321aed'
+      Name: DVerse.Plugins.MatterNumberValidator
+      FriendlyName: DVerse.Plugins.MatterNumberValidator
+      TypeName: DVerse.Plugins.MatterNumberValidator
+      AssemblyName: DVerse.Plugins
+      IsWorkflowActivity: 0
