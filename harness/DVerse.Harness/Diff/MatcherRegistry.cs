@@ -98,7 +98,13 @@ public sealed class MatcherRegistry
     // Known control classids the ratified model has actually surveyed (section 3 row 14):
     // textbox, datetime, lookup. Any other classid on a matched control is unsurveyed per
     // seat ruling 3 and must warn, never silently match.
-    private static readonly HashSet<string> SurveyedControlClassIds = new(StringComparer.OrdinalIgnoreCase)
+    //
+    // Slice 7.2 modification (mission ruling 8): widened from private to internal so the semantic
+    // diff walker's own parent-scoped FormXmlControl step (ChainBuilder.cs, needed for true recursion
+    // rather than this registry's own full-file-root matcher) can reuse this exact literal set
+    // instead of duplicating the three surveyed classids a second time. No behavioural change to this
+    // class or its own tests; visibility only.
+    internal static readonly HashSet<string> SurveyedControlClassIds = new(StringComparer.OrdinalIgnoreCase)
     {
         "{4273EDBD-AC1D-40d3-9FB2-095C621B552D}", // textbox
         "{5B773807-9FB2-42db-97C3-7A91EFF8ADFF}", // datetime

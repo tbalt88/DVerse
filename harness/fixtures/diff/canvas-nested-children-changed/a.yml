@@ -1,0 +1,73 @@
+# Slice 7.2 fixture (semantic diff engine, walker + property-level verdicts).
+# Proves the CanvasControl family's self-recursion two levels deep (model
+# row 27: "nested arbitrarily deep under Children:"). Trimmed excerpt of the
+# real committed demo-solution/canvasapps/MatterCanvas/Src/Screen1.pa.yaml:
+# Screen1's Children holds Form1 (level 0 of this fixture's own nesting);
+# Form1's Children holds one DataCard ("Matter Name_DataCard1", level 1);
+# that DataCard's own Children holds DataCardKey1 and DataCardValue1
+# (level 2) -- copied verbatim including their real Control/Properties
+# bodies. Diffed via ArtifactDiffer.Diff(..., DiffClassFamilies.CanvasScreen),
+# this exercises CanvasControl matching itself three times in a row
+# (Screen -> Form1, Form1 -> DataCard1, DataCard1 -> DataCardValue1), the
+# CanvasControl step's own self-reference in ChainBuilder. See b.yml for the
+# only mutation: DataCardValue1's 'Width' property formula changes, two
+# Children-hops below Form1.
+Screens:
+  Screen1:
+    Children:
+      - Form1:
+          Control: Form@2.4.4
+          Variant: Classic
+          Layout: Vertical
+          Properties:
+            DataSource: |+
+              =Matters
+            Item: =Gallery1.Selected
+            Width: |+
+              =560
+            X: |+
+              =720
+            Y: =60
+          Children:
+            - Matter Name_DataCard1:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualEdit
+                IsLocked: true
+                Properties:
+                  DataField: ="dv_name"
+                  Default: =ThisItem.'Matter Name'
+                  DisplayName: =DataSourceInfo([@Matters],DataSourceInfo.DisplayName,'dv_name')
+                  MaxLength: =DataSourceInfo([@Matters], DataSourceInfo.MaxLength, 'dv_name')
+                  Required: =true
+                  Update: =DataCardValue1.Text
+                  Width: =186
+                  X: =0
+                  Y: =0
+                Children:
+                  - DataCardKey1:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =App.Theme.Colors.Darker30
+                        Height: =34
+                        Text: =Parent.DisplayName
+                        Width: =Parent.Width - 60
+                        Wrap: =false
+                        X: =30
+                        Y: =10
+                  - DataCardValue1:
+                      Control: Classic/TextInput@2.3.2
+                      MetadataKey: FieldValue
+                      Properties:
+                        BorderColor: =If(IsBlank(Parent.Error), Parent.BorderColor, Color.Red)
+                        Default: =Parent.Default
+                        DelayOutput: =true
+                        DisplayMode: =Parent.DisplayMode
+                        MaxLength: =Parent.MaxLength
+                        PaddingLeft: =5
+                        Tooltip: =Parent.DisplayName
+                        Width: =Parent.Width - 60
+                        X: =30
+                        Y: =DataCardKey1.Y + DataCardKey1.Height + 5
