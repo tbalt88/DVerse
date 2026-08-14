@@ -16,21 +16,25 @@
 # name)='{...}'. Type='SdkMessageProcessingStep', Id (or schema name)='{...}'."). This is empirical,
 # stronger than decompile alone.
 #
-# BOTH '@id' (the real GUID, matching '@PluginAssemblyId'/'@SdkMessageProcessingStepId' on the
-# corresponding component) AND '@schemaName' are supplied on each entry. Real Dataverse solution.xml,
-# and pac's own decompiled reader (RootComponentSourceGate.cs's header cites
-# Helper.LoadSolutionInformation reading "type"|"schemaName"|"behavior"|"id" generically), identify
-# GUID-typed components like these two by '@id' alone; a real pac-authored RootComponent for a
-# schema-named object (Entity, AppModule, Role) would not normally carry '@id' at all, and vice versa,
-# so carrying both here is NOT the shape pac's own writer would produce -- an admitted, deliberate
-# deviation. It is done anyway because this repo's own G8 gate (RootComponentSourceGate.cs, forbidden
-# to modify under this slice's owned-files list) unconditionally refuses any RootComponent entry with a
-# blank '@schemaName' and has no concept of '@id' at all; omitting '@schemaName' would fail G8 (a hard
-# "all offline gates exit 0" requirement), and omitting '@id' would remove the field pac's own error
-# message above explicitly asked for. Pack was re-run after adding both attributes and succeeded
-# (exit 0); this does not prove import will accept the redundant '@schemaName' on a GUID-identified
-# type, only that the local pack pipeline tolerates it. See the wave4-4b report's import-risk
-# assumptions table.
+# SLICE 4.4c: both entries below now mirror the platform's own canonical export verbatim
+# (`pac solution clone --name DVerseCore`, read-only, dverse-ci profile; quoted in
+# loop/specs/wave4-4c-canonical-plugin-shapes.md, the sole authority), replacing 4.4b's guessed
+# both-id-and-schemaName shape for type 92. The canonical export settles what 4.4b could only guess at:
+#   - type 91 (PluginAssembly) keeps BOTH '@id' (braced, matching the canonical export's own
+#     id="{5af6f42c-...}" on this RootComponent) and '@schemaName' (the assembly's FullName, per import
+#     rung 1 in commit f203540 -- a PluginAssembly's schemaName must be the FullName, not a bare name).
+#     This is the one entry where the platform's own writer really does carry both attributes.
+#   - type 92 (SdkMessageProcessingStep) is '@id' ONLY (braced), with NO '@schemaName' at all -- exactly
+#     what the canonical export has. 4.4b's report called omitting '@schemaName' here a G8 gate risk and
+#     added a redundant '@schemaName' to satisfy G8's then-unconditional refusal on a blank
+#     '@schemaName'. The canonical export proves that redundant attribute was never a pac requirement,
+#     only a gap in G8: a GUID-identified component type legitimately has no schema name. G8
+#     (harness/DVerse.Harness/Gates/RootComponentSourceGate.cs) was fixed this slice to accept an
+#     id-only entry instead of demanding a schemaName workaround; see that file's own header for the
+#     fix and its mutation-check evidence.
+# Both ids adopted verbatim from the canonical export so the next import UPDATES the already-registered
+# components (matching '@PluginAssemblyId'/'@SdkMessageProcessingStepId' on the corresponding component
+# files) instead of duplicating them.
 RootComponents:
   RootComponent:
     - '@type': '1'
@@ -43,11 +47,10 @@ RootComponents:
       '@schemaName': dv_MatterApp
       '@behavior': '0'
     - '@type': '91'
-      '@id': 'b6ac2bd6-0432-4f70-9630-a59705f2e64e'
+      '@id': '{5af6f42c-9a97-f111-b8de-70a8a59a66f9}'
       '@schemaName': 'DVerse.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f506971365378cc'
       '@behavior': '0'
     - '@type': '92'
-      '@id': 'a4fbb0e9-2641-4c7c-9956-69dc662fdd96'
-      '@schemaName': 'dv_matter_Create_MatterNumberValidator'
+      '@id': '{10998a3b-9a97-f111-b8de-70a8a59a66f9}'
       '@behavior': '0'
 
