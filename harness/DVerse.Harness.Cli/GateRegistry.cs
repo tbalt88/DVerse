@@ -26,7 +26,8 @@ public static class GateRegistry
         new PowerAppsCheckerGate(),             // G7
         new RootComponentSourceGate(),          // G8
         new SolutionComponentPathGate(),        // G9
-        new YamlLayoutGate()                    // G10
+        new YamlLayoutGate(),                   // G10
+        new CanvasYamlGate()                    // G11
     ];
 
     /// <summary>Gates that need no tenant. These run everywhere, including fork pull requests.</summary>
