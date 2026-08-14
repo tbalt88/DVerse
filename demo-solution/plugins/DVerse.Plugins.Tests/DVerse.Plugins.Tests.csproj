@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Sibling project to ../DVerse.Plugins, per the mission ruling: NOT nested
+    inside the plugin project's folder. See the comment in
+    DVerse.Plugins.csproj for why the seed repo's nesting was a defect.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <AssemblyName>DVerse.Plugins.Tests</AssemblyName>
+    <RootNamespace>DVerse.Plugins.Tests</RootNamespace>
+    <Nullable>disable</Nullable>
+    <LangVersion>9.0</LangVersion>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.6.6" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Moq" Version="4.20.70" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.49" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DVerse.Plugins\DVerse.Plugins.csproj" />
+  </ItemGroup>
+
+</Project>
