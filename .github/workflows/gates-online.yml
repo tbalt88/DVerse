@@ -55,10 +55,17 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      # shell: bash on every run step below: this job moved to windows-latest
+      # when the solution gained net462 plugin projects (no .NET Framework
+      # runtime exists on Linux runners), and the Windows default shell is
+      # PowerShell, which cannot parse the bash line continuations these
+      # steps use. Git Bash ships on GitHub Windows runners.
       - name: Install pac
+        shell: bash
         run: dotnet tool install --global Microsoft.PowerApps.CLI.Tool
 
       - name: Authenticate via federated credential
+        shell: bash
         run: |
           pac auth create --githubFederated \
             --applicationId ${{ vars.DV_CLIENT_ID }} \
@@ -66,6 +73,7 @@ jobs:
             --environment ${{ vars.DV_ENVIRONMENT_URL }}
 
       - name: Run gates, including G7 online
+        shell: bash
         run: |
           dotnet run --project harness/DVerse.Harness.Cli -- gate run \
             --solution demo-solution \
