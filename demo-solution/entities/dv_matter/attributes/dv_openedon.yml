@@ -1,0 +1,15 @@
+# See dv_name.yml in this folder for the ground truth citation covering how
+# EntityProcessor.ReadEntityDirectory reads every file in this folder (unchanged here).
+# Custom datetime attribute per mission ruling: dv_openedon.
+attribute:
+  '@PhysicalName': dv_openedon
+  Name: dv_openedon
+  LogicalName: dv_openedon
+  Type: datetime
+  RequiredLevel: none
+  Format: DateOnly
+  displaynames:
+    displayname:
+      '@description': Opened On
+      '@languagecode': '1033'
+  Descriptions: {}

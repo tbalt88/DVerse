@@ -1,0 +1,15 @@
+# See dv_name.yml in this folder for the ground truth citation covering how
+# EntityProcessor.ReadEntityDirectory reads every file in this folder (unchanged here).
+# Custom string attribute per mission ruling: dv_matternumber.
+attribute:
+  '@PhysicalName': dv_matternumber
+  Name: dv_matternumber
+  LogicalName: dv_matternumber
+  Type: nvarchar
+  RequiredLevel: none
+  MaxLength: '100'
+  displaynames:
+    displayname:
+      '@description': Matter Number
+      '@languagecode': '1033'
+  Descriptions: {}

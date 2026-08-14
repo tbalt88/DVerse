@@ -1,3 +1,12 @@
+# entities/dv_matter/FormXml/main is listed separately from entities/dv_matter itself: pac's
+# EntityProcessor.ReadFormXmlCollectionsFromFolder filters FormXml subfolders with
+# 'SolutionComponentFiles.Where(componentFile => componentFile.StartsWith(absoluteSubfolder))', which
+# only matches a listed path that is at or below the subfolder being read; the parent-folder entry
+# alone (which is enough for attributes/, which is read with no such filter) silently drops the main
+# form from the packed zip while pac still exits 0. Ground truth: decompiled slice 4.2, confirmed
+# empirically (a pack with only the parent entry produced '<FormXml />' empty in customizations.xml).
 SolutionComponents:
   Component:
     - '@path': publishers/dversepublisher
+    - '@path': entities/dv_matter
+    - '@path': entities/dv_matter/FormXml/main
