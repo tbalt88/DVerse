@@ -43,3 +43,7 @@ Microsoft's ALM guidance says canvas apps belong in solutions; Matter Canvas was
 The pre-flip audit (`docs/assurance/l3-round-1.md`) ran against the five-import state; this addendum changes the tree after that audit. The change is CI-verified and its claims carry their own receipts above; the audit's verdict (nothing blocks the flip) is not weakened by an addition that strengthens the round-trip claim, but the sequencing is stated here so the record stays honest.
 
 Two representations of one app now ship deliberately: the `.pa.yaml` mirror (for gating and review, G11/G12) and the solution packaging (for import). The `docs/receipts/` inventory and README import table carry the sixth row.
+
+## Addendum 2 (2026-08-14, owner-requested): ALM strategy exercise and README polish
+
+Two final wrap items on owner request: `docs/alm-pipeline-strategy.md` maps every gate, import discipline, and OIDC pattern this repo proved onto a full DEV-to-TEST-to-PROD ALM pipeline, with the real-deployment gaps (managed exports, per-stage service principals, connection references, release-build plugin, G5, rollback) stated as the honest remainder. The README was restructured for a first-time public reader: mermaid diagrams for the big picture, the three refusal altitudes, the verification ladder, and the learning flywheel; new sections for capabilities, upskilling (the blind-eval evidence), and the AI SDLC stage mapping. Every audited number and limit carried over unchanged; no claims added beyond what the receipts already carry.
