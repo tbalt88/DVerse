@@ -1,0 +1,45 @@
+# Slice 7.1i fixture (matching layer). Baseline side of the "renamed canvas
+# control" mutation pair. Trimmed excerpt of the real committed
+# demo-solution/canvasapps/MatterCanvas/Src/Screen1.pa.yaml: only the three
+# top-level Button controls under Screen1's Children (Button1/Button2/
+# Button3, copied verbatim including their real Properties) are kept here,
+# re-rooted so this file's top level IS the parent node the CanvasControl
+# matcher expects (a node holding Children: directly), per ruling 3's
+# "identity scoped to the immediate parent" rule. Gallery1 and Form1 are
+# omitted; their presence or absence does not affect what this fixture
+# tests. See b.yml for the mutation: Button2 is renamed to NewMatterButton
+# with its properties otherwise unchanged.
+Children:
+  - Button1:
+      Control: Classic/Button@2.2.0
+      Properties:
+        OnSelect: |+
+          =SubmitForm(Form1)
+        Text: |+
+          ="Save"
+        X: |+
+          =720
+        Y: |+
+          =660
+  - Button2:
+      Control: Classic/Button@2.2.0
+      Properties:
+        OnSelect: |+
+          =NewForm(Form1)
+        Text: |+
+          ="New"
+        X: |+
+          =890
+        Y: |+
+          =660
+  - Button3:
+      Control: Classic/Button@2.2.0
+      Properties:
+        OnSelect: |+
+          =Remove(Matters, Gallery1.Selected)
+        Text: |+
+          ="Delete"
+        X: |+
+          =1060
+        Y: |+
+          =660

@@ -1,0 +1,46 @@
+# Slice 7.1i fixture (matching layer). Target side of the "renamed canvas
+# control" mutation: identical to a.yml except Button2's YAML key is
+# renamed to NewMatterButton; its Control/Properties body is byte-identical
+# to Button2's in a.yml, only the mapping key changed. Expected verdict
+# from the CanvasControl matcher: Button1 and Button3 matched by exact key
+# equality; Button2 reported as Removed and NewMatterButton reported as
+# Added -- delete-of-old-key plus add-of-new-key, per seat ruling 5 ("Canvas
+# rename = delete + add is ratified as matching the platform's own
+# semantics"), even though a human maker would call this "the same button,
+# renamed". No warning is emitted for this: ruling 5 treats delete+add as
+# the correct, confident verdict for a canvas rename, not a fallback to be
+# suspicious of.
+Children:
+  - Button1:
+      Control: Classic/Button@2.2.0
+      Properties:
+        OnSelect: |+
+          =SubmitForm(Form1)
+        Text: |+
+          ="Save"
+        X: |+
+          =720
+        Y: |+
+          =660
+  - NewMatterButton:
+      Control: Classic/Button@2.2.0
+      Properties:
+        OnSelect: |+
+          =NewForm(Form1)
+        Text: |+
+          ="New"
+        X: |+
+          =890
+        Y: |+
+          =660
+  - Button3:
+      Control: Classic/Button@2.2.0
+      Properties:
+        OnSelect: |+
+          =Remove(Matters, Gallery1.Selected)
+        Text: |+
+          ="Delete"
+        X: |+
+          =1060
+        Y: |+
+          =660
