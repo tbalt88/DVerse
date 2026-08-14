@@ -1,0 +1,62 @@
+# GROUND TRUTH: decompiled Microsoft.Crm.Tools.SolutionPackager (SolutionPackagerLib.dll, shipped inside
+# pac CLI 2.10.1's tool package, decompiled with ilspycmd 11.0.0.9375).
+# ComponentConfigurationManager.GetNewFormatFileName (Microsoft.Crm.Tools.SolutionPackager namespace)
+# special-cases ComponentType.AppModule to '$(PrimaryName)/appmodule.yml' when the packer is running in
+# YAML ("new format") mode; GetConfiguration lowercases the raw/XML-mode MainDirectory
+# (MainDirectory.ToLowerInvariant()) for every component type in that same mode. AppModuleProcessor's own
+# constructor (Microsoft.Crm.Tools.SolutionPackager.ComponentProcessors namespace) is
+# `base("AppModules", ComponentType.AppModule)`, and `pac solution clone --name DVerseCore` (read-only,
+# dverse-ci profile) independently unpacked the org's app to AppModules/dv_MatterApp/AppModule.xml in raw
+# mode -- so the YAML-mode path is demo-solution/appmodules/dv_MatterApp/appmodule.yml. This is the same
+# lowering EntityProcessor applies to "Entities" -> this repo's own entities/ folder, so the mechanism is
+# cross-checked, not assumed from one call site.
+# AppModuleProcessor.ReadFromFiles walks Directory.GetDirectories(<appmodules>) and requires each
+# subfolder's own resolved path to appear in context.SolutionInformation.SolutionComponentFiles (built
+# from solutioncomponents.yml's Component/@path list) -- an exact-match .Contains check, stricter than the
+# FormXml prefix-match lesson 2 already burned. Guard: appmodules/dv_MatterApp is listed as its own
+# solutioncomponents.yml path entry; presence verified empirically in the packed customizations.xml
+# (this slice's report).
+#
+# CONTENT: transcribed verbatim from the unmanaged AppModule.xml produced by the clone above (org appid
+# 0e33cdd1-8597-f111-b8dc-70a8a59a66f9, UniqueName dv_MatterApp) -- read-only clone evidence, not authored
+# from docs. AppModuleProcessor.WriteToFiles orders AppModuleComponents/AppModuleComponent children by
+# (type, schemaName); the two rows below are already in that order. This AppModule carries no AppConfig
+# element, so no NavigationSettings subfolder is needed (WriteToFiles/ReadAppModule only look for one when
+# AppConfig is present). WebResourceId and the Role ids under AppModuleRoleMaps are copied exactly as the
+# clone's raw XML represents them: WebResourceId as a bare GUID (no braces, matching the raw element
+# text), Role/@id WITH braces (matching the raw attribute text -- unlike systemform's `formid`, a plain
+# XML attribute gets no automatic brace-normalization from the packer, so the braces must be authored
+# here to round-trip the org's literal value).
+AppModule:
+  UniqueName: dv_MatterApp
+  IntroducedVersion: 0.2.0.0
+  WebResourceId: 953b9fac-1e5e-e611-80d6-00155ded156f
+  OptimizedFor: ''
+  statecode: '0'
+  statuscode: '1'
+  FormFactor: '1'
+  ClientType: '4'
+  NavigationType: '0'
+  AppModuleComponents:
+    AppModuleComponent:
+      - '@type': '1'
+        '@schemaName': dv_matter
+      - '@type': '62'
+        '@schemaName': dv_MatterApp
+  AppModuleRoleMaps:
+    Role:
+      - '@id': '{627090ff-40a3-4053-8790-584edc5be201}'
+      - '@id': '{119f245c-3cc8-4b62-b31c-d1a046ced15d}'
+  LocalizedNames:
+    LocalizedName:
+      '@description': Matter App
+      '@languagecode': '1033'
+  Descriptions:
+    Description:
+      '@description': Accelerate the creation of solutions for managing legal matters with a platform currently in initial development. Lay the foundation for streamlined processes and enhanced visibility as the app evolves.
+      '@languagecode': '1033'
+  appsettings:
+    appsetting:
+      '@settingdefinitionid.uniquename': AppChannel
+      iscustomizable: '1'
+      value: '1'

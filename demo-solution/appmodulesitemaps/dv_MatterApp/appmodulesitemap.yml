@@ -1,0 +1,63 @@
+# GROUND TRUTH: same decompiled ComponentConfigurationManager.GetNewFormatFileName evidence as
+# appmodules/dv_MatterApp/appmodule.yml's header (decompiled SolutionPackagerLib.dll from pac CLI 2.10.1
+# via ilspycmd), applied to ComponentType.AppModuleSiteMap: YAML-mode path is
+# '$(PrimaryName)/appmodulesitemap.yml' under MainDirectory.ToLowerInvariant() of the raw MainDirectory
+# "AppModuleSiteMaps" (AppModuleSitemapProcessor's constructor: `base("AppModuleSiteMaps",
+# ComponentType.AppModuleSiteMap)`; `pac solution clone` independently unpacked the org's sitemap to
+# AppModuleSiteMaps/dv_MatterApp/AppModuleSiteMap.xml in raw mode) -- hence
+# demo-solution/appmodulesitemaps/dv_MatterApp/appmodulesitemap.yml. Same exact-match
+# SolutionComponentFiles requirement as the AppModule folder (AppModuleSitemapProcessor.ReadFromFiles
+# mirrors AppModuleProcessor.ReadFromFiles's Directory.GetDirectories + exact-match .Contains check);
+# appmodulesitemaps/dv_MatterApp is listed as its own solutioncomponents.yml path entry.
+#
+# ROOT COMPONENT TYPE CAVEAT (decompiled Microsoft.Crm.Tools.SolutionPackager.ComponentType enum):
+# AppModuleSiteMap = 81, but the org's own exported Solution.xml (pac solution clone, Other/Solution.xml)
+# lists this object's RootComponent as type="62" (ComponentType.SiteMap), schemaName dv_MatterApp --
+# NOT type 81. The platform files an app's sitemap as a plain SiteMap component sharing the app's unique
+# name, and folds the AppModuleSiteMap association in as a dependent of that SiteMap root (behavior=0,
+# include-all), not as its own root entry. rootcomponents.yml therefore carries type 62, not 81, for this
+# object -- a real docs-vs-platform mismatch (lesson 4) caught only by reading the org's own solution.xml,
+# not by reasoning from the ComponentType enum name.
+#
+# CONTENT: transcribed verbatim from the unmanaged AppModuleSiteMap.xml produced by the clone above (org
+# appid 0e33cdd1-8597-f111-b8dc-70a8a59a66f9, SiteMapUniqueName dv_MatterApp). The standalone file's
+# `xmlns:xsi` root attribute is the raw extractor's own boilerplate (every other transcribed component in
+# this repo, e.g. FormXml/main's `forms` wrapper, omits the equivalent boilerplate from its YAML source
+# and still round-trips clean), so it is not reproduced here.
+AppModuleSiteMap:
+  SiteMapUniqueName: dv_MatterApp
+  EnableCollapsibleGroups: 'False'
+  ShowHome: 'True'
+  ShowPinned: 'True'
+  ShowRecents: 'True'
+  SiteMap:
+    '@IntroducedVersion': '7.0.0.0'
+    Area:
+      '@Id': area_400223f7
+      '@ResourceId': SitemapDesigner.NewTitle
+      '@DescriptionResourceId': SitemapDesigner.NewTitle
+      '@ShowGroups': 'true'
+      '@IntroducedVersion': '7.0.0.0'
+      Titles:
+        Title:
+          '@LCID': '1033'
+          '@Title': Area1
+      Group:
+        '@Id': group_0598b9c1
+        '@ResourceId': SitemapDesigner.NewGroup
+        '@DescriptionResourceId': SitemapDesigner.NewGroup
+        '@IntroducedVersion': '7.0.0.0'
+        '@IsProfile': 'false'
+        '@ToolTipResourseId': SitemapDesigner.Unknown
+        SubArea:
+          '@Id': subarea_eb161827
+          '@Icon': /_imgs/imagestrips/transparent_spacer.gif
+          '@Entity': dv_matter
+          '@Client': 'All,Outlook,OutlookLaptopClient,OutlookWorkstationClient,Web'
+          '@AvailableOffline': 'true'
+          '@PassParams': 'false'
+          '@Sku': 'All,OnPremise,Live,SPLA'
+  LocalizedNames:
+    LocalizedName:
+      '@description': Matter App
+      '@languagecode': '1033'
