@@ -86,6 +86,8 @@ The thin slice from D13: one table, one form, one plugin, one document-location 
 
 ## Wave 5, canvas app and the SharePoint footprint
 
+**CLOSED 2026-08-14** (`docs/wave-5-closing.md`): Matter Canvas (two screens, full CRUD, live-driven) mirrored into gated `.pa.yaml` source, G11 canvas gate live (10-gate ladder), SharePoint documents working at runtime through the app. 174 tests. `pac canvas validate` found removed-but-still-documented; G11 owns validation.
+
 | Slice | Deliverable |
 |---|---|
 | 5.1 | Canvas app over the Dataverse table, CRUD |
