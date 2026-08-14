@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    net462, SDK-style, per the mission ruling (wave 4.4a). Strong-name
+    signing is deliberately OFF: no SignAssembly, no AssemblyOriginatorKeyFile,
+    no key.snk anywhere. The archived seed repo tbalt88/DVerseClaudeSkills set
+    SignAssembly=true with AssemblyOriginatorKeyFile=key.snk while gitignoring
+    *.snk, so a fresh clone of that repo cannot build the plugin project at
+    all. That defect is on the record and deliberately not repeated here.
+
+    Tests live in a SEPARATE sibling project, DVerse.Plugins.Tests, not
+    nested inside this project's folder. The seed nested its Tests/ folder
+    under the plugin project folder with no Compile Remove, so the plugin
+    project's default recursive glob (**/*.cs) picked up the test sources
+    too. Being a sibling directory rather than a subdirectory means the
+    default glob here never reaches the test project's files; no exclusion
+    element is needed to avoid the defect because the defect cannot occur
+    given this layout.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <AssemblyName>DVerse.Plugins</AssemblyName>
+    <RootNamespace>DVerse.Plugins</RootNamespace>
+    <Nullable>disable</Nullable>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.49" />
+  </ItemGroup>
+
+</Project>
