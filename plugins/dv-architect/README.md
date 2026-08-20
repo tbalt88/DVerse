@@ -10,7 +10,7 @@ Evolved from `d365-architect` (v3 of its own numbering), a skill in the
 archived public seed repository
 [`tbalt88/DVerseClaudeSkills`](https://github.com/tbalt88/DVerseClaudeSkills),
 committed verbatim in this repo at `seed/d365-architect/` (commit `2c72b66`).
-That repo is where DVerse v2 itself began; this port carries one of its
+That repo is where DVerse itself began; this port carries one of its
 skills forward, not the repo's code.
 
 **Inherited, unchanged in substance:** the event pipeline stage table, the
@@ -32,7 +32,7 @@ section for the complete split.
 ## What changed from the seed, and why
 
 - **Identity**: renamed `dynamics-365-solo-architect` to `dv-architect`; the
-  skill body speaks in DVerse v2 terms throughout.
+  skill body speaks in DVerse terms throughout.
 - **New**: the two rule tables above and the verification-ladder doctrine.
   Nothing in either table is asserted without a corresponding gate file under
   `harness/DVerse.Harness/Gates/` or a numbered entry in `loop/LESSONS.md`

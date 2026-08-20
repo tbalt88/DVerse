@@ -13,7 +13,7 @@
 
 ## Solution source format: YAML, not legacy XML [G1, G10]
 
-DVerse v2 solutions are the YAML source-control format, not the seed's `Entities/`
+DVerse solutions are the YAML source-control format, not the seed's `Entities/`
 + `Other/Customizations.xml` layout. This is forced, not a style choice: canvas
 app sources are supported only in the YAML format. The manifest set:
 

@@ -3,7 +3,7 @@
 > Inherited from the seed `ce-plugin-dev.md` (event pipeline, IPlugin/PluginBase
 > shape, context properties, BP-1 through BP-12): substantively unchanged, this
 > is standard Dataverse SDK behavior, not something this repo's harness checks.
-> Everything under "DVerse v2 additions" below is new: rules this repo has
+> Everything under "DVerse additions" below is new: rules this repo has
 > actually proven, live, against a running org (wave 4.4), each cited to the
 > gate or burned lesson that proves it.
 
@@ -25,7 +25,7 @@ updates (`UserSettings` does not exist yet when sync PostOp fires).
 
 ## IPlugin — Reference Pattern
 
-Target `net462` (the DVerse v2 plugin project's real TFM,
+Target `net462` (the DVerse plugin project's real TFM,
 `demo-solution/plugins/DVerse.Plugins/DVerse.Plugins.csproj`; the official spec
 also names `netstandard2.0` as buildable, but this repo standardizes on
 `net462` since that is what the live plugin project uses and what G6 actually
@@ -98,7 +98,7 @@ BP-12 Merge separate plugins into one assembly for perf/maintainability
 
 ---
 
-## DVerse v2 additions (gate- and lesson-backed, proven live wave 4.4)
+## DVerse additions (gate- and lesson-backed, proven live wave 4.4)
 
 **Scaffold + build layout [L9].** The plugin project and its test project are
 SIBLINGS, never nested: `demo-solution/plugins/DVerse.Plugins/` and

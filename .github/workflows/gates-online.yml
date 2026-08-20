@@ -15,7 +15,12 @@
 #   2. It is the proof that the federated credential works. The Entra
 #      federated credential backing DV_CLIENT_ID is scoped to GitHub's
 #      immutable subject for main, audience api://AzureADTokenExchange. That
-#      scoping cannot be exercised locally by any developer, however
+#      scoping cannot be exercised locally. RENAME NOTE (2026-08-14): the repo
+#      was renamed DVerse-v2 to DVerse; the federated subject embeds the repo
+#      NAME alongside the immutable ids, so this push is the live test of
+#      whether the trust survives the rename. If this run fails at pac auth,
+#      the Entra federated credential subject needs its name segment updated.
+#      This comment exists to trigger that self-proving run by any developer, however
 #      thoroughly they test the gate itself against their own pac profile;
 #      the only place "the OIDC exchange actually works from GitHub" can be
 #      demonstrated is a run of this workflow on main.

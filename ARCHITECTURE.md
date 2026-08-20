@@ -1,4 +1,4 @@
-# DVerse v2 Architecture
+# DVerse Architecture
 
 The governing document. Spec is law: deviations are surfaced to the owner, never silently substituted, and settled decisions are not re-litigated.
 

@@ -1,12 +1,12 @@
 {
   "name": "dv-architect",
   "version": "0.6.0",
-  "description": "Dataverse/Power Platform architect skill for DVerse v2. Grounds every rule it states in this repository's mechanically-enforced gates (harness/DVerse.Harness/Gates/*.cs) or a burned lesson (loop/LESSONS.md), never in prose alone.",
+  "description": "Dataverse/Power Platform architect skill for DVerse. Grounds every rule it states in this repository's mechanically-enforced gates (harness/DVerse.Harness/Gates/*.cs) or a burned lesson (loop/LESSONS.md), never in prose alone.",
   "author": {
-    "name": "DVerse v2"
+    "name": "DVerse"
   },
-  "homepage": "https://github.com/tbalt88/DVerse-v2",
-  "repository": "https://github.com/tbalt88/DVerse-v2",
+  "homepage": "https://github.com/tbalt88/DVerse",
+  "repository": "https://github.com/tbalt88/DVerse",
   "license": "SEE REPOSITORY",
   "keywords": [
     "dataverse",

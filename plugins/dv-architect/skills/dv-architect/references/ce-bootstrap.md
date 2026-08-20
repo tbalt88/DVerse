@@ -124,7 +124,7 @@ pac solution clone --name DVerseCore   # read-only; canonical XML back
 
 Transcribe the platform's own canonical element and attribute set into YAML
 source. Four distinct import rejections were absorbed one at a time before
-this became standing procedure; see `ce-plugin-dev.md`'s "DVerse v2 additions"
+this became standing procedure; see `ce-plugin-dev.md`'s "DVerse additions"
 for the specific rungs (FullName schemaName, leading-slash part URI,
 mandatory strong-naming).
 
