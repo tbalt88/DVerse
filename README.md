@@ -220,7 +220,7 @@ Honesty about what is ours matters more here than anywhere, because this project
 - The CLI entry point and exit-code contract (0 pass, 1 refusal, 2 CLI error): `harness/DVerse.Harness.Cli/`.
 - Two CI tiers wiring the gates into GitHub Actions: `.github/workflows/gates-offline.yml`, `gates-online.yml`.
 - The demo solution itself: `demo-solution/`, table, attributes, form, document-location relationship, plugin assembly, canvas app.
-- The evolved `dv-architect` skill: `plugins/dv-architect/`, every rule in its SKILL.md rules tables cross-referenced to a gate ID (G1-G4, G6-G11) or a burned lesson (`loop/LESSONS.md`); its reference docs additionally carry material honestly labeled spec-only where no gate or lesson bears on it yet.
+- The evolved `dv-architect` skill: `plugins/dv-architect/`, every rule in its SKILL.md rules tables cross-referenced to a gate ID (G1-G4, G6-G12) or a burned lesson (`loop/LESSONS.md`); its reference docs additionally carry material honestly labeled spec-only where no gate or lesson bears on it yet.
 
 ## Engineering notes
 
