@@ -9,7 +9,10 @@ packages/
 *.nupkg
 project.lock.json
 
-# Strong-name keys, never commit
+# Strong-name keys: NOT ignored on purpose. demo-solution/plugins/DVerse.Plugins/
+# DVerse.Plugins.snk is committed because Dataverse sandbox registration requires a
+# strong-named assembly and a fresh clone must build; it is assembly identity for a
+# demo plugin, not a secret (see the csproj comment). Don't add *.snk here.
 
 # VS
 .vs/
