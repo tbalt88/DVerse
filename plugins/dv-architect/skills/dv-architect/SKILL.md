@@ -17,7 +17,7 @@ description: >
   pac plugin, pac canvas, Organization Service, ServiceClient, Web API OData,
   security role, virtual entity, service bus, webhook, canvas app, pa.yaml,
   gate, refusal, solution.yml, solutioncomponents.yml, rootcomponents.yml,
-  missingdependencies.yml, publisher.yml, G1 through G11.
+  missingdependencies.yml, publisher.yml, G1 through G12.
 ---
 
 # DV Architect: Claude Code (v4, evolved)
@@ -42,18 +42,6 @@ inside DVerse. Ground every decision in three sources, in this order:
 Where a gate's behavior and general Dataverse guidance appear to disagree,
 the gate wins for this repository: it decides whether a change ships, not a
 description of one.
-
-## Claude Code Operating Mode
-
-**Always act, don't describe.**
-- Write `.cs` plugin files and YAML solution artifacts to disk with `Write`/
-  `Edit`, don't just show them in chat.
-- Run `pac`, `dotnet`, and `git` commands via `Bash` directly.
-- Use `Grep`/`Glob` to find the owning gate, fixture, or reference file
-  before making a change, not after.
-- Use `WebFetch` for current Microsoft Docs only when this repo's own sources
-  (gates, lessons, `ARCHITECTURE.md`) are silent.
-- When asked "how do I X", do X: write the file, run the command.
 
 **Validate against the harness before calling anything done.** After touching
 a solution root, run the offline gate sweep and the test suite; both are the
@@ -88,10 +76,9 @@ lines; for cross-domain questions read every relevant one.
 
 ---
 
-## v2 reality (what changed since the seed this was ported from)
+## Repo conventions
 
-- **Publisher prefix is `dv`, schema prefix is `dv_`.** Not the seed's
-  `dexx`/`dexx_` placeholder. Verified against
+- **Publisher prefix is `dv`, schema prefix is `dv_`.** Verified against
   `demo-solution/publishers/dversepublisher/publisher.yml` and
   `demo-solution/entities/dv_matter/`; mechanically checked by G2.
 - **Solutions are YAML source, not the legacy XML unpack format.** Forced,
@@ -99,16 +86,14 @@ lines; for cross-domain questions read every relevant one.
   `ARCHITECTURE.md`'s "Solution format" section and G1/G10 are the ground
   truth for the manifest set and its required layout.
 - **A governance harness exists and is the actual gate, not a suggestion.**
-  Ten gates run today (G1-G4, G6-G11; G5 reserved, not built — see below).
-  Where the seed stated a best practice as prose only, check first whether a
-  gate or a burned lesson already backs it; cite that, not just a doc
+  Eleven gates are registered (G1-G4, G6-G12; G5 reserved, not built — see
+  below). Where a best practice is stated as prose only, check first whether
+  a gate or a burned lesson already backs it; cite that, not just a doc
   section.
-- **The strong-name key is committed, not gitignored.** The seed's own
-  `.gitignore` templates (both `ce-alm.md` and `ce-bootstrap.md`) listed
-  `*.snk` as mandatory to ignore. That is backwards for this repo: Sandbox
-  isolation mode requires a signed, public-key-tokened assembly, and the
-  defect that actually broke registration once was hiding the key from
-  source control, not signing itself [L9, L15]. `DVerse.Plugins.snk` is
+- **The strong-name key is committed, not gitignored.** Sandbox isolation
+  mode requires a signed, public-key-tokened assembly, and the defect that
+  actually broke registration once was hiding the key from source control,
+  not signing itself [L9, L15]. `DVerse.Plugins.snk` is
   committed at `demo-solution/plugins/DVerse.Plugins/`.
 
 ---
@@ -136,6 +121,7 @@ number yet.
 | Every declared component in `solutions/*/solutioncomponents.yml` (the `SolutionComponents: Component: '@path'` mapping shape, NOT the flat sequence Microsoft's own docs show) resolves to a real file or directory under the solution root. | G9 |
 | Manifest files (`solution.yml`, `solutioncomponents.yml`, `rootcomponents.yml`, `missingdependencies.yml`, `publisher.yml`) live under `solutions/<name>/` or `publishers/<name>/`, never at the solution root; a stray manifest is invisible to pac's format auto-detection and produces a misleading missing-`Customizations.xml` error. | G10 |
 | Every `*.pa.yaml` under `canvasapps/**` parses; every control entry under a screen's `Children:` declares `Control:`; every `Properties:` entry's value is `=`-prefixed (a bare value silently fails to evaluate as a formula); an empty `.pa.yaml` file is refused. Zero canvas files is a genuine Pass. | G11 |
+| Given a baseline tree (`--baseline <path>` on `gate run`, or `dverse diff`), the structural diff against the current tree refuses: a `@datafieldname` change to a non-lowercase value (L14 class); a diff verdict carrying an unsurveyed `RootComponents` type or unsurveyed FormXml control; a removed `RootComponents`/`SolutionComponents` entry whose source still exists on disk. Without a baseline it is skipped, not failed (`no baseline provided; structural diff requires two trees`). | G12 |
 
 ---
 
@@ -205,23 +191,7 @@ wherever it is not possible yet.
 
 ## Provenance
 
-**Inherited** (from the seed `d365-architect` v3, verbatim at `seed/d365-
-architect/`, itself from the archived `tbalt88/DVerseClaudeSkills`): the
-event pipeline stage table, the `IPlugin`/`PluginBase` shape and BP-1 through
-BP-12, the Web API/Organization Service decision table and code samples, the
-three-layer security model, the Service Bus/webhook/virtual-entity
-integration patterns, and the day-1 bootstrap runbook shape. All substantively
-unchanged; these are standard Dataverse platform behaviors this repo's
-harness does not (and mostly should not) mechanically check.
-
-**Built** (this repo, gate- and lesson-backed): the "Rules with mechanical
-enforcement" table, the "Rules proven by a burned lesson" table, the
-"Verification ladder" doctrine, the v2 reality corrections (publisher prefix,
-YAML source format, the committed `.snk`), the plugin registration rungs
-section in `references/ce-plugin-dev.md`, and every `dv_`-prefixed naming
-example replacing the seed's `dexx_` placeholder throughout the reference
-files. Never present the inherited material as new; never present the built
-material as merely carried forward.
+Inherited vs built material: see `plugins/dv-architect/README.md`.
 
 ---
 
