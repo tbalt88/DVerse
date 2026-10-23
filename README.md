@@ -9,7 +9,7 @@ Second generation of the DVerse series: successor to the archived [DVerseClaudeS
 [![offline-gates](https://github.com/tbalt88/DVerse/actions/workflows/gates-offline.yml/badge.svg)](https://github.com/tbalt88/DVerse/actions/workflows/gates-offline.yml)
 [![online-gates](https://github.com/tbalt88/DVerse/actions/workflows/gates-online.yml/badge.svg)](https://github.com/tbalt88/DVerse/actions/workflows/gates-online.yml)
 
-> **Status: waves 0 to 8 complete.** Eleven gates run offline and online over a real, imported Dataverse solution, with 253 tests, six golden imports, a running model-driven app with an active plugin, live SharePoint document management, a solution-aware two-screen canvas app in gated source, and a semantic diff engine that refuses silent changes between any two versions of the tree. Externally audited before publication ([`docs/assurance/l3-round-1.md`](docs/assurance/l3-round-1.md)).
+> **Status: waves 0 to 8 complete.** Eleven gates run offline and online over a real, imported Dataverse solution, with 253 tests, six golden imports, a running model-driven app with an active plugin, live SharePoint document management, a solution-aware two-screen canvas app in gated source, and a semantic diff engine that refuses silent changes between any two versions of the tree. Audited before publication by an independent AI reviewer ([`docs/assurance/l3-round-1.md`](docs/assurance/l3-round-1.md)).
 
 ## The idea in 60 seconds
 
@@ -101,7 +101,7 @@ DVerse is a working implementation of an AI-governed software development lifecy
 | Verify | The verification ladder: pack, zip-presence, golden import, publish, runtime probe | process + receipts |
 | Review changes | G12 structural diff refuses burned change classes between baseline and head | **code-enforced** |
 | CI/CD | Two tiers: offline on every PR including forks (zero credentials), online post-merge via OIDC (zero secrets) | **code-enforced** |
-| Audit | Append-only JSONL refusal ledger; every verdict carries evidence; independent pre-publication assurance round | code + external audit |
+| Audit | Append-only JSONL refusal ledger; every verdict carries evidence; independent pre-publication assurance round | code + independent AI audit |
 | Learn | Burned lessons feed specs, gates, and the skill (the flywheel above) | process, append-only |
 
 The honest one-line summary: **generation is commoditized; refusal is not.** Plenty of tooling helps AI build on this platform. This repo is about the layer that says no.
